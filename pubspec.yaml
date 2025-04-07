@@ -1,0 +1,44 @@
+name: kozo_ibaraki
+description: "A new Flutter project."
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+13
+
+environment:
+  sdk: ^3.5.3
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  flutter_html: ^3.0.0-beta.2
+  flutter_launcher_icons: ^0.14.3
+  url_launcher: ^6.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/privacy.html
+    - assets/images/youtube/1.jpg
+    - assets/images/youtube/2.jpg
+    - assets/images/youtube/3.jpg
+    - assets/images/background/material-03_02.png
+
+flutter_icons:       
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/images/Icon-512.png"
+  adaptive_icon_background: "assets/images/Icon-maskable-512.png"
+  adaptive_icon_foreground: "assets/images/Icon-maskable-512.png"
