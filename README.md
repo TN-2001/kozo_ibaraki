@@ -27,7 +27,9 @@
 ## Webビルド
 ### リリース(Firebase)
 1. Firebaseでプロジェクト作成
-1. ```npm install -g firebase-tools```
+1. Firebaseのダウンロード：```npm install -g firebase-tools```
+    - [Node.jsが必要](https://nodejs.org/ja/download)
+    - [PowerShellの実行ポリシーの緩和が必要](https://ydk.vc/vscode-nodejs-scripts-about-execution-policies/)
 1. ```firebase login```
 1. ```firebase init```
     1. Hosting を選択
