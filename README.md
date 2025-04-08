@@ -5,8 +5,6 @@
 - [windows](https://qiita.com/shimizu-m1127/items/d8dfc2179bc01baaef6b)
 
 
-
-
 ## GitHub
 - [クローン(ダウンロード)](https://webcreatorfile.com/web/git/869/)
 
@@ -18,10 +16,10 @@
 
 
 ## Windowsビルド
-- コンパイル：Visual Studioが必要（CMakeのバージョンが低いとエラーが出る）
+- [開発者モード：オン](https://zenn.dev/nukokoi/articles/5f108b0b66e639)
 
 - タイトル変更：windows\runner\main.cppの修正
-```json
+```
   if (!window.Create(L"MyApp", origin, size)) 
 ```
 
@@ -39,7 +37,7 @@
 1. ```flutter build web```
 
 1. 複数ページのとき：firebase.jsonに以下を追加
-```json
+```
     "rewrites": [
       {
         "source": "**",
@@ -62,7 +60,7 @@
 
 ### 毎回
 1. バージョン更新：pubspec.yamlの編集
-```json
+```
 version: 1.0.0+2（2を変更）
 ```
 1. ```flutter build appbundle```
