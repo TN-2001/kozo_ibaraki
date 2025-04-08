@@ -239,9 +239,23 @@ class BeamData{
       elem.result[6] = resul[i][6];
       resultElemList.add(elem);
     }
+
+    // 節点の結果をデータ化
+    double rmax = 0;
     for(int i = 0; i < nodeList.length; i++){
       nodeList[i].result[3] = freaResult[i][0]; // 反力V
       nodeList[i].result[4] = freaResult[i][1]; // 反力M
+
+      rmax = max(rmax, nodeList[i].result[3].abs());
+      rmax = max(rmax, nodeList[i].result[4].abs());
+    }
+    for(int i = 0; i < nodeList.length; i++){
+      if (nodeList[i].result[3].abs() <= rmax * 0.001) {
+        nodeList[i].result[3] = 0;
+      }
+      if (nodeList[i].result[4].abs() <= rmax * 0.001) {
+        nodeList[i].result[4] = 0;
+      }
     }
 
     isCalculation = true;

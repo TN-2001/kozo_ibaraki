@@ -311,9 +311,9 @@ class BeamPainter extends CustomPainter {
             canvas.drawArc(Rect.fromCircle(center: pos, radius: 40), pi/3*2, pi/3*2, false, paint);
             paint.style = PaintingStyle.fill;
             if(nodes[i].loadXY[2] > 0.0){
-              MyPainter.triangleEquilateral(Offset(pos.dx-19, pos.dy+37), 20, -pi/3*0.8, paint, canvas);
+              MyPainter.triangleEquilateral(Offset(pos.dx-17, pos.dy+40), 20, -pi/3*0.8, paint, canvas);
             }else{
-              MyPainter.triangleEquilateral(Offset(pos.dx-19, pos.dy-37), 20, pi/3*0.8, paint, canvas);
+              MyPainter.triangleEquilateral(Offset(pos.dx-17, pos.dy-40), 20, pi/3*0.8, paint, canvas);
             }
             if (isValueText) {
               MyPainter.text(canvas, Offset(pos.dx-50, pos.dy+35), 
@@ -324,9 +324,9 @@ class BeamPainter extends CustomPainter {
             canvas.drawArc(Rect.fromCircle(center: pos, radius: 40), -pi/3, pi/3*2, false, paint);
             paint.style = PaintingStyle.fill;
             if(nodes[i].loadXY[2] > 0.0){
-              MyPainter.triangleEquilateral(Offset(pos.dx+19, pos.dy-37), 20, pi/3*2.2, paint, canvas);
+              MyPainter.triangleEquilateral(Offset(pos.dx+17, pos.dy-40), 20, pi/3*2.2, paint, canvas);
             }else{
-              MyPainter.triangleEquilateral(Offset(pos.dx+19, pos.dy+37), 20, -pi/3*2.2, paint, canvas);
+              MyPainter.triangleEquilateral(Offset(pos.dx+17, pos.dy+40), 20, -pi/3*2.2, paint, canvas);
             }
             if (isValueText) {
               MyPainter.text(canvas, Offset(pos.dx+10, pos.dy+35), 
@@ -483,9 +483,9 @@ class BeamPainter extends CustomPainter {
             canvas.drawArc(Rect.fromCircle(center: pos, radius: 40), pi/3*2, pi/3*2, false, paint);
             paint.style = PaintingStyle.fill;
             if(nodes[i].result[4] > 0.0){
-              MyPainter.triangleEquilateral(Offset(pos.dx-19, pos.dy+37), 20, -pi/3*0.8, paint, canvas);
+              MyPainter.triangleEquilateral(Offset(pos.dx-17, pos.dy+40), 20, -pi/3*0.8, paint, canvas);
             }else{
-              MyPainter.triangleEquilateral(Offset(pos.dx-19, pos.dy-37), 20, pi/3*0.8, paint, canvas);
+              MyPainter.triangleEquilateral(Offset(pos.dx-17, pos.dy-40), 20, pi/3*0.8, paint, canvas);
             }
             MyPainter.text(canvas, Offset(pos.dx-55, pos.dy-55), 
               MyPainter.doubleToString(data.nodeList[i].result[4].abs(), 3), 16, Colors.black, true, 1000,);
@@ -494,9 +494,9 @@ class BeamPainter extends CustomPainter {
             canvas.drawArc(Rect.fromCircle(center: pos, radius: 40), -pi/3, pi/3*2, false, paint);
             paint.style = PaintingStyle.fill;
             if(nodes[i].result[4] > 0.0){
-              MyPainter.triangleEquilateral(Offset(pos.dx+19, pos.dy-37), 20, pi/3*2.2, paint, canvas);
+              MyPainter.triangleEquilateral(Offset(pos.dx+17, pos.dy-40), 20, pi/3*2.2, paint, canvas);
             }else{
-              MyPainter.triangleEquilateral(Offset(pos.dx+19, pos.dy+37), 20, -pi/3*2.2, paint, canvas);
+              MyPainter.triangleEquilateral(Offset(pos.dx+17, pos.dy+40), 20, -pi/3*2.2, paint, canvas);
             }
             MyPainter.text(canvas, Offset(pos.dx+10, pos.dy-55), 
               MyPainter.doubleToString(data.nodeList[i].result[4].abs(), 3), 16, Colors.black, true, 1000,);
