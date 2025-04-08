@@ -33,7 +33,7 @@ flutter:
     - assets/images/youtube/1.jpg
     - assets/images/youtube/2.jpg
     - assets/images/youtube/3.jpg
-    - assets/images/background/material-03_02.png
+    - assets/images/background/brigegame3_02.png
 
 flutter_icons:       
   android: true

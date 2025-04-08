@@ -24,7 +24,7 @@ class _BridgegamePageState extends State<BridgegamePage> {
     super.initState();
 
     data = BridgegameData(onDebug: (value){});
-    loadImage('assets/images/background/material-03_02.png');
+    loadImage('assets/images/background/brigegame3_02.png');
   }
 
   @override
@@ -170,14 +170,6 @@ class _BridgegamePageState extends State<BridgegamePage> {
   }
 
   Future<void> loadImage(String asset) async {
-    // final ImageStream stream = AssetImage(asset).resolve(
-    //   const ImageConfiguration()
-    // );
-    // final Completer<ui.Image> completer = Completer();
-    // stream.addListener(ImageStreamListener((ImageInfo info, bool _) {
-    //   completer.complete(info.image);
-    // }));
-    // final ui.Image image = await completer.future;
     final ImageStream stream = AssetImage(asset).resolve(
       const ImageConfiguration(), // devicePixelRatioの指定を削除
     );
@@ -211,7 +203,7 @@ class BridgegameBackgroundPainter extends CustomPainter {
     canvas.drawImageRect(
       image,
       Rect.fromLTWH(0, 0, imageWidth, imageHeight), // 画像全体の範囲
-      Rect.fromLTWH(size.width/2-(imageWidth/2+23)*scale/22.7, size.height/2-(imageHeight/2-630)*scale/22.7, imageWidth*scale/22.7, imageHeight*scale/22.7),
+      Rect.fromLTWH(size.width/2-(imageWidth/2-1)*scale/22.7, size.height/2-(imageHeight/2-676)*scale/22.7, imageWidth*scale/22.7, imageHeight*scale/22.7),
       Paint(),
     );
   }
