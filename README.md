@@ -19,9 +19,9 @@
 - [開発者モード：オン](https://zenn.dev/nukokoi/articles/5f108b0b66e639)
 
 - タイトル変更：windows\runner\main.cppの修正
-```
+    ```
   if (!window.Create(L"MyApp", origin, size)) 
-```
+    ```
 
 
 ## Webビルド
@@ -37,14 +37,14 @@
 1. ```flutter build web```
 
 1. 複数ページのとき：firebase.jsonに以下を追加
-```
+    ```
     "rewrites": [
       {
         "source": "**",
         "destination": "/index.html"
       }
     ]
-```
+    ```
 
 1. ```firebase deploy```
 
@@ -60,7 +60,7 @@
 
 ### 毎回
 1. バージョン更新：pubspec.yamlの編集
-```
-version: 1.0.0+2（2を変更）
-```
+    ```
+    version: 1.0.0+2（2を変更）
+    ```
 1. ```flutter build appbundle```
