@@ -69,6 +69,18 @@ class _BridgegamePageState extends State<BridgegamePage> {
                 });
               },
             ),
+            // 問題条件
+            MyMenuDropdown(
+              items: const ["3点曲げ","4点曲げ", "自重"], 
+              // items: const ["3点曲げ","4点曲げ"],
+              value: data.powerType, 
+              onPressed: (value){
+                setState(() {
+                  data.powerType = value;
+
+                });
+              }
+            ),
           },
         ],
 
@@ -86,6 +98,9 @@ class _BridgegamePageState extends State<BridgegamePage> {
                 }else{
                   snacbar();
                 }
+                // setState(() {
+                //   data.calculation();
+                // });
               },
             ),
           }else...{

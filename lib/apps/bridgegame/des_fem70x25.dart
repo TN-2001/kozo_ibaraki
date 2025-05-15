@@ -102,21 +102,26 @@ import 'dart:math';
   }
 
   // Force vector (p = 1) 外力ベクトル（荷重）の設定
-  if(powerType == 0){ // 集中荷重
-    int n1 = (npx1 + 1) * npx2 + (npx1 / 2).round();
-    int n2 = (npx1 + 1) * npx2 + (npx1 / 2).round() + 1;
-    int n3 = (npx1 + 1) * npx2 + (npx1 / 2).round() + 2;
-    fext[nd * n1 - 1] = -1.0;
-    fext[nd * n2 - 1] = -2.0;
-    fext[nd * n3 - 1] = -1.0;
-  }else if(powerType == 1){ // 分布荷重
-    for (int i = (npx1+1)*npx2+3; i <= (npx1+1)*(npx2+1)-3; i++) {
-      if(i == (npx1+1)*npx2+3 || i == (npx1+1)*(npx2+1)-3){
-        fext[i*nd -1] = -1.0 / (npx1-4);
-      }else{
-        fext[i*nd-1] = -2.0 / (npx1-4);
-      }
-    }
+  if(powerType == 0){ // 3点曲げ
+    int n1 = (npx1 + 1) * npx2 + (npx1 / 2).round() - 1;
+    int n2 = (npx1 + 1) * npx2 + (npx1 / 2).round();
+    int n3 = (npx1 + 1) * npx2 + (npx1 / 2).round() + 1;
+    fext[nd * n1 + 1] = -1.0;
+    fext[nd * n2 + 1] = -2.0;
+    fext[nd * n3 + 1] = -1.0;
+  }else if(powerType == 1){ // 4点曲げ
+    int n1 = (npx1 + 1) * npx2 + 22;
+    int n2 = (npx1 + 1) * npx2 + 23;
+    int n3 = (npx1 + 1) * npx2 + 24;
+    fext[nd * n1 + 1] = -1.0;
+    fext[nd * n2 + 1] = -2.0;
+    fext[nd * n3 + 1] = -1.0;
+    n1 = (npx1 + 1) * npx2 + 46;
+    n2 = (npx1 + 1) * npx2 + 47;
+    n3 = (npx1 + 1) * npx2 + 48;
+    fext[nd * n1 + 1] = -1.0;
+    fext[nd * n2 + 1] = -2.0;
+    fext[nd * n3 + 1] = -1.0;
   }else if(powerType == 2){ // 自重
     for(int n2 = 0; n2 < npx2; n2++){
       for(int n1 = 0; n1 < npx1; n1++){
@@ -124,7 +129,11 @@ import 'dart:math';
           for(int i = 0; i < 4; i++){
             int ni = ijke[n1][n2][i];
             int nj = nd*ni + 1;
-            fext[nj] -= 0.01;
+            if (n2 == 0) {
+              fext[nj] -= 0.1;
+            } else {
+              fext[nj] -= 0.02;
+            }
           }
         }
       }

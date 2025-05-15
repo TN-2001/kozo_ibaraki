@@ -25,7 +25,7 @@ class BridgegameData{
       }
     }
 
-    // 拘束か荷重がかかる要素は確定
+    // 要素は確定か
     for(int i = 0; i < countX; i++){
       elemList[i].isCanPaint = false;
       elemList[i].e = 1;
@@ -47,7 +47,7 @@ class BridgegameData{
   double resultMin = 0, resultMax = 0;
   // 選択番号
   int selectedNumber = -1;
-  int powerType = 0; // 荷重条件（0:集中荷重、1:分布荷重、2:自重）
+  int powerType = 0; // 荷重条件（0:3点曲げ、1:4点曲げ、2:自重）
 
   // 節点の範囲座標
   Rect rect(){
@@ -84,87 +84,6 @@ class BridgegameData{
   }
   double vvar = 0; // 荷重中央たわみ/体積（基準モデル）
   double resultPoint = 0; // 点数
-
-  // 追加削除
-  void addNode(){
-    // バグ対策
-    if(node == null) return;
-    for(int i = 0; i < nodeList.length; i++){
-      if(node!.pos.dx == nodeList[i].pos.dx && node!.pos.dy == nodeList[i].pos.dy){
-        return;
-      }
-    }
-
-    // 追加
-    nodeList.add(node!);
-    node = Node();
-    node!.number = nodeList.length;
-  }
-  void removeNode(int number){
-    // バグ対策
-    if(nodeList.length-1 < number && nodeList.isNotEmpty) return;
-
-    // 節点を使っている要素の削除
-    for(int i = elemList.length-1; i >= 0; i--){
-      for(int j = 0; j < elemNode; j++){
-        if(elemList[i].nodeList[j]!.number == number){
-          removeElem(i);
-        }
-      }
-    }
-
-    // 節点の削除
-    nodeList.removeAt(number);
-
-    // 節点の番号を修正
-    for(int i = 0; i < nodeList.length; i++){
-      nodeList[i].number = i;
-    }
-  }
-  void addElem(){
-    // バグ対策
-    if(elem == null) return;
-    for(int i = 0; i < elemNode; i++){
-      if(elem!.nodeList[1] == null) return;
-    }
-    for(int i = 0; i < elemNode; i++){
-      for(int j = 0; j < elemNode; j++){
-        if(i != j && elem!.nodeList[i] == elem!.nodeList[j]){
-          return;
-        }
-      }
-    }
-    for(int e = 0; e < elemList.length; e++){
-      int count = 0;
-      for(int i = 0; i < elemNode; i++){
-        for(int j = 0; j < elemNode; j++){
-          if(elem!.nodeList[i] == elemList[e].nodeList[j]){
-            count ++;
-            if(count == elemNode){
-              return;
-            }
-          }
-        }
-      }
-    }
-
-    // 追加
-    elemList.add(elem!);
-    elem = Elem();
-    elem!.number = elemList.length;
-  }
-  void removeElem(int number){
-    // バグ対策
-    if(elemList.length-1 < number && elemList.isNotEmpty) return;
-
-    // 要素の削除
-    elemList.removeAt(number);
-
-    // 要素の番号を修正
-    for(int i = 0; i < elemList.length; i++){
-      elemList[i].number = i;
-    }
-  }
 
   // 対称化
   void symmetrical(){
@@ -223,6 +142,7 @@ class BridgegameData{
 
     // 点数
     double maxBecPos = nodeList[35].becPos.dy.abs();
+    // print(maxBecPos);
     int elemLength = elemCount();
 
     // シグモイド関数
@@ -230,56 +150,101 @@ class BridgegameData{
 
     // ニュートン補間
     double b0, b1, b2;
-    if (elemLength >= 70 && elemLength < 140) {
-      b0 = 3.4159242117E+00;
-      b1 = -4.5191687192E-02;
-      b2 = 2.1786797104E-04;
-      vvar = b0 + b1 * (elemLength - 70) + b2 * (elemLength - 70) * (elemLength - 105);
-    } else if (elemLength >= 140 && elemLength < 210) {
-      b0 = 7.8628263731E-01;
-      b1 = -8.3156504589E-03;
-      b2 = 3.5738917299E-05;
-      vvar = b0 + b1 * (elemLength - 140) + b2 * (elemLength - 140) * (elemLength - 175);
-    } else if (elemLength >= 210 && elemLength < 350) {
-      b0 = 2.9174745257E-01;
-      b1 = -2.0613303788E-03;
-      b2 = 8.5850173811E-06;
-      vvar = b0 + b1 * (elemLength - 210) + b2 * (elemLength - 210) * (elemLength - 280);
-    } else if (elemLength >= 350 && elemLength < 490) {
-      b0 = 8.7294369877E-02;
-      b1 = -4.4232646612E-04;
-      b2 = 1.3426382928E-06;
-      vvar = b0 + b1 * (elemLength - 350) + b2 * (elemLength - 350) * (elemLength - 420);
-    } else if (elemLength >= 490 && elemLength < 630) {
-      b0 = 3.8526519889E-02;
-      b1 = -1.5628977445E-04;
-      b2 = 3.9630188412E-07;
-      vvar = b0 + b1 * (elemLength - 490) + b2 * (elemLength - 490) * (elemLength - 560);
-    } else if (elemLength >= 630 && elemLength < 770) {
-      b0 = 2.0529709931E-02;
-      b1 = -6.7666021124E-05;
-      b2 = 1.4764385486E-07;
-      vvar = b0 + b1 * (elemLength - 630) + b2 * (elemLength - 630) * (elemLength - 700);
-    } else if (elemLength >= 770 && elemLength < 910) {
-      b0 = 1.2503376751E-02;
-      b1 = -3.3617200755E-05;
-      b2 = 6.3902626225E-08;
-      vvar = b0 + b1 * (elemLength - 770) + b2 * (elemLength - 770) * (elemLength - 840);
-    } else if (elemLength >= 910 && elemLength < 1050) {
-      b0 = 8.4232143822E-03;
-      b1 = -1.8513034220E-05;
-      b2 = 3.1060716901E-08;
-      vvar = b0 + b1 * (elemLength - 910) + b2 * (elemLength - 910) * (elemLength - 980);
+    if (powerType == 0) {
+      if (elemLength >= 70 && elemLength < 140) {
+        b0 =  3.4159242117E+00;
+        b1 = -4.9026406049E-02;
+        b2 =  3.2743136695E-04;
+        vvar = b0 + b1 * (elemLength - 70) + b2 * (elemLength - 70) * (elemLength - 105);
+      } else if (elemLength >= 140 && elemLength < 210) {
+        b0 =  7.8628263731E-01;
+        b1 = -9.3223610660E-03;
+        b2 =  6.4502077503E-05;
+        vvar = b0 + b1 * (elemLength - 140) + b2 * (elemLength - 140) * (elemLength - 175);
+      } else if (elemLength >= 210 && elemLength < 350) {
+        b0 = 2.9174745257E-01;
+        b1 = -2.0613303788E-03;
+        b2 = 8.5850173811E-06;
+        vvar = b0 + b1 * (elemLength - 210) + b2 * (elemLength - 210) * (elemLength - 280);
+      } else if (elemLength >= 350 && elemLength < 490) {
+        b0 = 8.7294369877E-02;
+        b1 = -4.4232646612E-04;
+        b2 = 1.3426382928E-06;
+        vvar = b0 + b1 * (elemLength - 350) + b2 * (elemLength - 350) * (elemLength - 420);
+      } else if (elemLength >= 490 && elemLength < 630) {
+        b0 = 3.8526519889E-02;
+        b1 = -1.5628977445E-04;
+        b2 = 3.9630188412E-07;
+        vvar = b0 + b1 * (elemLength - 490) + b2 * (elemLength - 490) * (elemLength - 560);
+      } else if (elemLength >= 630 && elemLength < 770) {
+        b0 = 2.0529709931E-02;
+        b1 = -6.7666021124E-05;
+        b2 = 1.4764385486E-07;
+        vvar = b0 + b1 * (elemLength - 630) + b2 * (elemLength - 630) * (elemLength - 700);
+      } else if (elemLength >= 770 && elemLength < 910) {
+        b0 = 1.2503376751E-02;
+        b1 = -3.3617200755E-05;
+        b2 = 6.3902626225E-08;
+        vvar = b0 + b1 * (elemLength - 770) + b2 * (elemLength - 770) * (elemLength - 840);
+      } else if (elemLength >= 910 && elemLength < 1050) {
+        b0 = 8.4232143822E-03;
+        b1 = -1.8513034220E-05;
+        b2 = 3.1060716901E-08;
+        vvar = b0 + b1 * (elemLength - 910) + b2 * (elemLength - 910) * (elemLength - 980);
+      }
+    } else {
+      // print(nodeList[23].becPos.dy.abs());
+      maxBecPos = nodeList[23].becPos.dy.abs();
+      if (elemLength >= 70 && elemLength < 140) {
+        b0 =  3.83095784081963E+00;
+        b1 = -5.80273668805609E-02;
+        b2 =  4.53615168754680E-04;
+        vvar = b0 + b1 * (elemLength - 70) + b2 * (elemLength - 70) * (elemLength - 105);
+      } else if (elemLength >= 140 && elemLength < 210) {
+        b0 =  8.80399322629337E-01;
+        b1 = -9.72569493226677E-03;
+        b2 =  5.66108143337244E-05;
+        vvar = b0 + b1 * (elemLength - 140) + b2 * (elemLength - 140) * (elemLength - 175);
+      } else if (elemLength >= 210 && elemLength < 350) {
+        b0 =  3.38297172488288E-01;
+        b1 = -2.29427110273659E-03;
+        b2 =  9.29880951489469E-06;
+        vvar = b0 + b1 * (elemLength - 210) + b2 * (elemLength - 210) * (elemLength - 280);
+      } else if (elemLength >= 350 && elemLength < 490) {
+        b0 =  1.08227551351134E-01;
+        b1 = -5.30257640222751E-04;
+        b2 =  1.54965659068093E-06;
+        vvar = b0 + b1 * (elemLength - 350) + b2 * (elemLength - 350) * (elemLength - 420);
+      } else if (elemLength >= 490 && elemLength < 630) {
+        b0 =  4.91781163086219E-02;
+        b1 = -1.95951437338516E-04;
+        b2 =  4.86441085534530E-07;
+        vvar = b0 + b1 * (elemLength - 490) + b2 * (elemLength - 490) * (elemLength - 560);
+      } else if (elemLength >= 630 && elemLength < 770) {
+        b0 =  2.65120377194681E-02;
+        b1 = -8.64750318306500E-05;
+        b2 =  1.86445191479459E-07;
+        vvar = b0 + b1 * (elemLength - 630) + b2 * (elemLength - 630) * (elemLength - 700);
+      } else if (elemLength >= 770 && elemLength < 910) {
+        b0 =  1.62326961396758E-02;
+        b1 = -4.33425084092314E-05;
+        b2 =  8.18144201538573E-08;
+        vvar = b0 + b1 * (elemLength - 770) + b2 * (elemLength - 770) * (elemLength - 840);
+      } else if (elemLength >= 910 && elemLength < 1050) {
+        b0 =  1.09665262798912E-02;
+        b1 = -2.39707508636930E-05;
+        b2 =  4.00697386158101E-08;
+        vvar = b0 + b1 * (elemLength - 910) + b2 * (elemLength - 910) * (elemLength - 980);
+      }
     }
     vvar = vvar/elemLength;
 
     double vvvar = maxBecPos/elemLength-vvar;
     double a = 3;
-    if(vvvar > 0){
-      a = 0.5;
-    }
+    // if(vvvar > 0){
+    //   a = 0.5;
+    // }
     resultPoint = 100 * (1-1/(1+(pow(e, -a*(vvvar)/vvar))));
-
     selectResult(3);
 
     isCalculation = true;
@@ -331,9 +296,7 @@ class BridgegameData{
     canvasData.setScale(canvasRect, rect());
 
     double a = 3;
-    // if(resultPoint < 50){
-    //   a = a * 2*(1/(1+pow(e, -0.025*(resultPoint-50))));
-    // }
+    // 荷重中央たわみ（3点曲げ：3.415924211727363、4点曲げ：4.812392454389149）
 
     List<Node> nodes = nodeList;
     for(int i = 0; i < nodes.length; i++){
@@ -405,8 +368,8 @@ class Node
   // 基本データ
   int number = 0;
   Offset pos = Offset.zero;
-  List<bool> constXYR = [false, false, false, false]; // 拘束（0:x、1:y、2:回転、3:ヒンジ）
-  List<double> loadXY = [0, 0, 0]; // 荷重（0:x、1:y、2:モーメント）
+  List<bool> constXY = [false, false]; // 拘束（0:x、1:y）
+  List<double> loadXY = [0, 0]; // 荷重（0:x、1:y）
 
   // 計算結果
   Offset becPos = Offset.zero;

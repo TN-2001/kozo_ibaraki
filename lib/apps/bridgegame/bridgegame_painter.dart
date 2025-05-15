@@ -20,28 +20,34 @@ class BridgegamePainter extends CustomPainter {
       _drawElem(false, canvas); // 要素
       _drawElemEdge(false, canvas); // 要素の辺
 
+      paint = Paint()
+        ..color = const Color.fromARGB(255, 0, 0, 0)
+        ..style = PaintingStyle.stroke;
+      canvas.drawLine(data.nodeList[35].canvasPos, data.nodeList[71*25+35].canvasPos, paint);
+
       // 矢印
       double arrowSize = canvasRect.width/70 / 5;
 
-      if(data.powerType == 0){ // 集中荷重
+      if(data.powerType == 0){ // 3点曲げ
         paint.color = const Color.fromARGB(255, 0, 0, 0);
         paint.style = PaintingStyle.fill;
         paint.strokeWidth = 3.0;
-        for(int i = 34; i < 37; i++){
+        for(int i = 34; i <= 36; i++){
           Offset pos = data.nodeList[i].canvasPos;
           MyPainter.arrow(pos, Offset(pos.dx, pos.dy+data.canvasData.scale*1.5), arrowSize, const Color.fromARGB(255, 0, 63, 95), canvas);
         }
-      }else if(data.powerType == 1){ // 分布荷重
-        paint.color = const Color.fromARGB(255, 0, 63, 95);
+      }else if(data.powerType == 1){ // 4点曲げ
+        paint.color = const Color.fromARGB(255, 0, 0, 0);
         paint.style = PaintingStyle.fill;
         paint.strokeWidth = 3.0;
-        for(int i = 2; i < 69; i += 3){
+        for(int i = 22; i <= 24; i++){
           Offset pos = data.nodeList[i].canvasPos;
           MyPainter.arrow(pos, Offset(pos.dx, pos.dy+data.canvasData.scale*1.5), arrowSize, const Color.fromARGB(255, 0, 63, 95), canvas);
         }
-        Offset pos1 = data.nodeList[2].canvasPos;
-        Offset pos2 = data.nodeList[68].canvasPos;
-        canvas.drawLine(Offset(pos1.dx, pos1.dy+data.canvasData.scale*1.5), Offset(pos2.dx, pos2.dy+data.canvasData.scale*1.5), paint);
+        for(int i = 46; i <= 48; i++){
+          Offset pos = data.nodeList[i].canvasPos;
+          MyPainter.arrow(pos, Offset(pos.dx, pos.dy+data.canvasData.scale*1.5), arrowSize, const Color.fromARGB(255, 0, 63, 95), canvas);
+        }
       }
 
       // 体積
