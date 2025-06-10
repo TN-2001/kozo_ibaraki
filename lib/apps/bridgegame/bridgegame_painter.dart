@@ -1,52 +1,66 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/apps/bridgegame/bridgegame_data.dart';
 import 'package:kozo_ibaraki/components/my_painter.dart';
+import 'package:kozo_ibaraki/utils/camera.dart';
 
 class BridgegamePainter extends CustomPainter {
-  const BridgegamePainter({required this.data});
+  BridgegamePainter({required this.data, required this.camera, required this.image});
 
   final BridgegameData data;
+  Camera camera; // カメラ
+  final ui.Image image;
 
   @override
   void paint(Canvas canvas, Size size) {
     Rect dataRect = data.rect();
-    // data.updateCanvasPos(Rect.fromLTRB((size.width/10), (size.height/4), size.width-(size.width/10), size.height-(size.height/4)), 0);
 
     Paint paint = Paint();
 
-    Rect canvasRect = data.canvasData.dToCRect(dataRect);
+    // カメラの初期化
+    camera.init(
+      _getCameraScale(Rect.fromLTRB((size.width/10), (size.height/4), size.width-(size.width/10), size.height-(size.height/4)), dataRect), 
+      dataRect.center, 
+      Offset(size.width/2, size.height/2)
+    );
 
-    if(!data.isCalculation || data.resultList.isEmpty){
+    // 画像を描画
+    _drawImage(canvas, size);
+
+    if (!data.isCalculation || data.resultList.isEmpty) {
+      // 要素
       _drawElem(false, canvas); // 要素
       _drawElemEdge(false, canvas); // 要素の辺
 
+      // 中心線
       paint = Paint()
         ..color = const Color.fromARGB(255, 0, 0, 0)
         ..style = PaintingStyle.stroke;
-      canvas.drawLine(data.nodeList[35].canvasPos, data.nodeList[71*25+35].canvasPos, paint);
+      canvas.drawLine(camera.worldToScreen(data.nodeList[35].pos), camera.worldToScreen(data.nodeList[71*25+35].pos), paint);
 
       // 矢印
-      double arrowSize = canvasRect.width/70 / 5;
+      double arrowSize = 0.2;
 
       if(data.powerType == 0){ // 3点曲げ
         paint.color = const Color.fromARGB(255, 0, 0, 0);
         paint.style = PaintingStyle.fill;
         paint.strokeWidth = 3.0;
         for(int i = 34; i <= 36; i++){
-          Offset pos = data.nodeList[i].canvasPos;
-          MyPainter.arrow(pos, Offset(pos.dx, pos.dy+data.canvasData.scale*1.5), arrowSize, const Color.fromARGB(255, 0, 63, 95), canvas);
+          Offset pos = data.nodeList[i].pos;
+          MyPainter.arrow(camera.worldToScreen(pos), camera.worldToScreen(Offset(pos.dx, pos.dy-1.5)), arrowSize*camera.scale, const Color.fromARGB(255, 0, 63, 95), canvas);
         }
       }else if(data.powerType == 1){ // 4点曲げ
         paint.color = const Color.fromARGB(255, 0, 0, 0);
         paint.style = PaintingStyle.fill;
         paint.strokeWidth = 3.0;
         for(int i = 22; i <= 24; i++){
-          Offset pos = data.nodeList[i].canvasPos;
-          MyPainter.arrow(pos, Offset(pos.dx, pos.dy+data.canvasData.scale*1.5), arrowSize, const Color.fromARGB(255, 0, 63, 95), canvas);
+          Offset pos = data.nodeList[i].pos;
+          MyPainter.arrow(camera.worldToScreen(pos), camera.worldToScreen(Offset(pos.dx, pos.dy-1.5)), arrowSize*camera.scale, const Color.fromARGB(255, 0, 63, 95), canvas);
         }
         for(int i = 46; i <= 48; i++){
-          Offset pos = data.nodeList[i].canvasPos;
-          MyPainter.arrow(pos, Offset(pos.dx, pos.dy+data.canvasData.scale*1.5), arrowSize, const Color.fromARGB(255, 0, 63, 95), canvas);
+          Offset pos = data.nodeList[i].pos;
+          MyPainter.arrow(camera.worldToScreen(pos), camera.worldToScreen(Offset(pos.dx, pos.dy-1.5)), arrowSize*camera.scale, const Color.fromARGB(255, 0, 63, 95), canvas);
         }
       }
 
@@ -57,8 +71,17 @@ class BridgegamePainter extends CustomPainter {
         color = Colors.red;
       }
       MyPainter.text(canvas, const Offset(10, 10), "体積：$elemLength", 16, color, true, size.width, );
-    }
-    else{
+    } else {
+      if (data.powerType == 0) {
+        data.dispScale = 90.0; // 3点曲げの変位倍率
+      } else if (data.powerType == 1) {
+        data.dispScale = 2.0; // 4点曲げの変位倍率
+      } else {
+        data.dispScale = 100.0; // その他の変位倍率
+      }
+      data.dispScale /= (data.vvar * data.elemCount());
+
+      // 要素
       _drawElem(true, canvas); // 要素
       _drawElemEdge(true, canvas); // 要素の辺
 
@@ -72,7 +95,8 @@ class BridgegamePainter extends CustomPainter {
         if(data.elemList[data.selectedNumber].e > 0){
           final path = Path();
           for(int j = 0; j < data.elemNode; j++){
-            Offset pos = data.elemList[data.selectedNumber].nodeList[j]!.canvasAfterPos;
+            Offset pos = camera.worldToScreen(
+              data.elemList[data.selectedNumber].nodeList[j]!.pos + data.elemList[data.selectedNumber].nodeList[j]!.becPos*data.dispScale);
             if(j == 0){
               path.moveTo(pos.dx, pos.dy);
             }else{
@@ -85,7 +109,7 @@ class BridgegamePainter extends CustomPainter {
       }
       if(data.selectedNumber >= 0){
         if(data.elemList[data.selectedNumber].e > 0){
-          MyPainter.text(canvas, data.elemList[data.selectedNumber].nodeList[0]!.canvasAfterPos, 
+          MyPainter.text(canvas, camera.worldToScreen(data.elemList[data.selectedNumber].nodeList[0]!.pos + data.elemList[data.selectedNumber].nodeList[0]!.becPos*data.dispScale), 
             MyPainter.doubleToString(data.resultList[data.selectedNumber], 3), 14, Colors.black, true, size.width);
         }
       }
@@ -133,6 +157,40 @@ class BridgegamePainter extends CustomPainter {
     }
   }
 
+  // カメラの拡大率を取得
+  double _getCameraScale(Rect screenRect, Rect worldRect){
+    double width = worldRect.width;
+    double height = worldRect.height;
+    if(width == 0 && height == 0){
+      width = 100;
+    }
+    if(screenRect.width / width < screenRect.height / height){
+      return screenRect.width / width;
+    }
+    else{
+      return screenRect.height / height;
+    }
+  }
+
+  // 画像を描画
+  void _drawImage(Canvas canvas, Size size) {
+    double imageWidth = image.width.toDouble();
+    double imageHeight = image.height.toDouble();
+    Offset imageCameraPos = const Offset(0, -676); // 画像のカメラ位置
+    double imageScale = camera.scale / 22.7; // 画像の拡大率
+    canvas.drawImageRect(
+      image,
+      Rect.fromLTWH(0, 0, imageWidth, imageHeight), // 画像全体の範囲
+      Rect.fromLTRB(
+        (-imageWidth/2-imageCameraPos.dx)*imageScale + size.width/2, 
+        (-imageHeight/2-imageCameraPos.dy)*imageScale + size.height/2, 
+        (imageWidth/2-imageCameraPos.dx)*imageScale + size.width/2, 
+        (imageHeight/2-imageCameraPos.dy)*imageScale + size.height/2
+      ),
+      Paint(),
+    );
+  }
+
   // 要素の辺
   void _drawElemEdge(bool isAfter, Canvas canvas){
     Paint paint = Paint()
@@ -146,9 +204,9 @@ class BridgegamePainter extends CustomPainter {
           for(int j = 0; j < data.elemNode; j++){
             Offset pos;
             if(!isAfter){
-              pos = data.elemList[i].canvasPosList[j];
+              pos = camera.worldToScreen(data.elemList[i].nodeList[j]!.pos);
             }else{
-              pos = data.elemList[i].nodeList[j]!.canvasAfterPos;
+              pos = camera.worldToScreen(data.elemList[i].nodeList[j]!.pos + data.elemList[i].nodeList[j]!.becPos*data.dispScale);
             }
 
             if(j == 0){
@@ -169,23 +227,27 @@ class BridgegamePainter extends CustomPainter {
     Paint paint = Paint()
       ..color = const Color.fromARGB(255, 49, 49, 49);
 
-    if(!isAfter){
-      paint.color = const Color.fromARGB(255, 184, 25, 63);
-    }
-
     for(int i = 0; i < data.elemList.length; i++){
       if(data.elemList[i].e > 0){
         if(isAfter && (data.resultMax != 0 || data.resultMin != 0)){
           paint.color = MyPainter.getColor((data.resultList[i] - data.resultMin) / (data.resultMax - data.resultMin) * 100);
+        }
+        else if(!isAfter){
+          if(data.elemList[i].isCanPaint){
+            paint.color = const Color.fromARGB(255, 184, 25, 63);
+          }
+          else{
+            paint.color = const Color.fromARGB(255, 106, 23, 43);
+          }
         }
 
         final path = Path();
         for(int j = 0; j < data.elemNode; j++){
           Offset pos;
           if(!isAfter){
-            pos = data.elemList[i].canvasPosList[j];
+            pos = camera.worldToScreen(data.elemList[i].nodeList[j]!.pos);
           }else{
-            pos = data.elemList[i].nodeList[j]!.canvasAfterPos;
+            pos = camera.worldToScreen(data.elemList[i].nodeList[j]!.pos + data.elemList[i].nodeList[j]!.becPos*data.dispScale);
           }
           if(j == 0){
             path.moveTo(pos.dx, pos.dy);

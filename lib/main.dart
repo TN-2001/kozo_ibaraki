@@ -8,12 +8,12 @@ import 'package:kozo_ibaraki/apps/truss/truss_page.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-// import 'package:flutter_web_plugins/flutter_web_plugins.dart'; // Webアプリのときだけ
+import 'package:flutter_web_plugins/flutter_web_plugins.dart'; // Webアプリのときだけ
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // setUrlStrategy(PathUrlStrategy()); // Webアプリのときだけ
+  setUrlStrategy(PathUrlStrategy()); // Webアプリのときだけ
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
 

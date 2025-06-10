@@ -5,6 +5,7 @@ import 'package:kozo_ibaraki/apps/bridgegame/bridgegame_data.dart';
 import 'package:kozo_ibaraki/apps/bridgegame/bridgegame_painter.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:kozo_ibaraki/main.dart';
+import 'package:kozo_ibaraki/utils/camera.dart';
 
 class BridgegamePage extends StatefulWidget {
   const BridgegamePage({super.key});
@@ -18,6 +19,7 @@ class _BridgegamePageState extends State<BridgegamePage> {
   late BridgegameData data; // データ
   int toolNum = 0;
   ui.Image? _image;
+  Camera camera = Camera(1.0, Offset.zero, Offset.zero); // カメラ
 
   @override
   void initState() {
@@ -122,15 +124,8 @@ class _BridgegamePageState extends State<BridgegamePage> {
       body: Stack(
         children:[
           if(_image != null)...{
-            SizedBox(
-              width: double.infinity,
-              height: double.infinity,
-              child: CustomPaint(
-                painter: BridgegameBackgroundPainter(data: data, image: _image!)
-              ),
-            ),
+            painter(),
           },
-          painter(),
         ]
       )
     );
@@ -143,7 +138,7 @@ class _BridgegamePageState extends State<BridgegamePage> {
       onTap: (position) {
         if(data.isCalculation){
           setState(() {
-            data.selectElem(position,0);
+            data.selectElem(camera.screenToWorld(position),0);
             if(data.selectedNumber >= 0){
               data.selectedNumber = data.selectedNumber;
             }
@@ -152,7 +147,7 @@ class _BridgegamePageState extends State<BridgegamePage> {
       },
       onDrag: (position) {
         if(!data.isCalculation){
-          data.selectElem(position,0);
+          data.selectElem(camera.screenToWorld(position),0);
           if(data.selectedNumber >= 0){
             if(data.elemList[data.selectedNumber].isCanPaint){
               if(toolNum == 0 && data.elemList[data.selectedNumber].e < 1){
@@ -167,7 +162,7 @@ class _BridgegamePageState extends State<BridgegamePage> {
           });
         }
       },
-      painter: BridgegamePainter(data: data), 
+      painter: BridgegamePainter(data: data, camera: camera, image: _image!), 
     );
   }
 
@@ -199,32 +194,5 @@ class _BridgegamePageState extends State<BridgegamePage> {
     setState(() {
       _image = image;
     });
-  }
-}
-
-class BridgegameBackgroundPainter extends CustomPainter {
-  const BridgegameBackgroundPainter({required this.data, required this.image});
-
-  final BridgegameData data;
-  final ui.Image image;
-
-  @override
-  void paint(ui.Canvas canvas, ui.Size size) {
-    data.updateCanvasPos(Rect.fromLTRB((size.width/10), (size.height/4), size.width-(size.width/10), size.height-(size.height/4)), 0);
-    double scale = data.canvasData.scale;
-
-    double imageWidth = image.width.toDouble();
-    double imageHeight = image.height.toDouble();
-    canvas.drawImageRect(
-      image,
-      Rect.fromLTWH(0, 0, imageWidth, imageHeight), // 画像全体の範囲
-      Rect.fromLTWH(size.width/2-(imageWidth/2-1)*scale/22.7, size.height/2-(imageHeight/2-676)*scale/22.7, imageWidth*scale/22.7, imageHeight*scale/22.7),
-      Paint(),
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant BridgegameBackgroundPainter oldDelegate) {
-    return false;
   }
 }

@@ -129,8 +129,8 @@ import 'dart:math';
           for(int i = 0; i < 4; i++){
             int ni = ijke[n1][n2][i];
             int nj = nd*ni + 1;
-            if (n2 == 0) {
-              fext[nj] -= 0.1;
+            if (n2 == 0 || n2 == 1) {
+              fext[nj] -= 0.06;
             } else {
               fext[nj] -= 0.02;
             }
