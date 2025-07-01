@@ -3,7 +3,7 @@ import 'package:kozo_ibaraki/components/my_decorations.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:kozo_ibaraki/apps/beam/beam_painter.dart';
 import 'package:kozo_ibaraki/apps/beam/beam_data.dart';
-import 'package:kozo_ibaraki/main.dart';
+import 'package:kozo_ibaraki/main.dart'; // スマホアプリのときはコメントアウト
 
 
 class BeamPage extends StatefulWidget {
@@ -48,7 +48,7 @@ class _BeamPageState extends State<BeamPage> {
     return MyScaffold(
       scaffoldKey: _scaffoldKey,
 
-      drawer: drawer(context),
+      drawer: drawer(context), // スマホアプリのときはコメントアウト
       
       header: MyHeader(
         isBorder: true,
@@ -425,34 +425,6 @@ class _BeamPageState extends State<BeamPage> {
             )
           ],
         ),
-        // MyProperty(
-        //   name: "剛性",
-        //   labelWidth: 75,
-        //   children: [
-        //     MyProperty(
-        //       name: "ヤング率",
-        //       labelAlignment: Alignment.centerRight,
-        //       width: propWidth*2,
-        //       filledWidth: 75,
-        //       doubleValue: elem.e,
-        //       onChangedDouble: (value) {
-        //         elem.e = value;
-        //       },
-        //       focusNode: _focusElemSetting2,
-        //     ),
-        //     MyProperty(
-        //       name: "断面二次モーメント",
-        //       labelAlignment: Alignment.centerRight,
-        //       width: propWidth*2,
-        //       filledWidth: 75,
-        //       doubleValue: elem.v,
-        //       onChangedDouble: (value) {
-        //         elem.v = value;
-        //       },
-        //       focusNode: _focusElemSetting3,
-        //     ),
-        //   ],
-        // ),
         MyProperty(
           name: "ヤング率",
           labelWidth: 75+propWidth*2,

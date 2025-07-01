@@ -1,48 +1,16 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/apps/bridgegame/des_fem70x25.dart';
+import 'package:kozo_ibaraki/apps/bridgegame_free/des_fem_free.dart';
 import 'package:kozo_ibaraki/utils/my_calculator.dart';
 
-class BridgegameData{
-  BridgegameData({required this.onDebug}){
-    elemNode = 4;
-    int countX = 70;
-    int countY = 25;
-    for(int i = 0; i <= countY; i++){
-      for(int j = 0; j <= countX; j++){
-        Node node = Node();
-        node.pos = Offset(j.toDouble(), i.toDouble());
-        nodeList.add(node);
-      }
-    }
-    for(int i = 0; i < countY; i++){
-      for(int j = 0; j < countX; j++){
-        Elem elem = Elem();
-        elem.nodeList = [nodeList[i*(countX+1)+j],nodeList[i*(countX+1)+j+1],nodeList[(i+1)*(countX+1)+j+1],nodeList[(i+1)*(countX+1)+j]];
-        elemList.add(elem);
-      }
-    }
-
-    // 要素は確定か
-    // 2段確定
-    for(int i = 0; i < countX; i++){
-      elemList[i].isCanPaint = false;
-      elemList[i].e = 1;
-      elemList[countX+i].isCanPaint = false;
-      elemList[countX+i].e = 1;
-    }
-  }
-
-  final Function(String value) onDebug;
-
-  // データ
-  int elemNode = 4; // 要素節点数
-  List<Node> nodeList = []; // 節点データ
-  List<Elem> elemList = []; // 要素データ
-  // 追加データ
-  Node? node; // 新規節点データ
-  Elem? elem; // 新規要素データ
+class BridgegameFreeData {
+  // プロパティ
+  final int _elemNode = 4; // 要素節点数
+  final int _countX = 100; // 節点のX方向数(70,100,140)
+  final int _countY = 36; // 節点のY方向数(25,36,50)
+  final List<Node> _nodeList = []; // 節点データ
+  final List<Elem> _elemList = []; // 要素データ
 
   bool isCalculation = false; // 解析したかどうか
   List<double> resultList = [];
@@ -51,9 +19,29 @@ class BridgegameData{
   int selectedNumber = -1;
   int powerType = 0; // 荷重条件（0:3点曲げ、1:4点曲げ、2:自重）
 
-  // 節点の範囲座標
-  Rect rect(){
-    List<Node> nodes = nodeList;
+  double dispScale = 1.0; // 変位倍率
+
+  
+  double vvar = 0; // 荷重中央たわみ/体積（基準モデル）
+  double resultPoint = 0; // 点数
+
+  // ゲッター
+  int get elemNode => _elemNode; // 要素節点数
+  int get countX => _countX; // 節点のX方向数
+  int get countY => _countY; // 節点のY方向数
+
+  int get elemCount { // 要素数
+    int elemCount = 0;
+    for(int i = 0; i < _elemList.length; i++){
+      if(_elemList[i].e > 0){
+        elemCount ++;
+      }
+    }
+    return elemCount;
+  }
+  
+  Rect get rect { // 節点の範囲座標
+    List<Node> nodes = _nodeList;
     if(nodes.isEmpty) return Rect.zero; // 節点データがないとき終了
 
     double left = nodes[0].pos.dx;
@@ -72,30 +60,62 @@ class BridgegameData{
 
     return Rect.fromLTRB(left, top, right, bottom);
   }
-  double dispScale = 1.0; // 変位倍率
+
+  Node getNode (int number) { // 節点を取得
+    if(number < 0 || number >= _nodeList.length) {
+      throw RangeError('Node number out of range: $number');
+    }
+    return _nodeList[number];
+  }
+  int getNodeListLength() { // 節点の数を取得
+    return _nodeList.length;
+  }
+  Elem getElem (int number) { // 要素を取得
+    if(number < 0 || number >= _elemList.length) {
+      throw RangeError('Element number out of range: $number');
+    }
+    return _elemList[number];
+  }
+  int getElemListLength() { // 要素の数を取得
+    return _elemList.length;
+  }
 
 
-  int elemCount(){ // 要素数
-    int elemCount = 0;
-    for(int i = 0; i < elemList.length; i++){
-      if(elemList[i].e > 0){
-        elemCount ++;
+  // コンストラクタ
+  BridgegameFreeData () {
+    for(int i = 0; i <= countY; i++){
+      for(int j = 0; j <= countX; j++){
+        Node node = Node();
+        node.pos = Offset(j.toDouble(), i.toDouble());
+        _nodeList.add(node);
       }
     }
-    return elemCount;
+    for(int i = 0; i < countY; i++){
+      for(int j = 0; j < countX; j++){
+        Elem elem = Elem();
+        elem.nodeList = [_nodeList[i*(countX+1)+j],_nodeList[i*(countX+1)+j+1],_nodeList[(i+1)*(countX+1)+j+1],_nodeList[(i+1)*(countX+1)+j]];
+        _elemList.add(elem);
+      }
+    }
+
+    // 要素は確定か
+    // 2段確定
+    for(int i = 0; i < countX; i++){
+      _elemList[i].isCanPaint = false;
+      _elemList[i].e = 1;
+      _elemList[countX+i].isCanPaint = false;
+      _elemList[countX+i].e = 1;
+    }
   }
-  double vvar = 0; // 荷重中央たわみ/体積（基準モデル）
-  double resultPoint = 0; // 点数
+
 
   // 対称化
   void symmetrical(){
-    int countX = 70;
-    int countY = 25;
 
-    for(int y = 0; y < countY; y++){
-      for(int x = 0; x < countX/2; x++){
-        if(elemList[countX*y+countX-x-1].isCanPaint){
-          elemList[countX*y+countX-x-1].e = elemList[countX*y+x].e;
+    for(int y = 0; y < _countY; y++){
+      for(int x = 0; x < _countX/2; x++){
+        if(_elemList[_countX*y+_countX-x-1].isCanPaint){
+          _elemList[_countX*y+_countX-x-1].e = _elemList[_countX*y+x].e;
         }
       }
     }
@@ -103,42 +123,42 @@ class BridgegameData{
 
   // 解析
   void calculation(){
-    const int npx1 = 70;
-    const int npx2 = 25;
+    int npx1 = _countX;
+    int npx2 = _countY;
     const int nd = 2;
 
     List<List<int>> zeroOneList = List.generate(npx1, (_) => List.filled(npx2, 0));
     for (int n2 = 0; n2 < npx2; n2++) {
       for (int n1 = 0; n1 < npx1; n1++) {
-        zeroOneList[n1][n2] = elemList[npx1*(npx2-n2-1)+n1].e.toInt();
+        zeroOneList[n1][n2] = _elemList[npx1*(npx2-n2-1)+n1].e.toInt();
       }
     }
 
     // 解析実行
-    final result = desFEM70x25(zeroOneList, powerType);
+    final result = desFEMFree(zeroOneList, powerType);
 
     // 変位を入手
     for (int n2 = 0; n2 < npx2+1; n2++) {
       for (int n1 = 0; n1 < npx1+1; n1++) {
-        nodeList[(npx1+1)*(npx2-n2)+n1].becPos = Offset(result.$1[((npx1+1)*n2+n1)*nd], result.$1[((npx1+1)*n2+n1)*nd+1]);
+        _nodeList[(npx1+1)*(npx2-n2)+n1].becPos = Offset(result.$1[((npx1+1)*n2+n1)*nd], result.$1[((npx1+1)*n2+n1)*nd+1]);
       }
     }
     // 変位後の座標
-    for(int i = 0; i < nodeList.length; i++){
-      nodeList[i].afterPos = Offset(nodeList[i].pos.dx+nodeList[i].becPos.dx, nodeList[i].pos.dy+nodeList[i].becPos.dy);
+    for(int i = 0; i < _nodeList.length; i++){
+      _nodeList[i].afterPos = Offset(_nodeList[i].pos.dx+_nodeList[i].becPos.dx, _nodeList[i].pos.dy+_nodeList[i].becPos.dy);
     }
 
     // 結果の入手
     for (int n2 = 0; n2 < npx2; n2++) {
       for (int n1 = 0; n1 < npx1; n1++) {
-        elemList[npx1*(npx2-n2-1)+n1].strainXY[0] = result.$2[n1][n2][0];
-        elemList[npx1*(npx2-n2-1)+n1].strainXY[1] = result.$2[n1][n2][1];
-        elemList[npx1*(npx2-n2-1)+n1].strainXY[2] = result.$2[n1][n2][2];
-        elemList[npx1*(npx2-n2-1)+n1].stlessXY[0] = result.$3[n1][n2][0];
-        elemList[npx1*(npx2-n2-1)+n1].stlessXY[1] = result.$3[n1][n2][1];
-        elemList[npx1*(npx2-n2-1)+n1].stlessXY[2] = result.$3[n1][n2][2];
-        elemList[npx1*(npx2-n2-1)+n1].stlessXY[3] = result.$3[n1][n2][3];
-        elemList[npx1*(npx2-n2-1)+n1].stlessXY[4] = result.$3[n1][n2][4];
+        _elemList[npx1*(npx2-n2-1)+n1].strainXY[0] = result.$2[n1][n2][0];
+        _elemList[npx1*(npx2-n2-1)+n1].strainXY[1] = result.$2[n1][n2][1];
+        _elemList[npx1*(npx2-n2-1)+n1].strainXY[2] = result.$2[n1][n2][2];
+        _elemList[npx1*(npx2-n2-1)+n1].stlessXY[0] = result.$3[n1][n2][0];
+        _elemList[npx1*(npx2-n2-1)+n1].stlessXY[1] = result.$3[n1][n2][1];
+        _elemList[npx1*(npx2-n2-1)+n1].stlessXY[2] = result.$3[n1][n2][2];
+        _elemList[npx1*(npx2-n2-1)+n1].stlessXY[3] = result.$3[n1][n2][3];
+        _elemList[npx1*(npx2-n2-1)+n1].stlessXY[4] = result.$3[n1][n2][4];
       }
     }
 
@@ -148,8 +168,8 @@ class BridgegameData{
     for (int i = 0; i < 35-2; i++) {
       int h1 = 2 + i;
       int h2 = h1 + 1;
-      double v1 = nodeList[h1].becPos.dy.abs();
-      double v2 = nodeList[h2].becPos.dy.abs();
+      double v1 = _nodeList[h1].becPos.dy.abs();
+      double v2 = _nodeList[h2].becPos.dy.abs();
       double ds = (v1 + v2) * he / 2.0; // 台形の面積
       ss += ds;
     }
@@ -157,9 +177,9 @@ class BridgegameData{
 
 
     // 点数
-    double maxBecPos = nodeList[35].becPos.dy.abs();
+    double maxBecPos = _nodeList[35].becPos.dy.abs();
     // print(maxBecPos);
-    int elemLength = elemCount();
+    int elemLength = elemCount;
 
     // シグモイド関数
     // vvar = 125446.5437*pow(elemLength,-3.4227461);
@@ -255,7 +275,7 @@ class BridgegameData{
       maxBecPos = ss; // 体積を基準にする
     } else if (powerType == 1) { // 4点曲げ
       // print(nodeList[23].becPos.dy.abs());
-      maxBecPos = nodeList[23].becPos.dy.abs();
+      maxBecPos = _nodeList[23].becPos.dy.abs();
       if (elemLength >= 70 && elemLength < 140) {
         b0 =  3.83095784081963E+00;
         b1 = -5.80273668805609E-02;
@@ -355,36 +375,36 @@ class BridgegameData{
     isCalculation = true;
   }
   void resetCalculation(){
-    for(int i = 0; i < elemList.length; i++){
-      for(int j = 0; j < elemList[i].stlessXY.length; j++){
-        elemList[i].stlessXY[j] = 0;
+    for(int i = 0; i < _elemList.length; i++){
+      for(int j = 0; j < _elemList[i].stlessXY.length; j++){
+        _elemList[i].stlessXY[j] = 0;
       }
-      for(int j = 0; j < elemList[i].strainXY.length; j++){
-        elemList[i].strainXY[j] = 0;
+      for(int j = 0; j < _elemList[i].strainXY.length; j++){
+        _elemList[i].strainXY[j] = 0;
       }
     }
 
     isCalculation = false;
   }
   void selectResult(int num){ // 結果
-    resultList = List.filled(elemList.length, 0);
-    for (int i = 0; i < elemList.length; i++) {
+    resultList = List.filled(_elemList.length, 0);
+    for (int i = 0; i < _elemList.length; i++) {
       if(num == 0) {
-        resultList[i] = elemList[i].stlessXY[0];
+        resultList[i] = _elemList[i].stlessXY[0];
       } else if(num == 1) {
-        resultList[i] = elemList[i].stlessXY[1];
+        resultList[i] = _elemList[i].stlessXY[1];
       } else if(num == 2) {
-        resultList[i] = elemList[i].stlessXY[2];
+        resultList[i] = _elemList[i].stlessXY[2];
       } else if(num == 3) {
-        resultList[i] = elemList[i].stlessXY[3];
+        resultList[i] = _elemList[i].stlessXY[3];
       } else if(num == 4) {
-        resultList[i] = elemList[i].stlessXY[4];
+        resultList[i] = _elemList[i].stlessXY[4];
       } else if(num == 5) {
-        resultList[i] = elemList[i].strainXY[0];
+        resultList[i] = _elemList[i].strainXY[0];
       } else if(num == 6) {
-        resultList[i] = elemList[i].strainXY[1];
+        resultList[i] = _elemList[i].strainXY[1];
       } else if(num == 7) {
-        resultList[i] = elemList[i].strainXY[2];
+        resultList[i] = _elemList[i].strainXY[2];
       } else {
         resultList = List.empty();
       }
@@ -399,72 +419,57 @@ class BridgegameData{
   // 節点の選択
   void initSelect(){
     selectedNumber = -1;
-    for(int i = 0; i < elemList.length; i++){
-      elemList[i].isSelect = false;
-    }
-    for(int i = 0; i < nodeList.length; i++){
-      nodeList[i].isSelect = false;
+    for(int i = 0; i < _elemList.length; i++){
+      _elemList[i].isSelect = false;
     }
   }
   void selectElem(Offset pos, int type){
     initSelect();
 
-    for(int i = 0; i < elemList.length; i++){
+    for(int i = 0; i < _elemList.length; i++){
       List<Offset> nodePosList = List.empty(growable: true);
       for(int j = 0; j < elemNode; j++){
-        nodePosList.add(elemList[i].nodeList[j]!.pos);
+        nodePosList.add(_elemList[i].nodeList[j]!.pos);
       }
       // 四角形のとき
-      Offset p0 = elemList[i].nodeList[0]!.pos;
-      Offset p1 = elemList[i].nodeList[1]!.pos;
-      Offset p2 = elemList[i].nodeList[2]!.pos;
-      Offset p3 = elemList[i].nodeList[3]!.pos;
+      Offset p0 = _elemList[i].nodeList[0]!.pos;
+      Offset p1 = _elemList[i].nodeList[1]!.pos;
+      Offset p2 = _elemList[i].nodeList[2]!.pos;
+      Offset p3 = _elemList[i].nodeList[3]!.pos;
       if(isCalculation){
-        p0 = elemList[i].nodeList[0]!.pos + elemList[i].nodeList[0]!.becPos*dispScale;
-        p1 = elemList[i].nodeList[1]!.pos + elemList[i].nodeList[1]!.becPos*dispScale;
-        p2 = elemList[i].nodeList[2]!.pos + elemList[i].nodeList[2]!.becPos*dispScale;
-        p3 = elemList[i].nodeList[3]!.pos + elemList[i].nodeList[3]!.becPos*dispScale;
+        p0 = _elemList[i].nodeList[0]!.pos + _elemList[i].nodeList[0]!.becPos*dispScale;
+        p1 = _elemList[i].nodeList[1]!.pos + _elemList[i].nodeList[1]!.becPos*dispScale;
+        p2 = _elemList[i].nodeList[2]!.pos + _elemList[i].nodeList[2]!.becPos*dispScale;
+        p3 = _elemList[i].nodeList[3]!.pos + _elemList[i].nodeList[3]!.becPos*dispScale;
       }
 
       if(MyCalculator.isPointInRectangle(pos, p0, p1, p2, p3)){
         selectedNumber = i;
-        elemList[i].isSelect = true;
+        _elemList[i].isSelect = true;
         return;
       }
     }
   }
 }
 
-class Node
-{
+class Node {
   // 基本データ
-  int number = 0;
   Offset pos = Offset.zero;
-  List<bool> constXY = [false, false]; // 拘束（0:x、1:y）
   List<double> loadXY = [0, 0]; // 荷重（0:x、1:y）
 
   // 計算結果
   Offset becPos = Offset.zero;
   Offset afterPos = Offset.zero;
-  List<double> result = [0,0,0,0,0,0,0,0,0]; // 0:たわみ、1:たわみ角1、2:たわみ角2
-
-  // キャンバス情報
-  bool isSelect = false; // 選択されているか
 }
 
-class Elem
-{
+class Elem {
   // 基本データ
-  int number = 0;
   double e = 0.0;
-  double v = 0.0;
   List<Node?> nodeList = [null, null, null, null];
-  double load = 0.0; // 分布荷重
 
   // 計算結果
   List<double> strainXY = [0,0,0]; // 0:X方向ひずみ、1:Y方向ひずみ、2:せん断ひずみ
   List<double> stlessXY = [0,0,0,0,0,0,0]; // 0:X方向応力、1:Y方向応力、2:せん断応力、3:最大主応力、4:最小主応力、5:曲げモーメント左、6:曲げモーメント右
-  List<double> result = [0,0,0,0,0,0,0,0,0]; // 0:たわみ1、1:たわみ角1、2:たわみ2、3:たわみ角2、4:せん断力、5:曲げモーメント1、6:曲げモーメント2
 
   // キャンバス情報
   bool isSelect = false; // 選択されているか

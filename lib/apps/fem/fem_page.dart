@@ -3,18 +3,17 @@ import 'package:kozo_ibaraki/apps/fem/fem_data.dart';
 import 'package:kozo_ibaraki/apps/fem/fem_painter.dart';
 import 'package:kozo_ibaraki/components/my_decorations.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
+import 'package:kozo_ibaraki/main.dart';
 
-class PageFem extends StatefulWidget {
-  const PageFem({super.key, required this.scaffoldKey});
-
-  final GlobalKey<ScaffoldState> scaffoldKey;
+class FemPage extends StatefulWidget {
+  const FemPage({super.key});
 
   @override
-  State<PageFem> createState() => _PageFemState();
+  State<FemPage> createState() => _FemPageState();
 }
 
-class _PageFemState extends State<PageFem> {
-  late GlobalKey<ScaffoldState> scaffoldKey;
+class _FemPageState extends State<FemPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late FemData data;
   int devTypeNum = 0;
   int toolTypeNum = 0, toolNum = 0;
@@ -25,7 +24,6 @@ class _PageFemState extends State<PageFem> {
   void initState() {
     super.initState();
 
-    scaffoldKey = widget.scaffoldKey;
     data = FemData(onDebug: (value){},);
     data.node = Node();
   }
@@ -36,20 +34,25 @@ class _PageFemState extends State<PageFem> {
     final Size size = MediaQuery.of(context).size;
 
     return MyScaffold(
+      scaffoldKey: _scaffoldKey,
+
+      drawer: drawer(context),
+
       header: MyHeader(
-        center: [
+        isBorder: true,
+        left: [
           // メニューボタン
           MyIconButton(
-            icon: Icons.menu, 
-            message: "メニュー",
+            icon: Icons.menu,
+            message: "メニュー", 
             onPressed: (){
-              scaffoldKey.currentState!.openDrawer();
+              _scaffoldKey.currentState!.openDrawer();
             },
           ),
           if(!data.isCalculation)...{
             // ツールタイプ
             MyIconToggleButtons(
-              icons: const [Icons.circle, Icons.rectangle], 
+              icons: const [Icons.circle, Icons.square], 
               messages: const ["節点", "要素"],
               value: toolTypeNum, 
               onPressed: (value){
@@ -63,6 +66,8 @@ class _PageFemState extends State<PageFem> {
                   }else if(toolTypeNum == 1 && toolNum == 0){
                     data.elem = Elem();
                     data.elem!.number = data.elemList.length;
+                    data.elem!.e = 1;
+                    data.elem!.v = 1;
                   }
                   data.initSelect();
                 });
@@ -84,13 +89,17 @@ class _PageFemState extends State<PageFem> {
                   }else if(toolTypeNum == 1 && toolNum == 0){
                     data.elem = Elem();
                     data.elem!.number = data.elemList.length;
+                    data.elem!.e = 1;
+                    data.elem!.v = 1;
                   }
                   data.initSelect();
                 });
               }
             ),
           },
-          const Expanded(child: SizedBox()),
+        ],
+
+        right: [
           if(!data.isCalculation)...{
             // 解析開始ボタン
             MyIconButton(
@@ -268,9 +277,10 @@ class _PageFemState extends State<PageFem> {
     List<MyProperty> propertyList(Node node) {
       MyProperty prop2_1(Node node) {
         return MyProperty(
-          name: "X",
+          name: "水平",
           labelAlignment: Alignment.centerRight,
-          width: propWidth*2,
+          width: propWidth+50,
+          filledWidth: propWidth,
           boolValue: node.constXY[0],
           onChangedBool: (value) {
             setState(() {
@@ -281,9 +291,10 @@ class _PageFemState extends State<PageFem> {
       }
       MyProperty prop2_2(Node node) {
         return MyProperty(
-          name: "Y",
+          name: "鉛直",
           labelAlignment: Alignment.centerRight,
-          width: propWidth*2,
+          width: propWidth+50,
+          filledWidth: propWidth,
           boolValue: node.constXY[1],
           onChangedBool: (value) {
             setState(() {
@@ -294,10 +305,10 @@ class _PageFemState extends State<PageFem> {
       }
       MyProperty prop3_1(Node node) {
         return MyProperty(
-          name: "X",
+          name: "水平",
           labelAlignment: Alignment.centerRight,
-          width: propWidth*2,
-          filledWidth: 75,
+          width: propWidth+50,
+          filledWidth: propWidth,
           doubleValue: (node.loadXY[0] != 0.0) ? node.loadXY[0] : null,
           onChangedDouble: (value) {
             node.loadXY[0] = value;
@@ -306,10 +317,10 @@ class _PageFemState extends State<PageFem> {
       }
       MyProperty prop3_2(Node node) {
         return MyProperty(
-          name: "Y",
+          name: "鉛直",
           labelAlignment: Alignment.centerRight,
-          width: propWidth*2,
-          filledWidth: 75,
+          width: propWidth+50,
+          filledWidth: propWidth,
           doubleValue: (node.loadXY[1] != 0.0) ? node.loadXY[1] : null,
           onChangedDouble: (value) {
             node.loadXY[1] = value;
@@ -319,24 +330,24 @@ class _PageFemState extends State<PageFem> {
 
       return [
         MyProperty(
-          name: "座標",
-          labelWidth: labelWidth,
+          name: "節点座標",
+          width: labelWidth+propWidth*4,
           children: [
             MyProperty(
-              name: "X",
+              name: "水平",
               labelAlignment: Alignment.centerRight,
-              width: propWidth*2,
-              filledWidth: 75,
+              width: propWidth+50,
+              filledWidth: propWidth,
               doubleValue: node.pos.dx,
               onChangedDouble: (value) {
                 node.pos = Offset(value, node.pos.dy);
               },
             ),
             MyProperty(
-              name: "Y",
+              name: "鉛直",
               labelAlignment: Alignment.centerRight,
-              width: propWidth*2,
-              filledWidth: 75,
+              width: propWidth+50,
+              filledWidth: propWidth,
               doubleValue: node.pos.dy,
               onChangedDouble: (value) {
                 node.pos = Offset(node.pos.dx, value);
@@ -345,16 +356,16 @@ class _PageFemState extends State<PageFem> {
           ],
         ),
         MyProperty(
-          name: "拘束",
-          labelWidth: labelWidth,
+          name: "拘束条件",
+          width: labelWidth+propWidth*4,
           children: [
             prop2_1(node),
             prop2_2(node),
           ],
         ),
         MyProperty(
-          name: "変位",
-          labelWidth: labelWidth,
+          name: "強制変位",
+          width: labelWidth+propWidth*4,
           children: [
             prop3_1(node),
             prop3_2(node),
@@ -400,14 +411,12 @@ class _PageFemState extends State<PageFem> {
     List<MyProperty> propertyList(Elem elem) {
       return [
         MyProperty(
-          name: "節点番号",
-          labelWidth: 75,
+          name: "結合情報（節点番号）",
+          labelWidth: 75+propWidth*2,
           children: [
             MyProperty(
-              name: "a",
-              labelAlignment: Alignment.centerRight,
-              width: propWidth*1.33,
-              filledWidth: 50,
+              width: propWidth*2/3,
+              filledWidth: propWidth*2/3,
               intValue: (elem.nodeList[0] != null) ? (elem.nodeList[0]!.number+1) : null,
               onChangedInt: (value) {
                 if(value-1 >= 0 && value-1 < data.nodeList.length){
@@ -418,10 +427,8 @@ class _PageFemState extends State<PageFem> {
               },
             ),
             MyProperty(
-              name: "b",
-              labelAlignment: Alignment.centerRight,
-              width: propWidth*1.33,
-              filledWidth: 50,
+              width: propWidth*2/3,
+              filledWidth: propWidth*2/3,
               intValue: (elem.nodeList[1] != null) ? (elem.nodeList[1]!.number+1) : null,
               onChangedInt: (value) {
                 if(value-1 >= 0 && value-1 < data.nodeList.length){
@@ -432,10 +439,8 @@ class _PageFemState extends State<PageFem> {
               },
             ),
             MyProperty(
-              name: "c",
-              labelAlignment: Alignment.centerRight,
-              width: propWidth*1.33,
-              filledWidth: 50,
+              width: propWidth*2/3,
+              filledWidth: propWidth*2/3,
               intValue: (elem.nodeList[2] != null) ? (elem.nodeList[2]!.number+1) : null,
               onChangedInt: (value) {
                 if(value-1 >= 0 && value-1 < data.nodeList.length){
@@ -448,31 +453,49 @@ class _PageFemState extends State<PageFem> {
           ],
         ),
         MyProperty(
-          name: "剛性",
-          labelWidth: 75,
-          children: [
-            MyProperty(
-              name: "ヤング率",
-              labelAlignment: Alignment.centerRight,
-              width: propWidth*2,
-              filledWidth: 75,
-              doubleValue: elem.e,
-              onChangedDouble: (value) {
-                elem.e = value;
-              },
-            ),
-            MyProperty(
-              name: "ポアソン比",
-              labelAlignment: Alignment.centerRight,
-              width: propWidth*2,
-              filledWidth: 75,
-              doubleValue: elem.v,
-              onChangedDouble: (value) {
-                elem.v = value;
-              },
-            ),
-          ],
+          name: "ヤング率",
+          labelWidth: 75+propWidth*2,
+          filledWidth: propWidth*2,
+          doubleValue: elem.e,
+          onChangedDouble: (value) {
+            elem.e = value;
+          },
         ),
+        MyProperty(
+          name: "ポアソン比",
+          labelWidth: 75+propWidth*2,
+          filledWidth: propWidth*2,
+          doubleValue: elem.v,
+          onChangedDouble: (value) {
+            elem.v = value;
+          },
+        ),
+        // MyProperty(
+        //   name: "剛性",
+        //   labelWidth: 75,
+        //   children: [
+        //     MyProperty(
+        //       name: "ヤング率",
+        //       labelAlignment: Alignment.centerRight,
+        //       width: propWidth*2,
+        //       filledWidth: 75,
+        //       doubleValue: elem.e,
+        //       onChangedDouble: (value) {
+        //         elem.e = value;
+        //       },
+        //     ),
+        //     MyProperty(
+        //       name: "ポアソン比",
+        //       labelAlignment: Alignment.centerRight,
+        //       width: propWidth*2,
+        //       filledWidth: 75,
+        //       doubleValue: elem.v,
+        //       onChangedDouble: (value) {
+        //         elem.v = value;
+        //       },
+        //     ),
+        //   ],
+        // ),
       ];
     }
 

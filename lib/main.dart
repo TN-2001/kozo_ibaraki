@@ -3,17 +3,19 @@ import 'package:flutter/services.dart';
 import 'package:kozo_ibaraki/apps/beam/beam_page.dart';
 import 'package:kozo_ibaraki/apps/bridge/bridge_page.dart';
 import 'package:kozo_ibaraki/apps/bridgegame/bridgegame_page.dart';
+import 'package:kozo_ibaraki/apps/bridgegame_free/bridgegame_free_page.dart';
+import 'package:kozo_ibaraki/apps/fem/fem_page.dart';
 import 'package:kozo_ibaraki/apps/privacy/privacy_page.dart';
 import 'package:kozo_ibaraki/apps/truss/truss_page.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:flutter_web_plugins/flutter_web_plugins.dart'; // Webアプリのときだけ
+// import 'package:flutter_web_plugins/flutter_web_plugins.dart'; // Webアプリのときだけ
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  setUrlStrategy(PathUrlStrategy()); // Webアプリのときだけ
+  // setUrlStrategy(PathUrlStrategy()); // Webアプリのときだけ
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
 
@@ -35,6 +37,8 @@ class MyApp extends StatelessWidget {
         '/truss':(context) => const TrussPage(),
         '/bridge':(context) => const BridgePage(),
         '/bridgegame':(context) => const BridgegamePage(),
+        '/bridgegamefree':(context) => const BridgegameFreePage(),
+        '/fem':(context) => const FemPage(),
         '/privacy':(context) => const PrivacyPage(),
       },
     );
@@ -44,10 +48,10 @@ class MyApp extends StatelessWidget {
 Widget drawer(BuildContext context){
   return MyDrawer(
     title: "ツール",
-    itemList: const ["「はり」の計算", "「トラス」の計算", "橋作り", "橋作り（ゲーム）", "ヘルプ"], 
+    itemList: const ["「はり」の計算", "「トラス」の計算", "橋作り", "橋作り（ゲーム）","新橋ゲーム", "有限要素解析", "ヘルプ"], 
     onTap: (number){
       String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
-      if(number <= 3){
+      if(number <= 5){
         String targetRoute;
 
         if (number == 0) {
@@ -56,8 +60,12 @@ Widget drawer(BuildContext context){
           targetRoute = '/truss';
         } else if (number == 2) {
           targetRoute = '/bridge';
-        } else {
+        } else if (number == 3) {
           targetRoute = '/bridgegame';
+        } else if (number == 4) {
+          targetRoute = '/bridgegamefree';
+        } else {
+          targetRoute = '/fem';
         }
 
         Navigator.pop(context);

@@ -1,31 +1,31 @@
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/apps/bridgegame/bridgegame_data.dart';
-import 'package:kozo_ibaraki/apps/bridgegame/bridgegame_painter.dart';
+import 'package:kozo_ibaraki/apps/bridgegame_free/bridgegame_free_data.dart';
+import 'package:kozo_ibaraki/apps/bridgegame_free/bridgegame_free_painter.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:kozo_ibaraki/main.dart';
 import 'package:kozo_ibaraki/utils/camera.dart';
 
-class BridgegamePage extends StatefulWidget {
-  const BridgegamePage({super.key});
+class BridgegameFreePage extends StatefulWidget {
+  const BridgegameFreePage({super.key});
 
   @override
-  State<BridgegamePage> createState() => _BridgegamePageState();
+  State<BridgegameFreePage> createState() => _BridgegameFreePageState();
 }
 
-class _BridgegamePageState extends State<BridgegamePage> {
+class _BridgegameFreePageState extends State<BridgegameFreePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); // メニュー用キー
-  late BridgegameData data; // データ
-  int toolNum = 0;
+  late BridgegameFreeData _data; // データ
+  int _toolNum = 0;
   ui.Image? _image;
-  Camera camera = Camera(1.0, Offset.zero, Offset.zero); // カメラ
+  final Camera _camera = Camera(1.0, Offset.zero, Offset.zero); // カメラ
 
   @override
   void initState() {
     super.initState();
 
-    data = BridgegameData(onDebug: (value){});
+    _data = BridgegameFreeData();
     loadImage('assets/images/background/brigegame3_02.png');
   }
 
@@ -49,15 +49,15 @@ class _BridgegamePageState extends State<BridgegamePage> {
               _scaffoldKey.currentState!.openDrawer();
             },
           ),
-          if(!data.isCalculation)...{
+          if(!_data.isCalculation)...{
             // ツールメニュー
             MyIconToggleButtons(
               icons: const [Icons.edit, Icons.auto_fix_normal], 
               messages: const ['ペン','消しゴム'],
-              value: toolNum, 
+              value: _toolNum, 
               onPressed: (value){
                 setState(() {
-                  toolNum = value;
+                  _toolNum = value;
                 });
               }
             ),
@@ -67,17 +67,17 @@ class _BridgegamePageState extends State<BridgegamePage> {
               message: "対称化（左を右にコピー）",
               onPressed: () {
                 setState(() {
-                  data.symmetrical();
+                  _data.symmetrical();
                 });
               },
             ),
             // 問題条件
             MyMenuDropdown(
               items: const ["3点曲げ","4点曲げ", "自重"], 
-              value: data.powerType, 
+              value: _data.powerType, 
               onPressed: (value){
                 setState(() {
-                  data.powerType = value;
+                  _data.powerType = value;
 
                 });
               }
@@ -86,22 +86,22 @@ class _BridgegamePageState extends State<BridgegamePage> {
         ],
 
         right: [
-          if(!data.isCalculation)...{
+          if(!_data.isCalculation)...{
             // 解析開始ボタン
             MyIconButton(
               icon: Icons.play_arrow,
               message: "計算",
               onPressed: (){
-                if(data.elemCount() <= 1000){
-                  setState(() {
-                    data.calculation();
-                  });
-                }else{
-                  snacbar();
-                }
-                // setState(() {
-                //   data.calculation();
-                // });
+                // if(_data.elemCount <= 1000){
+                //   setState(() {
+                //     _data.calculation();
+                //   });
+                // }else{
+                //   snacbar();
+                // }
+                setState(() {
+                  _data.calculation();
+                });
               },
             ),
           }else...{
@@ -111,7 +111,7 @@ class _BridgegamePageState extends State<BridgegamePage> {
               message: "再編集",
               onPressed: (){
                 setState(() {
-                  data.resetCalculation();
+                  _data.resetCalculation();
                 });
               },
             ),
@@ -135,25 +135,25 @@ class _BridgegamePageState extends State<BridgegamePage> {
     return MyCustomPaint(
       backgroundColor: const Color.fromARGB(0, 0, 0, 0),
       onTap: (position) {
-        if(data.isCalculation){
+        if(_data.isCalculation){
           setState(() {
-            data.selectElem(camera.screenToWorld(position),0);
-            if(data.selectedNumber >= 0){
-              data.selectedNumber = data.selectedNumber;
+            _data.selectElem(_camera.screenToWorld(position),0);
+            if(_data.selectedNumber >= 0){
+              _data.selectedNumber = _data.selectedNumber;
             }
           });
         }
       },
       onDrag: (position) {
-        if(!data.isCalculation){
-          data.selectElem(camera.screenToWorld(position),0);
-          if(data.selectedNumber >= 0){
-            if(data.elemList[data.selectedNumber].isCanPaint){
-              if(toolNum == 0 && data.elemList[data.selectedNumber].e < 1){
-                data.elemList[data.selectedNumber].e = 1;
+        if(!_data.isCalculation){
+          _data.selectElem(_camera.screenToWorld(position),0);
+          if(_data.selectedNumber >= 0){
+            if(_data.getElem(_data.selectedNumber).isCanPaint){
+              if(_toolNum == 0 && _data.getElem(_data.selectedNumber).e < 1){
+                _data.getElem(_data.selectedNumber).e = 1;
               }
-              else if(toolNum == 1 && data.elemList[data.selectedNumber].e > 0){
-                data.elemList[data.selectedNumber].e = 0;
+              else if(_toolNum == 1 && _data.getElem(_data.selectedNumber).e > 0){
+                _data.getElem(_data.selectedNumber).e = 0;
               }
             }
           }
@@ -161,7 +161,7 @@ class _BridgegamePageState extends State<BridgegamePage> {
           });
         }
       },
-      painter: BridgegamePainter(data: data, camera: camera, image: _image!), 
+      painter: BridgegameFreePainter(data: _data, camera: _camera, image: _image!), 
     );
   }
 

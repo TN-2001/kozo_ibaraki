@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/apps/fem/fem_data.dart';
 import 'package:kozo_ibaraki/components/my_painter.dart';
+import 'package:kozo_ibaraki/utils/camera.dart';
 
 class FemPainter extends CustomPainter {
-  const FemPainter({required this.data, required this.devTypeNum});
+  FemPainter({required this.data, required this.devTypeNum});
 
   final FemData data;
   final int devTypeNum;
+  Camera camera = Camera(1.0, Offset.zero, Offset.zero); // カメラ
 
   @override
   void paint(Canvas canvas, Size size) {
+
+    
 
     // サイズに関する変数
     double width = 0;
@@ -46,6 +50,13 @@ class FemPainter extends CustomPainter {
     }
     rect = Rect.fromLTRB((size.width-width)/2, (size.height-heigh)/2, size.width-(size.width-width)/2, size.height - (size.height-heigh)/2);
     
+    // カメラの初期化
+    camera.init(
+      _getCameraScale(rect, data.rect()), 
+      data.rect().center, 
+      Offset(size.width/2, size.height/2)
+    );
+
     if (!data.isCalculation) {
       setSize();
       data.updateCanvasPos(rect, 1);
@@ -70,6 +81,20 @@ class FemPainter extends CustomPainter {
     }
   }
 
+  // カメラの拡大率を取得
+  double _getCameraScale(Rect screenRect, Rect worldRect) {
+    double width = worldRect.width;
+    double height = worldRect.height;
+    if(width == 0 && height == 0){
+      width = 100;
+    }
+    if(screenRect.width / width < screenRect.height / height){
+      return screenRect.width / width;
+    }
+    else{
+      return screenRect.height / height;
+    }
+  }
 
   // 節点
   void _drawNode(List<Node> nodes, bool isSelect, double width, Canvas canvas) {
@@ -81,7 +106,7 @@ class FemPainter extends CustomPainter {
         // 丸を描画
         paint.style = PaintingStyle.fill;
         paint.color = const Color.fromARGB(255, 79, 79, 79);
-        canvas.drawCircle(nodes[i].canvasPos, width, paint);
+        canvas.drawCircle(camera.worldToScreen(nodes[i].pos), width, paint);
 
         // 丸枠を描画
         paint.style = PaintingStyle.stroke;
@@ -90,7 +115,7 @@ class FemPainter extends CustomPainter {
         }else{
           paint.color = const Color.fromARGB(255, 0, 0, 0);
         }
-        canvas.drawCircle(nodes[i].canvasPos, width, paint);
+        canvas.drawCircle(camera.worldToScreen(nodes[i].pos), width, paint);
       }
     }
   }
@@ -99,11 +124,11 @@ class FemPainter extends CustomPainter {
   void _drawNodeNumber(List<Node> nodes, bool isSelect, Canvas canvas) {
     if(nodes.isNotEmpty){
       for(int i = 0; i < nodes.length; i++){
-        // Offset pos = nodes[i].canvasPos;
+        Offset pos = camera.worldToScreen(nodes[i].pos);
         if(nodes[i].isSelect && isSelect){
-          // Painter().text(canvas, 100, (i+1).toString(), Offset(pos.dx - 30, pos.dy - 30), 20, Colors.red);
+          MyPainter.text(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), 20, Colors.red, true, 100);
         }else{
-          // Painter().text(canvas, 100, (i+1).toString(), Offset(pos.dx - 30, pos.dy - 30), 20, Colors.black);
+          MyPainter.text(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), 20, Colors.black, true, 100);
         }
       }
     }
@@ -119,9 +144,9 @@ class FemPainter extends CustomPainter {
       for(int i = 0; i < elems.length; i++){
         if(elems[i].nodeList[0] != null && elems[i].nodeList[1] != null && elems[i].nodeList[2] != null){
           var path = Path();
-          path.moveTo(elems[i].nodeList[0]!.canvasPos.dx, elems[i].nodeList[0]!.canvasPos.dy);
-          path.lineTo(elems[i].nodeList[1]!.canvasPos.dx, elems[i].nodeList[1]!.canvasPos.dy);
-          path.lineTo(elems[i].nodeList[2]!.canvasPos.dx, elems[i].nodeList[2]!.canvasPos.dy);
+          path.moveTo(camera.worldToScreen(elems[i].nodeList[0]!.pos).dx, camera.worldToScreen(elems[i].nodeList[0]!.pos).dy);
+          path.lineTo(camera.worldToScreen(elems[i].nodeList[1]!.pos).dx, camera.worldToScreen(elems[i].nodeList[1]!.pos).dy);
+          path.lineTo(camera.worldToScreen(elems[i].nodeList[2]!.pos).dx, camera.worldToScreen(elems[i].nodeList[2]!.pos).dy);
           path.close();
           canvas.drawPath(path, paint);
         }
@@ -134,7 +159,7 @@ class FemPainter extends CustomPainter {
           int num1 = j;
           int num2 = j < 2 ? j+1 : 0;
           if(elems[i].nodeList[num1] != null && elems[i].nodeList[num2] != null){
-            canvas.drawLine(elems[i].nodeList[num1]!.canvasPos, elems[i].nodeList[num2]!.canvasPos, paint);
+            canvas.drawLine(camera.worldToScreen(elems[i].nodeList[num1]!.pos), camera.worldToScreen(elems[i].nodeList[num2]!.pos), paint);
           }
         }
       }
@@ -148,7 +173,7 @@ class FemPainter extends CustomPainter {
           int num2 = j < 2 ? j+1 : 0;
           if(elems[i].nodeList[num1] != null && elems[i].nodeList[num2] != null){
             if(isSelect & elems[i].isSelect){
-              canvas.drawLine(elems[i].nodeList[num1]!.canvasPos, elems[i].nodeList[num2]!.canvasPos, paint);
+              canvas.drawLine(camera.worldToScreen(elems[i].nodeList[num1]!.pos), camera.worldToScreen(elems[i].nodeList[num2]!.pos), paint);
             }
           }
         }
@@ -165,7 +190,7 @@ class FemPainter extends CustomPainter {
 
     if(nodes.isNotEmpty){
       for(int i = 0; i < nodes.length; i++){
-        Offset pos = nodes[i].canvasPos;
+        Offset pos = camera.worldToScreen(nodes[i].pos);
         if(nodes[i].constXY[0]){
           if(pos.dx > rect.center.dx){
             canvas.drawCircle(Offset(pos.dx+20, pos.dy), 7.5, paint);
@@ -192,7 +217,7 @@ class FemPainter extends CustomPainter {
   void _drawPower(List<Node> nodes, Rect dataRect, Canvas canvas) {    
     if(nodes.isNotEmpty){
       for(int i = 0; i < nodes.length; i++){
-        Offset pos = nodes[i].canvasPos;
+        Offset pos = camera.worldToScreen(nodes[i].pos);
         if(nodes[i].loadXY[0] != 0){
           if(nodes[i].loadXY[0] < 0){
             MyPainter.arrow(Offset(pos.dx-5, pos.dy), Offset(pos.dx-50, pos.dy), 2.5, const Color.fromARGB(255, 0, 63, 95), canvas);

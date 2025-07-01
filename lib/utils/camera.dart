@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
 
 class Camera {
-  Camera(this.scale, this.worldPos, this.screenPos);
 
-  double scale; // 拡大率
-  Offset worldPos; // ワールド上のカメラの位置
-  Offset screenPos; // スクリーンの上のカメラの位置
+  // プロパティ
+  double _scale; // 拡大率
+  Offset _worldPos; // ワールド上のカメラの位置
+  Offset _screenPos; // スクリーンの上のカメラの位置
 
+  // ゲッター
+  double get scale => _scale; // 拡大率
+  Offset get worldPos => _worldPos; // ワールド上のカメラの位置
+  Offset get screenPos => _screenPos; // スクリーンの上のカメラの位置
+
+
+  // コンストラクタ
+  Camera(this._scale, this._worldPos, this._screenPos);
+
+  // カメラの初期化
   void init(double scale, Offset worldPos, Offset screenPos) {
-    this.scale = scale;
-    this.worldPos = worldPos;
-    this.screenPos = screenPos;
+    _scale = scale;
+    _worldPos = worldPos;
+    _screenPos = screenPos;
   }
 
   // ワールド座標をスクリーン座標に変換
