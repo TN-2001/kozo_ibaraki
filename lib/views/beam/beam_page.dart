@@ -18,9 +18,7 @@ class BeamPage extends StatefulWidget {
 
 class _BeamPageState extends State<BeamPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  late BeamData data;
-  int devTypeNum = 0;
-  int toolTypeNum = 0, toolNum = 0;
+  late BeamData controller;
   bool isSumaho = false;
   Elem currentElem = Elem();
 
@@ -35,9 +33,9 @@ class _BeamPageState extends State<BeamPage> {
   @override
   void initState() {
     super.initState();
-    data = BeamData(onDebug: (value){},);
-    data.node = Node();
-    data.addListener(_onUpdate);
+    controller = BeamData(onDebug: (value){},);
+    controller.node = Node();
+    controller.addListener(_onUpdate);
   }
 
   @override
@@ -46,8 +44,8 @@ class _BeamPageState extends State<BeamPage> {
     if(size.height > size.width && isSumaho == false) {
       setState(() {
         isSumaho = true;
-        if(devTypeNum > 1){
-          devTypeNum = 0;
+        if(controller.getResultIndex > 1){
+          controller.changeResultIndex(0);
         }
       });
     }else if (size.height < size.width && isSumaho == true) {
@@ -62,32 +60,32 @@ class _BeamPageState extends State<BeamPage> {
       drawer: drawer(context), // スマホアプリのときはコメントアウト
       body: Column(
         children: [
-          BeamBar(controller: data, scaffoldKey: _scaffoldKey),
+          BeamBar(controller: controller, scaffoldKey: _scaffoldKey),
           
           const BaseDivider(),
 
           Expanded(
             child: Stack(
               children: [
-                BeamCanvas(controller: data, devTypeNum: data.getResultIndex, isSumaho: isSumaho),
+                BeamCanvas(controller: controller, devTypeNum: controller.getResultIndex, isSumaho: isSumaho),
 
-                if(!data.isCalculation)...{
-                  if(data.getTypeIndex == 0)...{
-                    if(data.getToolIndex == 0)...{
+                if(!controller.isCalculation)...{
+                  if(controller.getTypeIndex == 0)...{
+                    if(controller.getToolIndex == 0)...{
                       // 新規ノード
                       nodeSetting(true, size.width),
                     }
-                    else if(data.selectNodeNumber >= 0)...{
+                    else if(controller.selectNodeNumber >= 0)...{
                       // 既存ノード
                       nodeSetting(false, size.width),
                     }
                   }
-                  else if(data.getTypeIndex == 1)...{
-                    if(data.getToolIndex == 0)...{
+                  else if(controller.getTypeIndex == 1)...{
+                    if(controller.getToolIndex == 0)...{
                       // 新規要素
                       elemSetting(true, size.width),
                     }
-                    else if(data.selectElemNumber >= 0)...{
+                    else if(controller.selectElemNumber >= 0)...{
                       // 既存要素
                       elemSetting(false, size.width),
                     }
@@ -242,13 +240,13 @@ class _BeamPageState extends State<BeamPage> {
     if(isAdd){
       // 追加時
       return settingPC(
-        propertyList(data.node!), 
-        "No. ${data.node!.number+1}", 
+        propertyList(controller.node!), 
+        "No. ${controller.node!.number+1}", 
         "追加", 
         (){
           setState(() {
-            data.addNode();
-            data.initSelect();
+            controller.addNode();
+            controller.initSelect();
           });
         },
         width
@@ -257,13 +255,13 @@ class _BeamPageState extends State<BeamPage> {
     else{
       // タッチ時
       return settingPC(
-        propertyList(data.nodeList[data.selectNodeNumber]), 
-        "No. ${data.nodeList[data.selectNodeNumber].number+1}", 
+        propertyList(controller.nodeList[controller.selectNodeNumber]), 
+        "No. ${controller.nodeList[controller.selectNodeNumber].number+1}", 
         "削除", 
         (){
           setState(() {
-            data.removeNode(data.selectNodeNumber);
-            data.initSelect();
+            controller.removeNode(controller.selectNodeNumber);
+            controller.initSelect();
           });
         },
         width
@@ -285,8 +283,8 @@ class _BeamPageState extends State<BeamPage> {
               filledWidth: propWidth,
               intValue: (elem.nodeList[0] != null) ? (elem.nodeList[0]!.number+1) : null,
               onChangedInt: (value) {
-                if(0 <= value-1  && value-1 < data.nodeList.length){
-                  elem.nodeList[0] = data.nodeList[value-1];
+                if(0 <= value-1  && value-1 < controller.nodeList.length){
+                  elem.nodeList[0] = controller.nodeList[value-1];
                 }
               },
             ),
@@ -295,8 +293,8 @@ class _BeamPageState extends State<BeamPage> {
               filledWidth: propWidth,
               intValue: (elem.nodeList[1] != null) ? (elem.nodeList[1]!.number+1) : null,
               onChangedInt: (value) {
-                if(0 <= value-1 && value-1 < data.nodeList.length){
-                  elem.nodeList[1] = data.nodeList[value-1];
+                if(0 <= value-1 && value-1 < controller.nodeList.length){
+                  elem.nodeList[1] = controller.nodeList[value-1];
                 }
               },
             )
@@ -335,15 +333,15 @@ class _BeamPageState extends State<BeamPage> {
     if(isAdd){
       // 追加時
       return settingPC(
-        propertyList(data.elem!), 
-        "No. ${data.elem!.number+1}", 
+        propertyList(controller.elem!), 
+        "No. ${controller.elem!.number+1}", 
         "追加", 
         (){
           setState(() {
-            data.addElem();
-            data.elem!.e = 1;
-            data.elem!.v = 1;
-            data.initSelect();
+            controller.addElem();
+            controller.elem!.e = 1;
+            controller.elem!.v = 1;
+            controller.initSelect();
           });
         },
         width
@@ -352,13 +350,13 @@ class _BeamPageState extends State<BeamPage> {
     else{
       // タッチ時
       return settingPC(
-        propertyList(data.elemList[data.selectElemNumber]), 
-        "No. ${data.elemList[data.selectElemNumber].number+1}",
+        propertyList(controller.elemList[controller.selectElemNumber]), 
+        "No. ${controller.elemList[controller.selectElemNumber].number+1}",
         "削除", 
         (){
           setState(() {
-            data.removeElem(data.selectElemNumber);
-            data.initSelect();
+            controller.removeElem(controller.selectElemNumber);
+            controller.initSelect();
           });
         },
         width
@@ -367,4 +365,3 @@ class _BeamPageState extends State<BeamPage> {
   }
 
 }
-

@@ -30,7 +30,7 @@ class ToolDropdownButton extends StatelessWidget {
 
       child: DropdownButton(
         // デザイン
-        underline: SizedBox(),
+        underline: const SizedBox(),
         // 表示
         value: items[selectedIndex],
         items: items.map<DropdownMenuItem<String>>((String value) {
