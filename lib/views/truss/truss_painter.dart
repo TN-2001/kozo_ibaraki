@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/apps/truss/truss_data.dart';
+import 'package:kozo_ibaraki/views/truss/truss_data.dart';
 import 'package:kozo_ibaraki/components/my_painter.dart';
 
 

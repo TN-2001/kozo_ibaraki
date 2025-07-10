@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:kozo_ibaraki/apps/beam/beam_page.dart';
-import 'package:kozo_ibaraki/apps/bridge/bridge_page.dart';
-import 'package:kozo_ibaraki/apps/bridgegame/bridgegame_page.dart';
-import 'package:kozo_ibaraki/apps/bridgegame_free/bridgegame_free_page.dart';
-import 'package:kozo_ibaraki/apps/fem/fem_page.dart';
-import 'package:kozo_ibaraki/apps/privacy/privacy_page.dart';
-import 'package:kozo_ibaraki/apps/truss/truss_page.dart';
+import 'package:kozo_ibaraki/views/beam/beam_page.dart';
+import 'package:kozo_ibaraki/views/bridge/bridge_page.dart';
+import 'package:kozo_ibaraki/views/bridgegame/bridgegame_page.dart';
+import 'package:kozo_ibaraki/views/bridgegame_free/bridgegame_free_page.dart';
+import 'package:kozo_ibaraki/views/fem/fem_page.dart';
+import 'package:kozo_ibaraki/views/privacy/privacy_page.dart';
+import 'package:kozo_ibaraki/views/truss/truss_page.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 

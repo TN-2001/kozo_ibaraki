@@ -1,46 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/apps/truss/truss_data.dart';
-import 'package:kozo_ibaraki/apps/truss/truss_painter.dart';
+import 'package:kozo_ibaraki/views/fem/fem_data.dart';
+import 'package:kozo_ibaraki/views/fem/fem_painter.dart';
 import 'package:kozo_ibaraki/components/my_decorations.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:kozo_ibaraki/main.dart';
 
-
-class TrussPage extends StatefulWidget {
-  const TrussPage({super.key});
+class FemPage extends StatefulWidget {
+  const FemPage({super.key});
 
   @override
-  State<TrussPage> createState() => _TrussPageState();
+  State<FemPage> createState() => _FemPageState();
 }
 
-class _TrussPageState extends State<TrussPage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); // メニュー用キー
-  late TrussData data; // データ
+class _FemPageState extends State<FemPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late FemData data;
   int devTypeNum = 0;
-  int toolTypeNum = 0;
-  int toolNum = 0;
-  bool isSumaho = false;
+  int toolTypeNum = 0, toolNum = 0;
+
 
 
   @override
   void initState() {
     super.initState();
-    data = TrussData(onDebug: (value){},);
+
+    data = FemData(onDebug: (value){},);
     data.node = Node();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Size size = MediaQuery.of(context).size; // 画面サイズ取得
-    if(size.height > size.width && isSumaho == false) {
-      setState(() {
-        isSumaho = true;
-      });
-    }else if (size.height < size.width && isSumaho == true) {
-      setState(() {
-        isSumaho = false;
-      });
-    }
+    // 画面サイズ取得
+    final Size size = MediaQuery.of(context).size;
 
     return MyScaffold(
       scaffoldKey: _scaffoldKey,
@@ -49,11 +40,10 @@ class _TrussPageState extends State<TrussPage> {
 
       header: MyHeader(
         isBorder: true,
-
         left: [
           // メニューボタン
           MyIconButton(
-            icon: Icons.menu, 
+            icon: Icons.menu,
             message: "メニュー", 
             onPressed: (){
               _scaffoldKey.currentState!.openDrawer();
@@ -76,34 +66,36 @@ class _TrussPageState extends State<TrussPage> {
                   }else if(toolTypeNum == 1 && toolNum == 0){
                     data.elem = Elem();
                     data.elem!.number = data.elemList.length;
+                    data.elem!.e = 1;
+                    data.elem!.v = 1;
                   }
                   data.initSelect();
                 });
               }
             ),
             // ツール
-            if(toolTypeNum < 2)...{
-              MyIconToggleButtons(
-                icons: const [Icons.add, Icons.touch_app], 
-                messages: const ["新規","修正"],
-                value: toolNum, 
-                onPressed: (value){
-                  setState(() {
-                    toolNum = value;
-                    data.node = null;
-                    data.elem = null;
-                    if(toolTypeNum == 0 && toolNum == 0){
-                      data.node = Node();
-                      data.node!.number = data.nodeList.length;
-                    }else if(toolTypeNum == 1 && toolNum == 0){
-                      data.elem = Elem();
-                      data.elem!.number = data.elemList.length;
-                    }
-                    data.initSelect();
-                  });
-                }
-              ),
-            }
+            MyIconToggleButtons(
+              icons: const [Icons.add, Icons.touch_app], 
+              messages: const ["新規","修正"],
+              value: toolNum, 
+              onPressed: (value){
+                setState(() {
+                  toolNum = value;
+                  data.node = null;
+                  data.elem = null;
+                  if(toolTypeNum == 0 && toolNum == 0){
+                    data.node = Node();
+                    data.node!.number = data.nodeList.length;
+                  }else if(toolTypeNum == 1 && toolNum == 0){
+                    data.elem = Elem();
+                    data.elem!.number = data.elemList.length;
+                    data.elem!.e = 1;
+                    data.elem!.v = 1;
+                  }
+                  data.initSelect();
+                });
+              }
+            ),
           },
         ],
 
@@ -114,31 +106,20 @@ class _TrussPageState extends State<TrussPage> {
               icon: Icons.play_arrow,
               message: "計算",
               onPressed: (){
-                // data.calculation();
-                // if(devTypeNum == 0){
-                //   data.selectResult(devTypeNum);
-                // }else{
-                //   data.selectResult(5);
-                // }
-                // setState(() {
-                //   data.isCalculation = true;
-                // });
-                onCalculation();
+                setState(() {
+                  data.calculation();
+                });
               },
             ),
           }else...{
             // 解析結果選択
             MyMenuDropdown(
-              items: const ["応力","ひずみ"],
+              items: const ["X方向応力","y方向応力","せん断応力","X方向ひずみ","y方向ひずみ","せん断ひずみ"],
               value: devTypeNum,
               onPressed: (value){
                 setState(() {
                   devTypeNum = value;
-                  if(value == 0){
-                    data.selectResult(0);
-                  }else{
-                    data.selectResult(5);
-                  }
+                  data.selectResult(value);
                 });
               },
             ),
@@ -153,7 +134,7 @@ class _TrussPageState extends State<TrussPage> {
               },
             ),
           }
-        ],
+        ]
       ),
 
       body: Stack(
@@ -169,44 +150,96 @@ class _TrussPageState extends State<TrussPage> {
                       data.selectNode(position);
                     }
                     else if(toolTypeNum == 1){
-                      data.selectElem(position);
+                      data.selectElem(position, 0);
                     }
                   }
                   data.selectedNumber = data.selectedNumber;
                 });
+                if(toolNum == 0 && toolTypeNum == 1){
+                  data.selectNode(position);
+                  newElem(data.nodeList[data.selectedNumber]);
+                }
               }
             },
-            painter: TrussPainter(data: data),
+            painter: FemPainter(data: data, devTypeNum: devTypeNum),
           ),
+
+          // 設定
           if(!data.isCalculation)...{
             if(toolTypeNum == 0)...{
               if(toolNum == 0)...{
-                // ノード追加
+                // 新規ノード
                 nodeSetting(true, size.width),
               }
               else if(data.selectedNumber >= 0)...{
-                // ノード選択
+                // 既存ノード
                 nodeSetting(false, size.width),
               }
             }
             else if(toolTypeNum == 1)...{
               if(toolNum == 0)...{
-                // 要素の追加
-                elemSetting(true, size.width),
+                // 新規要素
+                textElem(),
               }
               else if(data.selectedNumber >= 0)...{
-                // 要素の削除
+                // 既存要素
                 elemSetting(false, size.width),
               }
             }
           },
+
         ]
       ),
     );
   }
 
+  // 要素
+  Widget textElem(){
+    String text = "節点を3つ選択して要素作成\nNo. ${data.elemList.length+1}";
+    if(data.elem!.nodeList[0] != null){
+      text += "   a：${data.elem!.nodeList[0]!.number+1}";
+    }else{
+      text += "   a： ";
+    }
+    if(data.elem!.nodeList[1] != null){
+      text += "   b：${data.elem!.nodeList[1]!.number+1}";
+    }else{
+      text += "   b： ";
+    }
+    if(data.elem!.nodeList[2] != null){
+      text += "   c：${data.elem!.nodeList[2]!.number+1}";
+    }else{
+      text += "   c： ";
+    }
 
-  Widget settingPC(List<MyProperty> propertyList, String title, String buttonName, Function() onButtonPressed, double width) {
+    return MyAlign(
+      alignment: Alignment.bottomCenter,
+      isIntrinsicHeight: true,
+      isIntrinsicWidth: true,
+      child: Container(
+        margin: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(5),
+        child: Text(text),
+      ),
+    );
+  }
+
+  // 要素生成
+  void newElem(Node node){
+    if(data.elem!.nodeList[0] == null){
+      data.elem!.nodeList[0] = node;
+    }else if(data.elem!.nodeList[1] == null){
+      data.elem!.nodeList[1] = node;
+    }else if(data.elem!.nodeList[2] == null){
+      data.elem!.nodeList[2] = node;
+      setState(() {
+        data.addElem();
+        data.initSelect();
+      });
+    }
+  }
+
+  Widget setting(List<MyProperty> propertyList, String title, String buttonName, Function() onButtonPressed, double width) {
     return MyAlign(
       alignment: Alignment.bottomCenter,
       isIntrinsicHeight: true,
@@ -244,9 +277,10 @@ class _TrussPageState extends State<TrussPage> {
     List<MyProperty> propertyList(Node node) {
       MyProperty prop2_1(Node node) {
         return MyProperty(
-          name: "X",
+          name: "水平",
           labelAlignment: Alignment.centerRight,
-          width: propWidth*2,
+          width: propWidth+50,
+          filledWidth: propWidth,
           boolValue: node.constXY[0],
           onChangedBool: (value) {
             setState(() {
@@ -257,9 +291,10 @@ class _TrussPageState extends State<TrussPage> {
       }
       MyProperty prop2_2(Node node) {
         return MyProperty(
-          name: "Y",
+          name: "鉛直",
           labelAlignment: Alignment.centerRight,
-          width: propWidth*2,
+          width: propWidth+50,
+          filledWidth: propWidth,
           boolValue: node.constXY[1],
           onChangedBool: (value) {
             setState(() {
@@ -270,10 +305,10 @@ class _TrussPageState extends State<TrussPage> {
       }
       MyProperty prop3_1(Node node) {
         return MyProperty(
-          name: "X",
+          name: "水平",
           labelAlignment: Alignment.centerRight,
-          width: propWidth*2,
-          filledWidth: 75,
+          width: propWidth+50,
+          filledWidth: propWidth,
           doubleValue: (node.loadXY[0] != 0.0) ? node.loadXY[0] : null,
           onChangedDouble: (value) {
             node.loadXY[0] = value;
@@ -282,10 +317,10 @@ class _TrussPageState extends State<TrussPage> {
       }
       MyProperty prop3_2(Node node) {
         return MyProperty(
-          name: "Y",
+          name: "鉛直",
           labelAlignment: Alignment.centerRight,
-          width: propWidth*2,
-          filledWidth: 75,
+          width: propWidth+50,
+          filledWidth: propWidth,
           doubleValue: (node.loadXY[1] != 0.0) ? node.loadXY[1] : null,
           onChangedDouble: (value) {
             node.loadXY[1] = value;
@@ -295,43 +330,42 @@ class _TrussPageState extends State<TrussPage> {
 
       return [
         MyProperty(
-          name: "座標",
-          labelWidth: labelWidth,
+          name: "節点座標",
+          width: labelWidth+propWidth*4,
           children: [
             MyProperty(
-              name: "X",
+              name: "水平",
               labelAlignment: Alignment.centerRight,
-              width: propWidth*2,
-              filledWidth: 75,
+              width: propWidth+50,
+              filledWidth: propWidth,
               doubleValue: node.pos.dx,
               onChangedDouble: (value) {
                 node.pos = Offset(value, node.pos.dy);
               },
             ),
             MyProperty(
-              name: "Y",
+              name: "鉛直",
               labelAlignment: Alignment.centerRight,
-              width: propWidth*2,
-              filledWidth: 75,
+              width: propWidth+50,
+              filledWidth: propWidth,
               doubleValue: node.pos.dy,
               onChangedDouble: (value) {
-                node.pos = Offset(node.pos.dx, value,);
+                node.pos = Offset(node.pos.dx, value);
               },
             )
           ],
         ),
-        
         MyProperty(
-          name: "拘束",
-          labelWidth: labelWidth,
+          name: "拘束条件",
+          width: labelWidth+propWidth*4,
           children: [
             prop2_1(node),
             prop2_2(node),
           ],
         ),
         MyProperty(
-          name: "集中荷重",
-          labelWidth: labelWidth,
+          name: "強制変位",
+          width: labelWidth+propWidth*4,
           children: [
             prop3_1(node),
             prop3_2(node),
@@ -342,7 +376,7 @@ class _TrussPageState extends State<TrussPage> {
 
     if(isAdd){
       // 追加時
-      return settingPC(
+      return setting(
         propertyList(data.node!), 
         "No. ${data.node!.number+1}", 
         "追加", 
@@ -357,7 +391,7 @@ class _TrussPageState extends State<TrussPage> {
     }
     else{
       // タッチ時
-      return settingPC(
+      return setting(
         propertyList(data.nodeList[data.selectedNumber]), 
         "No. ${data.nodeList[data.selectedNumber].number+1}", 
         "削除", 
@@ -377,67 +411,97 @@ class _TrussPageState extends State<TrussPage> {
     List<MyProperty> propertyList(Elem elem) {
       return [
         MyProperty(
-          name: "節点番号",
-          labelWidth: 75,
+          name: "結合情報（節点番号）",
+          labelWidth: 75+propWidth*2,
           children: [
             MyProperty(
-              name: "a",
-              labelAlignment: Alignment.centerRight,
-              width: propWidth*2,
-              filledWidth: 75,
+              width: propWidth*2/3,
+              filledWidth: propWidth*2/3,
               intValue: (elem.nodeList[0] != null) ? (elem.nodeList[0]!.number+1) : null,
               onChangedInt: (value) {
-                if(0 <= value-1 && value-1 < data.nodeList.length){
+                if(value-1 >= 0 && value-1 < data.nodeList.length){
                   elem.nodeList[0] = data.nodeList[value-1];
+                }else{
+                  elem.nodeList[0] = null;
                 }
               },
             ),
             MyProperty(
-              name: "b",
-              labelAlignment: Alignment.centerRight,
-              width: propWidth*2,
-              filledWidth: 75,
+              width: propWidth*2/3,
+              filledWidth: propWidth*2/3,
               intValue: (elem.nodeList[1] != null) ? (elem.nodeList[1]!.number+1) : null,
               onChangedInt: (value) {
-                if(0 <= value-1 && value-1 < data.nodeList.length){
+                if(value-1 >= 0 && value-1 < data.nodeList.length){
                   elem.nodeList[1] = data.nodeList[value-1];
+                }else{
+                  elem.nodeList[1] = null;
                 }
               },
-            )
+            ),
+            MyProperty(
+              width: propWidth*2/3,
+              filledWidth: propWidth*2/3,
+              intValue: (elem.nodeList[2] != null) ? (elem.nodeList[2]!.number+1) : null,
+              onChangedInt: (value) {
+                if(value-1 >= 0 && value-1 < data.nodeList.length){
+                  elem.nodeList[2] = data.nodeList[value-1];
+                }else{
+                  elem.nodeList[2] = null;
+                }
+              },
+            ),
           ],
         ),
         MyProperty(
-          name: "剛性",
-          labelWidth: 75,
-          children: [
-            MyProperty(
-              name: "ヤング率",
-              labelAlignment: Alignment.centerRight,
-              width: propWidth*2,
-              filledWidth: 75,
-              doubleValue: elem.e,
-              onChangedDouble: (value) {
-                elem.e = value;
-              },
-            ),
-            MyProperty(
-              name: "断面積",
-              labelAlignment: Alignment.centerRight,
-              width: propWidth*2,
-              filledWidth: 75,
-              doubleValue: elem.v,
-              onChangedDouble: (value) {
-                elem.v = value;
-              },
-            ),
-          ],
+          name: "ヤング率",
+          labelWidth: 75+propWidth*2,
+          filledWidth: propWidth*2,
+          doubleValue: elem.e,
+          onChangedDouble: (value) {
+            elem.e = value;
+          },
         ),
+        MyProperty(
+          name: "ポアソン比",
+          labelWidth: 75+propWidth*2,
+          filledWidth: propWidth*2,
+          doubleValue: elem.v,
+          onChangedDouble: (value) {
+            elem.v = value;
+          },
+        ),
+        // MyProperty(
+        //   name: "剛性",
+        //   labelWidth: 75,
+        //   children: [
+        //     MyProperty(
+        //       name: "ヤング率",
+        //       labelAlignment: Alignment.centerRight,
+        //       width: propWidth*2,
+        //       filledWidth: 75,
+        //       doubleValue: elem.e,
+        //       onChangedDouble: (value) {
+        //         elem.e = value;
+        //       },
+        //     ),
+        //     MyProperty(
+        //       name: "ポアソン比",
+        //       labelAlignment: Alignment.centerRight,
+        //       width: propWidth*2,
+        //       filledWidth: 75,
+        //       doubleValue: elem.v,
+        //       onChangedDouble: (value) {
+        //         elem.v = value;
+        //       },
+        //     ),
+        //   ],
+        // ),
       ];
     }
 
     if(isAdd){
       // 追加時
-      return settingPC(
+      return setting(
         propertyList(data.elem!), 
         "No. ${data.elem!.number+1}", 
         "追加", 
@@ -452,7 +516,7 @@ class _TrussPageState extends State<TrussPage> {
     }
     else{
       // タッチ時
-      return settingPC(
+      return setting(
         propertyList(data.elemList[data.selectedNumber]), 
         "No. ${data.elemList[data.selectedNumber].number+1}",
         "削除", 
@@ -466,60 +530,4 @@ class _TrussPageState extends State<TrussPage> {
       );
     }
   }
-
-  // 計算ボタン
-  void onCalculation(){
-    bool isPower = false;
-
-    int xyConstCount = 0;
-    int xConstCount = 0;
-    int yConstCount = 0;
-
-    for(int i = 0; i < data.nodeList.length; i++){
-      if(data.nodeList[i].constXY[0] && data.nodeList[i].constXY[1]){
-        xyConstCount ++;
-      }else if(data.nodeList[i].constXY[0]){
-        xConstCount ++;
-      }else if(data.nodeList[i].constXY[1]){
-        yConstCount ++;
-      }
-
-      if((!data.nodeList[i].constXY[0] && data.nodeList[i].loadXY[0] != 0)
-        || (!data.nodeList[i].constXY[1] && data.nodeList[i].loadXY[1] != 0)){
-          isPower = true;
-      }
-    }
-
-    if(data.elemList.length < 3){
-      snacbar("節点と要素はそれぞれ3つ以上必要");
-    }else if(!(xyConstCount > 0 && (xConstCount > 0 || yConstCount > 0))){
-      snacbar("拘束条件が不足");
-    }else if(!isPower){
-      snacbar("荷重条件が不足");
-    }else{
-      setState(() {
-        data.calculation();
-        if(devTypeNum == 0){
-          data.selectResult(devTypeNum);
-        }else{
-          data.selectResult(5);
-        }
-        data.isCalculation = true;
-      });
-    }
-  }
-
-  // メッセージ
-  void snacbar(String text){
-    final snackBar = SnackBar(
-      content: Text(text),
-      action: SnackBarAction(
-        label: '閉じる', 
-        onPressed: () {  },
-      ),
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
 }
-

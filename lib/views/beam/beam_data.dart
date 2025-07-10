@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/utils/canvas_data.dart';
 import 'package:kozo_ibaraki/utils/my_calculator.dart';
-import 'package:kozo_ibaraki/apps/beam/beam2d_hinge_remesh.dart';
+import 'package:kozo_ibaraki/views/beam/beam2d_hinge_remesh.dart';
 
 class BeamData{
   BeamData({required this.onDebug});

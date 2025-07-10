@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/apps/bridgegame/des_fem70x25.dart';
+import 'package:kozo_ibaraki/views/bridgegame/des_fem70x25.dart';
 import 'package:kozo_ibaraki/utils/my_calculator.dart';
 
 class BridgegameData{

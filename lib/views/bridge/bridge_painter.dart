@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/apps/bridge/bridge_data.dart';
+import 'package:kozo_ibaraki/views/bridge/bridge_data.dart';
 import 'package:kozo_ibaraki/components/my_painter.dart';
 
 class BridgePainter extends CustomPainter {

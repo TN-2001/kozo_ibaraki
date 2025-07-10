@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/apps/bridge/bridge_data.dart';
-import 'package:kozo_ibaraki/apps/bridge/bridge_painter.dart';
+import 'package:kozo_ibaraki/views/bridge/bridge_data.dart';
+import 'package:kozo_ibaraki/views/bridge/bridge_painter.dart';
 import 'package:kozo_ibaraki/components/my_decorations.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:kozo_ibaraki/main.dart';

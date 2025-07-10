@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/apps/fem/fem_data.dart';
+import 'package:kozo_ibaraki/views/fem/fem_data.dart';
 import 'package:kozo_ibaraki/components/my_painter.dart';
 import 'package:kozo_ibaraki/utils/camera.dart';
 

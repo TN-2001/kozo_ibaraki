@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/apps/fem/lcst2ebe.dart';
+import 'package:kozo_ibaraki/views/fem/lcst2ebe.dart';
 import 'package:kozo_ibaraki/utils/canvas_data.dart';
 import 'package:kozo_ibaraki/utils/my_calculator.dart';
 
