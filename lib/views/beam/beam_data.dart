@@ -1,13 +1,71 @@
 import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/utils/canvas_data.dart';
 import 'package:kozo_ibaraki/utils/my_calculator.dart';
 import 'package:kozo_ibaraki/views/beam/beam2d_hinge_remesh.dart';
 
-class BeamData{
+class BeamData extends ChangeNotifier {
   BeamData({required this.onDebug});
   final Function(String value) onDebug;
+
+  /*
+    パラメータ
+  */
+  BeamState _state = BeamState.editor; // 現在の状態
+  int _typeIndex = 0; // 選択されているタイプのインデックス（0:節点、1:要素）
+  int _toolIndex = 0; // 選択されているツールのインデックス（0:新規、2修正）
+  int _resultIndex = 0; // 選択されている結果のインデックス（"変形図", "反力", "せん断力図","曲げモーメント図",）
+
+
+  /*
+    ゲッター
+  */
+  BeamState get getState => _state; // 現在の状態を取得
+  int get getTypeIndex => _typeIndex; // 選択されているタイプのインデックスを取得
+  int get getToolIndex => _toolIndex; // 選択されているツールのインデックスを取得
+  int get getResultIndex => _resultIndex; // 選択されている結果のインデックスを取得
+  
+  bool isCalculation = false; // 解析したかどうか
+
+  /*
+    関数
+  */
+  // 選択されたタイプとツールのインデックスを変更
+  void _changeTypeAndToolIndex() {
+    node = null; // 新規節点データをリセット
+    elem = null; // 新規要素データをリセット
+    if(_typeIndex == 0 && _toolIndex == 0){
+      node = Node();
+      node!.number = nodeList.length;
+    }else if(_typeIndex == 1 && _toolIndex == 0){
+      elem = Elem();
+      elem!.number = elemList.length;
+      elem!.e = 1;
+      elem!.v = 1;
+    }
+    initSelect();
+  }
+  void changeTypeIndex(int index) {
+    _typeIndex = index;
+
+    _changeTypeAndToolIndex();
+
+    notifyListeners();
+  }
+  void changeToolIndex(int index) {
+    _toolIndex = index;
+
+    _changeTypeAndToolIndex();
+
+    notifyListeners();
+  }
+
+  // 解析結果の選択インデックスを変更
+  void changeResultIndex(int index) {
+    _resultIndex = index;
+
+    notifyListeners();
+  }
 
   // データ
   int elemNode = 2; // 要素節点数
@@ -23,7 +81,6 @@ class BeamData{
   // キャンバス座標
   CanvasData canvasData = CanvasData(); // キャンバス座標とデータ座標の変換
 
-  bool isCalculation = false; // 解析したかどうか
   // 選択番号
   int selectNodeNumber = -1;
   int selectElemNumber = -1;
@@ -168,6 +225,44 @@ class BeamData{
   }
 
   // 解析
+  String checkCalculation(){
+    bool isPower = false;
+
+    int xyrConstCount = 0;
+    int xyConstCount = 0;
+    int yConstCount = 0;
+
+    for(int i = 0; i < nodeList.length; i++){
+      if(nodeList[i].constXYR[0] && nodeList[i].constXYR[1] && nodeList[i].constXYR[2]){
+        xyrConstCount ++;
+      }else if(nodeList[i].constXYR[0] && nodeList[i].constXYR[1]){
+        xyConstCount ++;
+      }else if(nodeList[i].constXYR[1]){
+        yConstCount ++;
+      }
+
+      if((!nodeList[i].constXYR[1] && nodeList[i].loadXY[1] != 0)
+        || (!nodeList[i].constXYR[2] && nodeList[i].loadXY[2] != 0)){
+          isPower = true;
+      }
+    }
+
+    for(int i = 0; i < elemList.length; i++){
+      if(elemList[i].load != 0){
+        isPower = true;
+      }
+    }
+
+    if(elemList.isEmpty){
+      return "節点は2つ以上、要素は1つ以上必要";
+    }else if(!(xyrConstCount > 0) && !(xyConstCount > 0 && yConstCount > 0)){
+      return "拘束条件が不足";
+    }else if(!isPower){
+      return "荷重条件が不足";
+    }else{
+      return ""; // 問題なし
+    }
+  }
   void calculation(){
     // バグ対策
     if(nodeList.isEmpty) return;
@@ -259,9 +354,13 @@ class BeamData{
     }
 
     isCalculation = true;
+    _state = BeamState.result; // 解析結果を表示
+    notifyListeners();
   }
   void resetCalculation(){
     isCalculation = false;
+    _state = BeamState.editor; // 解析結果をリセット
+    notifyListeners();
   }
 
   // キャンバスに要素があるか
@@ -322,9 +421,11 @@ class BeamData{
       if(MyCalculator.isPointInRectangle(pos, p0, p1, p2, p3)){
         selectElemNumber = i;
         elemList[i].isSelect = true;
-        return;
+        break;
       }
     }
+
+    notifyListeners();
   }
   void selectNode(Offset pos){
     initSelect(isElem: false);
@@ -337,6 +438,8 @@ class BeamData{
         break;
       }
     }
+
+    notifyListeners();
   }
 }
 
@@ -373,4 +476,10 @@ class Elem{
   // キャンバス情報
   List<Offset> canvasPosList = [Offset.zero, Offset.zero, Offset.zero, Offset.zero];
   bool isSelect = false; // 選択されているか
+}
+
+enum BeamState {
+  editor, // 編集モード
+  calculation, // 解析モード
+  result, // 結果表示モード
 }

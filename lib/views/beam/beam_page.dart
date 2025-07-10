@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/components/base_divider.dart';
 import 'package:kozo_ibaraki/components/my_decorations.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
+import 'package:kozo_ibaraki/constants/colors.dart';
 import 'package:kozo_ibaraki/views/beam/beam_painter.dart';
 import 'package:kozo_ibaraki/views/beam/beam_data.dart';
-import 'package:kozo_ibaraki/main.dart'; // スマホアプリのときはコメントアウト
+import 'package:kozo_ibaraki/main.dart';
+import 'package:kozo_ibaraki/views/beam/ui/beam_bar.dart'; // スマホアプリのときはコメントアウト
 
 
 class BeamPage extends StatefulWidget {
@@ -22,11 +25,19 @@ class _BeamPageState extends State<BeamPage> {
   Elem currentElem = Elem();
 
 
+  void _onUpdate() {
+    setState(() {
+      // 画面更新
+    });
+  }
+
+
   @override
   void initState() {
     super.initState();
     data = BeamData(onDebug: (value){},);
     data.node = Node();
+    data.addListener(_onUpdate);
   }
 
   @override
@@ -43,183 +54,49 @@ class _BeamPageState extends State<BeamPage> {
       setState(() {
         isSumaho = false;
       });
-    }
+    }  
 
-    return MyScaffold(
-      scaffoldKey: _scaffoldKey,
-
+    return Scaffold(
+      backgroundColor: BaseColors.baseColor,
+      key: _scaffoldKey,
       drawer: drawer(context), // スマホアプリのときはコメントアウト
-      
-      header: MyHeader(
-        isBorder: true,
-        left: [
-          // メニューボタン
-          MyIconButton(
-            icon: Icons.menu,
-            message: "メニュー", 
-            onPressed: (){
-              _scaffoldKey.currentState!.openDrawer();
-            },
-          ),
-          if(!data.isCalculation)...{
-            // ツールタイプ
-            MyIconToggleButtons(
-              icons: const [Icons.circle, Icons.square], 
-              messages: const ["節点", "要素"],
-              value: toolTypeNum, 
-              onPressed: (value){
-                setState(() {
-                  toolTypeNum = value;
-                  data.node = null;
-                  data.elem = null;
-                  if(toolTypeNum == 0 && toolNum == 0){
-                    data.node = Node();
-                    data.node!.number = data.nodeList.length;
-                  }else if(toolTypeNum == 1 && toolNum == 0){
-                    data.elem = Elem();
-                    data.elem!.number = data.elemList.length;
-                    data.elem!.e = 1;
-                    data.elem!.v = 1;
-                  }
-                  data.initSelect();
-                });
-              }
-            ),
-            // ツール
-            if(toolTypeNum < 2)...{
-              MyIconToggleButtons(
-                icons: const [Icons.add, Icons.touch_app], 
-                messages: const ["新規","修正"],
-                value: toolNum, 
-                onPressed: (value){
-                  setState(() {
-                    toolNum = value;
-                    data.node = null;
-                    data.elem = null;
-                    if(toolTypeNum == 0 && toolNum == 0){
-                      data.node = Node();
-                      data.node!.number = data.nodeList.length;
-                    }else if(toolTypeNum == 1 && toolNum == 0){
-                      data.elem = Elem();
-                      data.elem!.number = data.elemList.length;
-                      data.elem!.e = 1;
-                      data.elem!.v = 1;
-                    }
-                    data.initSelect();
-                  });
-                }
-              ),
-            },
-          },
-        ],
-
-        right: [
-          if(!data.isCalculation)...{
-            // 解析開始ボタン
-            MyIconButton(
-              icon: Icons.play_arrow,
-              message: "計算",
-              onPressed: (){
-                onCalculation();
-              },
-            ),
-          }else...{
-            // 解析結果選択
-            if(!isSumaho)... {
-              MyMenuDropdown(
-                items: const ["変形図", "反力", "せん断力図","曲げモーメント図",],
-                value: devTypeNum,
-                onPressed: (value){
-                  setState(() {
-                    devTypeNum = value;
-                  });
-                },
-              ),
-            }else...{
-              MyMenuDropdown(
-                items: const ["変形図", "反力"],
-                value: devTypeNum,
-                onPressed: (value){
-                  setState(() {
-                    devTypeNum = value;
-                  });
-                },
-              ),
-            },
-            // 再開ボタン
-            MyIconButton(
-              icon: Icons.restart_alt,
-              message: "再編集",
-              onPressed: (){
-                setState(() {
-                  data.resetCalculation();
-                });
-              },
-            ),
-          }
-        ]
-      ),
-
-      body: Stack(
+      body: Column(
         children: [
-          // メインビュー
-          MyCustomPaint(
-            backgroundColor: MyColors.wiget1,
-            onTap: (position) {
-              if(!data.isCalculation){
-                setState(() {
-                  if(toolNum == 1){
-                    if(toolTypeNum == 0){
-                      data.selectNode(position);
+          BeamBar(controller: data, scaffoldKey: _scaffoldKey),
+          
+          const BaseDivider(),
+
+          Expanded(
+            child: Stack(
+              children: [
+                BeamCanvas(controller: data, devTypeNum: data.getResultIndex, isSumaho: isSumaho),
+
+                if(!data.isCalculation)...{
+                  if(data.getTypeIndex == 0)...{
+                    if(data.getToolIndex == 0)...{
+                      // 新規ノード
+                      nodeSetting(true, size.width),
                     }
-                    else if(toolTypeNum == 1){
-                      data.selectElem(position);
+                    else if(data.selectNodeNumber >= 0)...{
+                      // 既存ノード
+                      nodeSetting(false, size.width),
                     }
                   }
-                });
-                // 要素設定時
-                // if(toolTypeNum == 1 && (0 <= currentMenuNumber && currentMenuNumber <= 1)){
-                //   data.selectNode(position);
-                //   if(data.selectNodeNumber >= 0){
-                //     setState(() {
-                //       if (currentMenuNumber == 0 && currentElem.nodeList[1] != data.nodeList[data.selectNodeNumber]) {
-                //         currentElem.nodeList[0] = data.nodeList[data.selectNodeNumber];
-                //       } else if (currentElem.nodeList[0] != data.nodeList[data.selectNodeNumber]){
-                //         currentElem.nodeList[1] = data.nodeList[data.selectNodeNumber];
-                //       }
-                //     });
-                //   }
-                //   initValue();
-                //   data.initSelect(isElem: false);
-                // }
-              }
-            },
-            painter: BeamPainter(data: data, devTypeNum: devTypeNum, isSumaho: isSumaho),
+                  else if(data.getTypeIndex == 1)...{
+                    if(data.getToolIndex == 0)...{
+                      // 新規要素
+                      elemSetting(true, size.width),
+                    }
+                    else if(data.selectElemNumber >= 0)...{
+                      // 既存要素
+                      elemSetting(false, size.width),
+                    }
+                  }
+                },
+              ]
+            ),
           ),
-          if(!data.isCalculation)...{
-            if(toolTypeNum == 0)...{
-              if(toolNum == 0)...{
-                // 新規ノード
-                nodeSetting(true, size.width),
-              }
-              else if(data.selectNodeNumber >= 0)...{
-                // 既存ノード
-                nodeSetting(false, size.width),
-              }
-            }
-            else if(toolTypeNum == 1)...{
-              if(toolNum == 0)...{
-                // 新規要素
-                elemSetting(true, size.width),
-              }
-              else if(data.selectElemNumber >= 0)...{
-                // 既存要素
-                elemSetting(false, size.width),
-              }
-            }
-          },
-
-        ]
+        ],
       ),
     );
   }
@@ -489,59 +366,5 @@ class _BeamPageState extends State<BeamPage> {
     }
   }
 
-  // 計算ボタン
-  void onCalculation(){
-    bool isPower = false;
-
-    int xyrConstCount = 0;
-    int xyConstCount = 0;
-    int yConstCount = 0;
-
-    for(int i = 0; i < data.nodeList.length; i++){
-      if(data.nodeList[i].constXYR[0] && data.nodeList[i].constXYR[1] && data.nodeList[i].constXYR[2]){
-        xyrConstCount ++;
-      }else if(data.nodeList[i].constXYR[0] && data.nodeList[i].constXYR[1]){
-        xyConstCount ++;
-      }else if(data.nodeList[i].constXYR[1]){
-        yConstCount ++;
-      }
-
-      if((!data.nodeList[i].constXYR[1] && data.nodeList[i].loadXY[1] != 0)
-        || (!data.nodeList[i].constXYR[2] && data.nodeList[i].loadXY[2] != 0)){
-          isPower = true;
-      }
-    }
-
-    for(int i = 0; i < data.elemList.length; i++){
-      if(data.elemList[i].load != 0){
-        isPower = true;
-      }
-    }
-
-    if(data.elemList.isEmpty){
-      snacbar("節点は2つ以上、要素は1つ以上必要");
-    }else if(!(xyrConstCount > 0) && !(xyConstCount > 0 && yConstCount > 0)){
-      snacbar("拘束条件が不足");
-    }else if(!isPower){
-      snacbar("荷重条件が不足");
-    }else{
-      setState(() {
-        data.calculation();
-      });
-    }
-  }
-
-  // メッセージ
-  void snacbar(String text){
-    final snackBar = SnackBar(
-      content: Text(text),
-      action: SnackBarAction(
-        label: '閉じる', 
-        onPressed: () {  },
-      ),
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
 }
 
