@@ -30,10 +30,9 @@ flutter:
 
   assets:
     - assets/privacy.html
-    - assets/images/youtube/1.jpg
-    - assets/images/youtube/2.jpg
-    - assets/images/youtube/3.jpg
-    - assets/images/background/brigegame3_02.png
+    - assets/images/
+    - assets/images/background/
+    - assets/images/icons/
 
 flutter_icons:       
   android: true
