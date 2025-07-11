@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kozo_ibaraki/views/beam/beam_page.dart';
@@ -9,13 +10,14 @@ import 'package:kozo_ibaraki/views/privacy/privacy_page.dart';
 import 'package:kozo_ibaraki/views/truss/truss_page.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-// import 'package:flutter_web_plugins/flutter_web_plugins.dart'; // Webアプリのときだけ
+import 'configs/configure_nonweb.dart' if (dart.library.html) 'configs/configure_web.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // setUrlStrategy(PathUrlStrategy()); // Webアプリのときだけ
+  if (kIsWeb) {
+    configureApp();
+  }
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
 
