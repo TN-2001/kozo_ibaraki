@@ -66,7 +66,7 @@ class _BridgegameToolBarState extends State<BridgegameToolBar> {
             const Icon(Icons.brush),
             ImageIcon(AssetImage(ImagePass.iconEraser)),
           ],
-          messages: const ["筆", "消しゴム"],
+          messages: const ["ペン", "消しゴム"],
         ),
 
         SizedBox(width: ToolUIDimens.gapWidth,),

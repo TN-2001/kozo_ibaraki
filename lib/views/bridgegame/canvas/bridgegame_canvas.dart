@@ -113,10 +113,17 @@ class BridgegameCanvas extends StatelessWidget {
                   child: const Sea(),
                 ),
                 // 船
-                Transform(
-                  transform: Matrix4.translationValues(-canvasWidth * 0.2, height * 0.375, 0),
-                  child: Image.asset(ImagePass.ship, width: height * 0.5, height: height * 0.5,),
-                ),
+                if (!controller.isCalculation)...{
+                  Transform(
+                    transform: Matrix4.translationValues(-canvasWidth * 0.2, height * 0.375, 0),
+                    child: Image.asset(ImagePass.ship, width: height * 0.5, height: height * 0.5,),
+                  ),
+                } else ...{
+                  Transform(
+                    transform: Matrix4.translationValues(canvasWidth * 0.2, height * 0.375, 0),
+                    child: Image.asset(ImagePass.ship, width: height * 0.5, height: height * 0.5,),
+                  ),
+                },
                 // 土台
                 SizedBox(
                   width: canvasWidth,

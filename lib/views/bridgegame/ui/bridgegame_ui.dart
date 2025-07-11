@@ -18,14 +18,14 @@ class BridgegameUI extends StatefulWidget {
 }
 
 class _BridgegameUIState extends State<BridgegameUI> {
-  late GlobalKey<ScaffoldState> _scaffoldKey;
+  // late GlobalKey<ScaffoldState> _scaffoldKey;
   int state = 0;
   int _powerIndex = 0;
 
 
-  void _onPressedMenuButton() {
-    _scaffoldKey.currentState?.openDrawer();
-  }
+  // void _onPressedMenuButton() {
+  //   _scaffoldKey.currentState?.openDrawer();
+  // }
 
   void _onPressedPowerDropdown(int indent) {
     setState(() {
@@ -72,10 +72,10 @@ class _BridgegameUIState extends State<BridgegameUI> {
     }
 
     // 完了メッセージを表示
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('処理が完了しました')),
-    );
+    // if (!mounted) return;
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   const SnackBar(content: Text('処理が完了しました')),
+    // );
   }
 
   void _onPressedEditButton() {
@@ -86,19 +86,19 @@ class _BridgegameUIState extends State<BridgegameUI> {
   }
 
 
-  Widget _menuButton() {
-    return ToolIconButton(
-      onPressed: _onPressedMenuButton, 
-      icon: const Icon(Icons.menu),
-      message: "メニュー",
-    );
-  }
+  // Widget _menuButton() {
+  //   return ToolIconButton(
+  //     onPressed: _onPressedMenuButton, 
+  //     icon: const Icon(Icons.menu),
+  //     message: "メニュー",
+  //   );
+  // }
 
 
   @override
   void initState() {
     super.initState();
-    _scaffoldKey = widget.scaffoldKey;
+    // _scaffoldKey = widget.scaffoldKey;
   }
 
   @override
@@ -112,15 +112,16 @@ class _BridgegameUIState extends State<BridgegameUI> {
           children: [
             SizedBox(width: ToolUIDimens.gapWidth,),
 
-            _menuButton(),
+            // _menuButton(),
 
-            if (MediaQuery.of(context).orientation == Orientation.landscape)...{
-              SizedBox(width: ToolUIDimens.gapWidth,),
-              const ToolBarDivider(isVertivcal: true,),
-              BridgegameToolBar(controller: widget.controller),
-            },
+            // if (MediaQuery.of(context).orientation == Orientation.landscape)...{
+            //   SizedBox(width: ToolUIDimens.gapWidth,),
+            //   const ToolBarDivider(isVertivcal: true,),
+            //   BridgegameToolBar(controller: widget.controller),
+            // },
 
-            SizedBox(width: ToolUIDimens.gapWidth,),
+            BridgegameToolBar(controller: widget.controller),
+
             const ToolBarDivider(isVertivcal: true,),
             const Expanded(child: SizedBox()),
             const ToolBarDivider(isVertivcal: true,),
@@ -129,7 +130,7 @@ class _BridgegameUIState extends State<BridgegameUI> {
             ToolDropdownButton(
               selectedIndex: _powerIndex,
               onPressed: _onPressedPowerDropdown,
-              items: const ["3点曲げ", "4点曲げ", "自重"], 
+              items: const ["荷重1", "荷重2", "自重"], 
             ),
 
             SizedBox(width: ToolUIDimens.gapWidth,),
@@ -153,12 +154,12 @@ class _BridgegameUIState extends State<BridgegameUI> {
         color: BaseColors.baseColor,
         child: Row(
           children: [
-            SizedBox(width: ToolUIDimens.gapWidth,),
+            // SizedBox(width: ToolUIDimens.gapWidth,),
 
-            _menuButton(),
+            // _menuButton(),
 
-            SizedBox(width: ToolUIDimens.gapWidth,),
-            const ToolBarDivider(isVertivcal: true,),
+            // SizedBox(width: ToolUIDimens.gapWidth,),
+            // const ToolBarDivider(isVertivcal: true,),
             const Expanded(child: SizedBox()),
             const ToolBarDivider(isVertivcal: true,),
             SizedBox(width: ToolUIDimens.gapWidth,),
