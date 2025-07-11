@@ -47,7 +47,8 @@ class _BridgegamePageState extends State<BridgegamePage> {
               children: [
                 BridgegameCanvas(controller: controller,),
 
-                if (MediaQuery.of(context).orientation == Orientation.portrait)...{
+                if (MediaQuery.of(context).orientation == Orientation.portrait &&
+                    !controller.isCalculation)...{
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
