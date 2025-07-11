@@ -64,86 +64,84 @@ class BridgegameCanvas extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: LayoutBuilder(
-        builder: (context, constraints) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
 
-          double width = constraints.maxWidth;
-          double height = constraints.maxHeight;
-          if (width / height < 16 / 9) {
-            height = width / (16 / 9);
-          } else if (width / height > 16 / 9) {
-            width = height * (16 / 9);
-          }
+        double width = constraints.maxWidth;
+        double height = constraints.maxHeight;
+        if (width / height < 16 / 9) {
+          height = width / (16 / 9);
+        } else if (width / height > 16 / 9) {
+          width = height * (16 / 9);
+        }
 
-          camera.init(
-            _getCameraScale(Rect.fromLTRB((width/10), (height/4), width-(width/10), height-(height/4)), controller.nodeRect), 
-            controller.nodeRect.center, 
-            Offset(constraints.maxWidth / 2, constraints.maxHeight / 2)
-          );
-          final double canvasWidth = camera.scale * controller.nodeRect.width;
-          final double canvasHeight = camera.scale * controller.nodeRect.height;
-          final double cellSize = camera.scale;
+        camera.init(
+          _getCameraScale(Rect.fromLTRB((width/10), (height/4), width-(width/10), height-(height/4)), controller.nodeRect), 
+          controller.nodeRect.center, 
+          Offset(constraints.maxWidth / 2, constraints.maxHeight / 2)
+        );
+        final double canvasWidth = camera.scale * controller.nodeRect.width;
+        final double canvasHeight = camera.scale * controller.nodeRect.height;
+        final double cellSize = camera.scale;
 
 
-          return Center(
-            child: Container(
-              color: const Color.fromARGB(255, 255, 255, 255),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // 雲
+        return Center(
+          child: Container(
+            color: const Color.fromARGB(255, 255, 255, 255),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // 雲
+                Transform(
+                  transform: Matrix4.translationValues(0, -height * 0.125, 0),
+                  child: Image.asset(ImagePass.cloud),
+                ),
+                // 太陽
+                Transform(
+                  transform: Matrix4.translationValues(-width * 0.3, -height * 0.375, 0),
+                  child: Image.asset(ImagePass.sun, width: height * 0.2, height: height * 0.2,),
+                ),
+                // 名前
+                Transform(
+                  transform: Matrix4.translationValues(width * 0.2, -height * 0.375, 0),
+                  child: Image.asset(ImagePass.name, width: height, height: height * 0.5,),
+                ),
+                // 海
+                SizedBox(
+                  width: canvasWidth,
+                  height: canvasHeight,
+                  child: const Sea(),
+                ),
+                // 船
+                Transform(
+                  transform: Matrix4.translationValues(-canvasWidth * 0.2, height * 0.375, 0),
+                  child: Image.asset(ImagePass.ship, width: height * 0.5, height: height * 0.5,),
+                ),
+                // 土台
+                SizedBox(
+                  width: canvasWidth,
+                  height: canvasHeight,
+                  child: Ground(constWidth: cellSize*2, canvasWidth: canvasWidth, canvasHeight: canvasHeight,),
+                ),
+                // トラック
+                if (!controller.isCalculation)...{
                   Transform(
-                    transform: Matrix4.translationValues(0, -height * 0.125, 0),
-                    child: Image.asset(ImagePass.cloud),
+                    transform: Matrix4.translationValues(canvasWidth * 0.5 + height * 0.075 + canvasHeight * 0.05, canvasHeight * 0.5 - cellSize * 3, 0),
+                    child: Image.asset(ImagePass.truck, width: height * 0.15, height: height * 0.15,),
                   ),
-                  // 太陽
+                } else ...{
                   Transform(
-                    transform: Matrix4.translationValues(-width * 0.3, -height * 0.375, 0),
-                    child: Image.asset(ImagePass.sun, width: height * 0.2, height: height * 0.2,),
+                    transform: Matrix4.translationValues(- canvasWidth * 0.5 - height * 0.075 - canvasHeight * 0.05, canvasHeight * 0.5 - cellSize * 3, 0),
+                    child: Image.asset(ImagePass.truck, width: height * 0.15, height: height * 0.15,),
                   ),
-                  // 名前
-                  Transform(
-                    transform: Matrix4.translationValues(width * 0.2, -height * 0.375, 0),
-                    child: Image.asset(ImagePass.name, width: height, height: height * 0.5,),
-                  ),
-                  // 海
-                  SizedBox(
-                    width: canvasWidth,
-                    height: canvasHeight,
-                    child: const Sea(),
-                  ),
-                  // 船
-                  Transform(
-                    transform: Matrix4.translationValues(-canvasWidth * 0.2, height * 0.375, 0),
-                    child: Image.asset(ImagePass.ship, width: height * 0.5, height: height * 0.5,),
-                  ),
-                  // 土台
-                  SizedBox(
-                    width: canvasWidth,
-                    height: canvasHeight,
-                    child: Ground(constWidth: cellSize*2, canvasWidth: canvasWidth, canvasHeight: canvasHeight,),
-                  ),
-                  // トラック
-                  if (!controller.isCalculation)...{
-                    Transform(
-                      transform: Matrix4.translationValues(canvasWidth * 0.5 + height * 0.075 + canvasHeight * 0.05, canvasHeight * 0.5 - cellSize * 3, 0),
-                      child: Image.asset(ImagePass.truck, width: height * 0.15, height: height * 0.15,),
-                    ),
-                  } else ...{
-                    Transform(
-                      transform: Matrix4.translationValues(- canvasWidth * 0.5 - height * 0.075 - canvasHeight * 0.05, canvasHeight * 0.5 - cellSize * 3, 0),
-                      child: Image.asset(ImagePass.truck, width: height * 0.15, height: height * 0.15,),
-                    ),
-                  },
-                  // 
-                  paintCanvas(context),
-                ],
-              ),
+                },
+                // 
+                paintCanvas(context),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

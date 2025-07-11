@@ -16,7 +16,7 @@ class BaseDimens {
   UI dimensions
 */
 class UIDimens {
-  static double padding = 10.0;
+  static double margin = 10.0;
 }
 
 /*

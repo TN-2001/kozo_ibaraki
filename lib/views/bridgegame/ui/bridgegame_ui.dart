@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/views/bridgegame/ui/bridgegame_tool_bar.dart';
 import '../../../components/tool_ui/tool_bar_divider.dart';
 import '../../../components/tool_ui/tool_dropdown_button.dart';
 import '../../../components/tool_ui/tool_icon_button.dart';
-import '../../../components/tool_ui/tool_toggle_buttons.dart';
 import '../../../constants/colors.dart';
 import '../../../constants/dimens.dart';
-import '../../../constants/paths.dart';
 import '../models/bridgegame_controller.dart';
 
 class BridgegameUI extends StatefulWidget {
@@ -21,35 +20,11 @@ class BridgegameUI extends StatefulWidget {
 class _BridgegameUIState extends State<BridgegameUI> {
   late GlobalKey<ScaffoldState> _scaffoldKey;
   int state = 0;
-  int _toolIndex = 0;
   int _powerIndex = 0;
 
 
   void _onPressedMenuButton() {
     _scaffoldKey.currentState?.openDrawer();
-  }
-
-  void _onPressedToolToggle(int index) {
-    setState(() {
-      _toolIndex = index;
-    });
-    widget.controller.changeToolIndex(_toolIndex);
-  }
-
-  void _onPressedUndoButton() {
-    widget.controller.undo();
-  }
-
-  void _onPressedRedoButton() {
-    widget.controller.redo();
-  }
-
-  void _onPressedMirrorButton() {
-    widget.controller.symmetrical();
-  }
-
-  void _onPressedClearButton() {
-    widget.controller.clear();
   }
 
   void _onPressedPowerDropdown(int indent) {
@@ -124,7 +99,6 @@ class _BridgegameUIState extends State<BridgegameUI> {
   void initState() {
     super.initState();
     _scaffoldKey = widget.scaffoldKey;
-    _onPressedToolToggle(0);
   }
 
   @override
@@ -140,44 +114,11 @@ class _BridgegameUIState extends State<BridgegameUI> {
 
             _menuButton(),
 
-            SizedBox(width: ToolUIDimens.gapWidth,),
-            const ToolBarDivider(isVertivcal: true,),
-            SizedBox(width: ToolUIDimens.gapWidth,),
-
-            ToolToggleButtons(
-              selectedIndex: _toolIndex,
-              onPressed: _onPressedToolToggle,
-              icons: [
-                const Icon(Icons.brush),
-                ImageIcon(AssetImage(ImagePass.iconEraser)),
-              ],
-              messages: const ["筆", "消しゴム"],
-            ),
-
-            SizedBox(width: ToolUIDimens.gapWidth,),
-            const ToolBarDivider(isVertivcal: true,),
-            SizedBox(width: ToolUIDimens.gapWidth,),
-
-            ToolIconButton(
-              onPressed: _onPressedUndoButton,
-              icon: const Icon(Icons.undo), 
-              message: "戻る", 
-            ),
-            ToolIconButton(
-              onPressed: _onPressedRedoButton,
-              icon: const Icon(Icons.redo), 
-              message: "進む", 
-            ),
-            ToolIconButton(
-              onPressed: _onPressedMirrorButton, 
-              icon: const Icon(Icons.switch_right),
-              message: "対称化（左を右にコピー）",
-            ),
-            ToolIconButton(
-              onPressed: _onPressedClearButton,
-              icon: const Icon(Icons.clear), 
-              message: "クリア", 
-            ),
+            if (MediaQuery.of(context).orientation == Orientation.landscape)...{
+              SizedBox(width: ToolUIDimens.gapWidth,),
+              const ToolBarDivider(isVertivcal: true,),
+              BridgegameToolBar(controller: widget.controller),
+            },
 
             SizedBox(width: ToolUIDimens.gapWidth,),
             const ToolBarDivider(isVertivcal: true,),

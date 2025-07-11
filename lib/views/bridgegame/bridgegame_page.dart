@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/constants/dimens.dart';
 
 import '../../components/base_divider.dart';
 import '../../constants/colors.dart';
 import '../../main.dart';
 import 'canvas/bridgegame_canvas.dart';
 import 'models/bridgegame_controller.dart';
+import 'ui/bridgegame_tool_bar.dart';
 import 'ui/bridgegame_ui.dart';
 
 class BridgegamePage extends StatefulWidget {
@@ -40,7 +42,27 @@ class _BridgegamePageState extends State<BridgegamePage> {
 
           const BaseDivider(),
 
-          BridgegameCanvas(controller: controller,),
+          Expanded(
+            child: Stack(
+              children: [
+                BridgegameCanvas(controller: controller,),
+
+                if (MediaQuery.of(context).orientation == Orientation.portrait)...{
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      margin: EdgeInsets.all(UIDimens.margin),
+                      decoration: BoxDecoration(
+                        color: ToolBarColors.baseColor,
+                        border: Border.all(color: BaseColors.borderColor),
+                      ),
+                      child: BridgegameToolBar(controller: controller),
+                    ),
+                  ),
+                },
+              ],
+            ),
+          ),
         ],
       ),
     );
