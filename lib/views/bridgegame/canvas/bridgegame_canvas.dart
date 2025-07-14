@@ -115,12 +115,12 @@ class BridgegameCanvas extends StatelessWidget {
                 // 船
                 if (!controller.isCalculation)...{
                   Transform(
-                    transform: Matrix4.translationValues(-canvasWidth * 0.2, height * 0.375, 0),
+                    transform: Matrix4.translationValues(height * 0.25 - canvasWidth * 0.425, height * 0.375, 0),
                     child: Image.asset(ImagePass.ship, width: height * 0.5, height: height * 0.5,),
                   ),
                 } else ...{
                   Transform(
-                    transform: Matrix4.translationValues(canvasWidth * 0.2, height * 0.375, 0),
+                    transform: Matrix4.translationValues(- height * 0.25 + canvasWidth * 0.425, height * 0.375, 0),
                     child: Image.asset(ImagePass.ship, width: height * 0.5, height: height * 0.5,),
                   ),
                 },
@@ -172,24 +172,19 @@ class BridgegamePainter extends CustomPainter {
       // 中心線
       paint = Paint()
         ..color = const Color.fromARGB(255, 0, 0, 0)
-        ..style = PaintingStyle.stroke;
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2;
       canvas.drawLine(camera.worldToScreen(data.getNode(35).pos), camera.worldToScreen(data.getNode(71*25+35).pos), paint);
 
       // 矢印
       double arrowSize = 0.2;
 
       if(data.powerIndex == 0){ // 3点曲げ
-        paint.color = const Color.fromARGB(255, 0, 0, 0);
-        paint.style = PaintingStyle.fill;
-        paint.strokeWidth = 3.0;
         for(int i = 34; i <= 36; i++){
           Offset pos = data.getNode(i).pos;
           MyPainter.arrow(camera.worldToScreen(pos), camera.worldToScreen(Offset(pos.dx, pos.dy-1.5)), arrowSize*camera.scale, const Color.fromARGB(255, 0, 63, 95), canvas);
         }
       }else if(data.powerIndex == 1){ // 4点曲げ
-        paint.color = const Color.fromARGB(255, 0, 0, 0);
-        paint.style = PaintingStyle.fill;
-        paint.strokeWidth = 3.0;
         for(int i = 22; i <= 24; i++){
           Offset pos = data.getNode(i).pos;
           MyPainter.arrow(camera.worldToScreen(pos), camera.worldToScreen(Offset(pos.dx, pos.dy-1.5)), arrowSize*camera.scale, const Color.fromARGB(255, 0, 63, 95), canvas);
@@ -297,9 +292,9 @@ class BridgegamePainter extends CustomPainter {
   // 要素の辺
   void _drawElemEdge(bool isAfter, Canvas canvas){
     Paint paint = Paint()
-      ..color = const Color.fromARGB(255, 220, 220, 220)
+      ..color = const Color.fromARGB(255, 150, 150, 150)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.2;
+      ..strokeWidth = 0.5;
 
     if(data.elemListLength > 0){
       for(int i = 0; i < data.elemListLength; i++){

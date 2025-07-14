@@ -28,13 +28,13 @@ class _BridgegameToolBarState extends State<BridgegameToolBar> {
     _controller.changeToolIndex(_toolIndex);
   }
 
-  void _onPressedUndoButton() {
-    _controller.undo();
-  }
+  // void _onPressedUndoButton() {
+  //   _controller.undo();
+  // }
 
-  void _onPressedRedoButton() {
-    _controller.redo();
-  }
+  // void _onPressedRedoButton() {
+  //   _controller.redo();
+  // }
 
   void _onPressedMirrorButton() {
     _controller.symmetrical();
@@ -73,16 +73,16 @@ class _BridgegameToolBarState extends State<BridgegameToolBar> {
         const ToolBarDivider(isVertivcal: true,),
         SizedBox(width: ToolUIDimens.gapWidth,),
 
-        ToolIconButton(
-          onPressed: _onPressedUndoButton,
-          icon: const Icon(Icons.undo), 
-          message: "戻る", 
-        ),
-        ToolIconButton(
-          onPressed: _onPressedRedoButton,
-          icon: const Icon(Icons.redo), 
-          message: "進む", 
-        ),
+        // ToolIconButton(
+        //   onPressed: _onPressedUndoButton,
+        //   icon: const Icon(Icons.undo), 
+        //   message: "戻る", 
+        // ),
+        // ToolIconButton(
+        //   onPressed: _onPressedRedoButton,
+        //   icon: const Icon(Icons.redo), 
+        //   message: "進む", 
+        // ),
         ToolIconButton(
           onPressed: _onPressedMirrorButton, 
           icon: const Icon(Icons.switch_right),
