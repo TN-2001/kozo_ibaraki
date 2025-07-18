@@ -92,19 +92,23 @@ class BridgegameCanvas extends StatelessWidget {
               alignment: Alignment.center,
               children: [
                 // 雲
-                Transform(
-                  transform: Matrix4.translationValues(0, -height * 0.125, 0),
-                  child: Image.asset(ImagePass.cloud),
+                OverflowBox(
+                  maxWidth: width * 1.21,
+                  maxHeight: height * 1.21,
+                  child: Transform(
+                    transform: Matrix4.translationValues(- width * 0.01, height * 0.015, 0),
+                    child: Image.asset(ImagePass.cloud, width: width * 1.21, height: height * 1.21,),
+                  ),
                 ),
                 // 太陽
                 Transform(
-                  transform: Matrix4.translationValues(-width * 0.3, -height * 0.375, 0),
-                  child: Image.asset(ImagePass.sun, width: height * 0.2, height: height * 0.2,),
+                  transform: Matrix4.translationValues(- width * 0.31, - height * 0.34, 0),
+                  child: Image.asset(ImagePass.sun, width: height * 0.25, height: height * 0.25,),
                 ),
                 // 名前
                 Transform(
-                  transform: Matrix4.translationValues(width * 0.2, -height * 0.375, 0),
-                  child: Image.asset(ImagePass.name, width: height, height: height * 0.5,),
+                  transform: Matrix4.translationValues(width * 0.15, -height * 0.38, 0),
+                  child: Image.asset(ImagePass.name, width: height * 1.25, height: height * 1.25 / 2,),
                 ),
                 // 海
                 SizedBox(
