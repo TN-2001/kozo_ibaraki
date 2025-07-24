@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/components/base_divider.dart';
 import 'package:kozo_ibaraki/components/my_decorations.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
-import 'package:kozo_ibaraki/constants/colors.dart';
+import 'package:kozo_ibaraki/constants/colors.dart' as myc;
 import 'package:kozo_ibaraki/views/beam/beam_painter.dart';
 import 'package:kozo_ibaraki/views/beam/beam_data.dart';
 import 'package:kozo_ibaraki/main.dart';
@@ -55,7 +55,7 @@ class _BeamPageState extends State<BeamPage> {
     }  
 
     return Scaffold(
-      backgroundColor: BaseColors.baseColor,
+      backgroundColor: myc.MyColors.baseBackground,
       key: _scaffoldKey,
       drawer: drawer(context), // スマホアプリのときはコメントアウト
       body: Column(
@@ -116,7 +116,7 @@ class _BeamPageState extends State<BeamPage> {
             onButtonPressed: onButtonPressed,
           ),
           const SizedBox(height: 5,),
-          const Divider(height: 0, color: MyColors.border,),
+          const Divider(height: 0, color: myc.MyColors.baseDivider,),
           const SizedBox(height: 5,),
           for(int i = 0; i < propertyList.length; i++)...{
             propertyList[i],

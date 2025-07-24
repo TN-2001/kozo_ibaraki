@@ -18,7 +18,7 @@ class BeamCanvas extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      color: CanvasColors.baseColor,
+      color: MyColors.canvasBackground,
       child: GestureDetector(
         onTapDown: (details) {
           if(!controller.isCalculation){

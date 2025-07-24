@@ -13,26 +13,26 @@ class BaseDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isVertivcal) {
-      return SizedBox(
+      return const SizedBox(
         height: double.infinity,
         child: VerticalDivider(
-          width: BaseDimens.dividerWidth,
-          thickness: BaseDimens.dividerWidth,
+          width: MyDimens.baseDividerWidth,
+          thickness: MyDimens.baseDividerWidth,
           indent: 0.0,
           endIndent: 0.0,
-          color: ToolBarColors.dividerClor,
+          color: MyColors.baseDivider,
         ),
       );
     }
     else {
-      return SizedBox(
+      return const SizedBox(
         width: double.infinity,
         child: Divider(
-          height: BaseDimens.dividerWidth,
-          thickness: BaseDimens.dividerWidth,
+          height: MyDimens.baseDividerWidth,
+          thickness: MyDimens.baseDividerWidth,
           indent: 0.0,
           endIndent: 0.0,
-          color: ToolBarColors.dividerClor,
+          color: MyColors.baseDivider,
         ),
       );
     }

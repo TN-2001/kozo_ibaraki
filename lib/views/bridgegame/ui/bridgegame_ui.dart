@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/views/bridgegame/ui/bridgegame_tool_bar.dart';
+import 'package:kozo_ibaraki/components/tool_ui/tool_bar.dart';
 import '../../../components/tool_ui/tool_bar_divider.dart';
 import '../../../components/tool_ui/tool_dropdown_button.dart';
 import '../../../components/tool_ui/tool_icon_button.dart';
-import '../../../constants/colors.dart';
-import '../../../constants/dimens.dart';
+import '../../../components/tool_ui/tool_toggle_buttons.dart';
+import '../../../constants/paths.dart';
 import '../models/bridgegame_controller.dart';
 
 class BridgegameUI extends StatefulWidget {
@@ -18,13 +18,38 @@ class BridgegameUI extends StatefulWidget {
 }
 
 class _BridgegameUIState extends State<BridgegameUI> {
+  late BridgegameController _controller;
   late GlobalKey<ScaffoldState> _scaffoldKey;
   int state = 0;
+  int _toolIndex = 0;
   int _powerIndex = 0;
 
 
   void _onPressedMenuButton() {
     _scaffoldKey.currentState?.openDrawer();
+  }
+
+  void _onPressedToolToggle(int index) {
+    setState(() {
+      _toolIndex = index;
+    });
+    _controller.changeToolIndex(_toolIndex);
+  }
+
+  // void _onPressedUndoButton() {
+  //   _controller.undo();
+  // }
+
+  // void _onPressedRedoButton() {
+  //   _controller.redo();
+  // }
+
+  void _onPressedMirrorButton() {
+    _controller.symmetrical();
+  }
+
+  void _onPressedClearButton() {
+    _controller.clear();
   }
 
   void _onPressedPowerDropdown(int indent) {
@@ -98,78 +123,91 @@ class _BridgegameUIState extends State<BridgegameUI> {
   @override
   void initState() {
     super.initState();
+    _controller = widget.controller;
     _scaffoldKey = widget.scaffoldKey;
+
+    _onPressedToolToggle(_controller.toolIndex);
   }
 
   @override
   Widget build(BuildContext context) {
     if (state == 0) {
-      return Container(
-        width: double.infinity,
-        height: ToolBarDimens.height,
-        color: BaseColors.baseColor,
-        child: Row(
-          children: [
-            SizedBox(width: ToolUIDimens.gapWidth,),
+      return ToolBar(
+        children: [
+          _menuButton(),
 
-            _menuButton(),
+          const ToolBarDivider(isVertivcal: true,),
 
-            SizedBox(width: ToolUIDimens.gapWidth,),
-            const ToolBarDivider(isVertivcal: true,),
+          // BridgegameToolBar(controller: widget.controller),
 
-            BridgegameToolBar(controller: widget.controller),
+          ToolToggleButtons(
+            selectedIndex: _toolIndex,
+            onPressed: _onPressedToolToggle,
+            icons: [
+              const Icon(Icons.brush),
+              ImageIcon(AssetImage(ImagePass.iconEraser)),
+            ],
+            messages: const ["ペン", "消しゴム"],
+          ),
 
-            const ToolBarDivider(isVertivcal: true,),
-            const Expanded(child: SizedBox()),
-            const ToolBarDivider(isVertivcal: true,),
-            SizedBox(width: ToolUIDimens.gapWidth,),
+          const ToolBarDivider(isVertivcal: true,),
 
-            ToolDropdownButton(
-              selectedIndex: _powerIndex,
-              onPressed: _onPressedPowerDropdown,
-              items: const ["荷重1", "荷重2", "自重"], 
-            ),
+          // ToolIconButton(
+          //   onPressed: _onPressedUndoButton,
+          //   icon: const Icon(Icons.undo), 
+          //   message: "戻る", 
+          // ),
+          // ToolIconButton(
+          //   onPressed: _onPressedRedoButton,
+          //   icon: const Icon(Icons.redo), 
+          //   message: "進む", 
+          // ),
+          ToolIconButton(
+            onPressed: _onPressedMirrorButton, 
+            icon: const Icon(Icons.switch_right),
+            message: "対称化（左を右にコピー）",
+          ),
+          ToolIconButton(
+            onPressed: _onPressedClearButton,
+            icon: const Icon(Icons.clear), 
+            message: "クリア", 
+          ),
 
-            SizedBox(width: ToolUIDimens.gapWidth,),
-            const ToolBarDivider(isVertivcal: true,),
-            SizedBox(width: ToolUIDimens.gapWidth,),
+          const ToolBarDivider(isVertivcal: true,),
+          const Expanded(child: SizedBox()),
+          const ToolBarDivider(isVertivcal: true,),
 
-            ToolIconButton(
-              onPressed: _onPressedAnalysisButton,
-              icon: const Icon(Icons.play_arrow),
-              message: "解析",
-            ),
+          ToolDropdownButton(
+            selectedIndex: _powerIndex,
+            onPressed: _onPressedPowerDropdown,
+            items: const ["荷重1", "荷重2", "自重"], 
+          ),
 
-            SizedBox(width: ToolUIDimens.gapWidth,),
-          ],
-        ),
+          const ToolBarDivider(isVertivcal: true,),
+
+          ToolIconButton(
+            onPressed: _onPressedAnalysisButton,
+            icon: const Icon(Icons.play_arrow),
+            message: "解析",
+          ),
+        ],
       );
     }
     else {
-      return Container(
-        width: double.infinity,
-        color: BaseColors.baseColor,
-        child: Row(
-          children: [
-            SizedBox(width: ToolUIDimens.gapWidth,),
+      return ToolBar(
+        children: [
+          _menuButton(),
 
-            _menuButton(),
+          const ToolBarDivider(isVertivcal: true,),
+          const Expanded(child: SizedBox()),
+          const ToolBarDivider(isVertivcal: true,),
 
-            SizedBox(width: ToolUIDimens.gapWidth,),
-            const ToolBarDivider(isVertivcal: true,),
-            const Expanded(child: SizedBox()),
-            const ToolBarDivider(isVertivcal: true,),
-            SizedBox(width: ToolUIDimens.gapWidth,),
-
-            ToolIconButton(
-              onPressed: _onPressedEditButton,
-              icon: const Icon(Icons.restart_alt),
-              message: "再編集",
-            ),
-
-            SizedBox(width: ToolUIDimens.gapWidth,),
-          ],
-        ),
+          ToolIconButton(
+            onPressed: _onPressedEditButton,
+            icon: const Icon(Icons.restart_alt),
+            message: "再編集",
+          ),
+        ],
       );
     }
   }

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/components/tool_ui/tool_bar.dart';
 import 'package:kozo_ibaraki/components/tool_ui/tool_bar_divider.dart';
 import 'package:kozo_ibaraki/components/tool_ui/tool_dropdown_button.dart';
 import 'package:kozo_ibaraki/components/tool_ui/tool_icon_button.dart';
 import 'package:kozo_ibaraki/components/tool_ui/tool_toggle_buttons.dart';
-import 'package:kozo_ibaraki/constants/colors.dart';
-import 'package:kozo_ibaraki/constants/dimens.dart';
 import 'package:kozo_ibaraki/views/beam/beam_data.dart';
 
 class BeamBar extends StatefulWidget {
@@ -96,98 +95,70 @@ class _BeamBarState extends State<BeamBar> {
     if (_controller.getState == BeamState.editor || 
         _controller.getState == BeamState.calculation) {
       // 編集モードのUIを表示
-      return Container(
-        width: double.infinity,
-        height: ToolBarDimens.height,
-        color: BaseColors.baseColor,
-        child: Row(
-          children: [
-            SizedBox(width: ToolUIDimens.gapWidth,), 
+      return ToolBar(
+        children: [
+          _menuButton(),
+          
+          const ToolBarDivider(isVertivcal: true,),
 
-            _menuButton(),
-            
-            SizedBox(width: ToolUIDimens.gapWidth,), 
-            const ToolBarDivider(isVertivcal: true,),
-            SizedBox(width: ToolUIDimens.gapWidth,), 
+          ToolToggleButtons(
+            selectedIndex: _selectedTypeIndex,
+            onPressed: _onPressedTypeToggle,
+            icons: const [
+              Icon(Icons.circle),
+              Icon(Icons.square),
+            ], 
+            messages: const ["節点", "要素"],
+          ),
 
-            ToolToggleButtons(
-              selectedIndex: _selectedTypeIndex,
-              onPressed: _onPressedTypeToggle,
-              icons: const [
-                Icon(Icons.circle),
-                Icon(Icons.square),
-              ], 
-              messages: const ["節点", "要素"],
-            ),
+          const ToolBarDivider(isVertivcal: true,),
 
-            SizedBox(width: ToolUIDimens.gapWidth,), 
-            const ToolBarDivider(isVertivcal: true,),
-            SizedBox(width: ToolUIDimens.gapWidth,), 
+          ToolToggleButtons(
+            selectedIndex: _selectedToolIndex,
+            onPressed: _onPressedToolToggle,
+            icons: const [
+              Icon(Icons.add),
+              Icon(Icons.touch_app),
+            ], 
+            messages: const ["新規","修正"],
+          ),
 
-            ToolToggleButtons(
-              selectedIndex: _selectedToolIndex,
-              onPressed: _onPressedToolToggle,
-              icons: const [
-                Icon(Icons.add),
-                Icon(Icons.touch_app),
-              ], 
-              messages: const ["新規","修正"],
-            ),
+          const ToolBarDivider(isVertivcal: true,),
+          const Expanded(child: SizedBox()),
+          const ToolBarDivider(isVertivcal: true,),
 
-            SizedBox(width: ToolUIDimens.gapWidth,), 
-            const ToolBarDivider(isVertivcal: true,),
-            const Expanded(child: SizedBox()),
-            const ToolBarDivider(isVertivcal: true,),
-            SizedBox(width: ToolUIDimens.gapWidth,), 
-
-            ToolIconButton(
-              onPressed: _onPressedAnalysisButton,
-              icon: const Icon(Icons.play_arrow),
-              message: "解析",
-            ),
-
-            SizedBox(width: ToolUIDimens.gapWidth,), 
-          ],
-        ),
+          ToolIconButton(
+            onPressed: _onPressedAnalysisButton,
+            icon: const Icon(Icons.play_arrow),
+            message: "解析",
+          ), 
+        ],
       );
     } 
     else {
       // 解析モードのUIを表示
-      return Container(
-        width: double.infinity,
-        height: ToolBarDimens.height,
-        color: BaseColors.baseColor,
-        child: Row(
-          children: [
-            SizedBox(width: ToolUIDimens.gapWidth,), 
+      return ToolBar(
+        children: [
+          _menuButton(),
+           
+          const ToolBarDivider(isVertivcal: true,),
+          const Expanded(child: SizedBox()),
+          const ToolBarDivider(isVertivcal: true,),
 
-            _menuButton(),
-            
-            SizedBox(width: ToolUIDimens.gapWidth,), 
-            const ToolBarDivider(isVertivcal: true,),
-            const Expanded(child: SizedBox()),
-            const ToolBarDivider(isVertivcal: true,),
-            SizedBox(width: ToolUIDimens.gapWidth,), 
+          ToolDropdownButton(
+            selectedIndex: _selectedResultIndex, 
+            onPressed: _onPressedResultDropdown, 
+            items: const ["変形図", "反力", "せん断力図","曲げモーメント図",],
+          ),
 
-            ToolDropdownButton(
-              selectedIndex: _selectedResultIndex, 
-              onPressed: _onPressedResultDropdown, 
-              items: const ["変形図", "反力", "せん断力図","曲げモーメント図",],
-            ),
+          const ToolBarDivider(isVertivcal: true,),
 
-            SizedBox(width: ToolUIDimens.gapWidth,), 
-            const ToolBarDivider(isVertivcal: true,),
-            SizedBox(width: ToolUIDimens.gapWidth,), 
-
-            ToolIconButton(
-              onPressed: _onPressedEditButton,
-              icon: const Icon(Icons.restart_alt),
-              message: "再編集",
-            ),
-
-            SizedBox(width: ToolUIDimens.gapWidth,), 
-          ],
-        ),
+          ToolIconButton(
+            onPressed: _onPressedEditButton,
+            icon: const Icon(Icons.restart_alt),
+            message: "再編集",
+          ),
+        ],
       );
     } 
   }
