@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/utils/canvas_data.dart';
 import 'package:kozo_ibaraki/utils/my_calculator.dart';
-import 'package:kozo_ibaraki/views/beam/beam2d_hinge_remesh.dart';
+import 'beam2d_hinge_remesh.dart';
 
 class BeamData extends ChangeNotifier {
   BeamData({required this.onDebug});

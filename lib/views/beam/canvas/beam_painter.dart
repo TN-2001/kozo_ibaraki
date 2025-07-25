@@ -2,8 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/components/my_painter.dart';
 import 'package:kozo_ibaraki/utils/canvas_data.dart';
-import 'package:kozo_ibaraki/views/beam/beam_data.dart';
-import '../../constants/colors.dart';
+import '../../../constants/colors.dart';
+import '../models/beam_data.dart';
 
 
 class BeamCanvas extends StatelessWidget {

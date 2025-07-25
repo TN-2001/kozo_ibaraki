@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/components/base_divider.dart';
 import 'package:kozo_ibaraki/components/my_decorations.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:kozo_ibaraki/constants/colors.dart' as myc;
-import 'package:kozo_ibaraki/views/beam/beam_painter.dart';
-import 'package:kozo_ibaraki/views/beam/beam_data.dart';
 import 'package:kozo_ibaraki/main.dart';
-import 'package:kozo_ibaraki/views/beam/ui/beam_bar.dart'; // スマホアプリのときはコメントアウト
+import '../../components/base_divider.dart';
+import 'canvas/beam_painter.dart';
+import 'models/beam_data.dart';
+import 'ui/beam_bar.dart';
 
 
 class BeamPage extends StatefulWidget {
