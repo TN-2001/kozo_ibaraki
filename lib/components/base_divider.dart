@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '/constants/colors.dart';
-import '/constants/dimens.dart';
+import '/constants/constant.dart';
 
 class BaseDivider extends StatelessWidget {
   const BaseDivider({

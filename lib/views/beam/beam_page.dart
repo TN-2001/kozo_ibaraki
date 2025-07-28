@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:kozo_ibaraki/components/my_decorations.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:kozo_ibaraki/constants/colors.dart' as myc;
 import 'package:kozo_ibaraki/main.dart';
-import '../../components/base_divider.dart';
+import '../../components/component.dart';
 import 'canvas/beam_painter.dart';
 import 'models/beam_data.dart';
 import 'ui/beam_bar.dart';
@@ -19,6 +20,7 @@ class BeamPage extends StatefulWidget {
 class _BeamPageState extends State<BeamPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late BeamData controller;
+  Orientation? _lastOrientation;
   bool isSumaho = false;
   Elem currentElem = Elem();
 
@@ -54,47 +56,66 @@ class _BeamPageState extends State<BeamPage> {
       });
     }  
 
+    final orientation = MediaQuery.of(context).orientation;
+
+    // 向きが変わった時
+    if (_lastOrientation != orientation) {
+      _lastOrientation = orientation;
+
+      if (orientation == Orientation.landscape) {
+        // 横向きならステータスバーを非表示
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+      } else {
+        // 縦向きならステータスバーを表示
+        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+      }
+    }
+
     return Scaffold(
-      backgroundColor: myc.MyColors.baseBackground,
+      backgroundColor: Colors.black,
       key: _scaffoldKey,
       drawer: drawer(context), // スマホアプリのときはコメントアウト
-      body: Column(
-        children: [
-          BeamBar(controller: controller, scaffoldKey: _scaffoldKey),
-          
-          const BaseDivider(),
+      body: SafeArea(
+        child: ClipRect(
+          child: Column(
+            children: [
+              BeamBar(controller: controller, scaffoldKey: _scaffoldKey),
+              
+              const BaseDivider(),
 
-          Expanded(
-            child: Stack(
-              children: [
-                BeamCanvas(controller: controller, devTypeNum: controller.getResultIndex, isSumaho: isSumaho),
+              Expanded(
+                child: Stack(
+                  children: [
+                    BeamCanvas(controller: controller, devTypeNum: controller.getResultIndex, isSumaho: isSumaho),
 
-                if(!controller.isCalculation)...{
-                  if(controller.getTypeIndex == 0)...{
-                    if(controller.getToolIndex == 0)...{
-                      // 新規ノード
-                      nodeSetting(true, size.width),
-                    }
-                    else if(controller.selectNodeNumber >= 0)...{
-                      // 既存ノード
-                      nodeSetting(false, size.width),
-                    }
-                  }
-                  else if(controller.getTypeIndex == 1)...{
-                    if(controller.getToolIndex == 0)...{
-                      // 新規要素
-                      elemSetting(true, size.width),
-                    }
-                    else if(controller.selectElemNumber >= 0)...{
-                      // 既存要素
-                      elemSetting(false, size.width),
-                    }
-                  }
-                },
-              ]
-            ),
+                    if(!controller.isCalculation)...{
+                      if(controller.getTypeIndex == 0)...{
+                        if(controller.getToolIndex == 0)...{
+                          // 新規ノード
+                          nodeSetting(true, size.width),
+                        }
+                        else if(controller.selectNodeNumber >= 0)...{
+                          // 既存ノード
+                          nodeSetting(false, size.width),
+                        }
+                      }
+                      else if(controller.getTypeIndex == 1)...{
+                        if(controller.getToolIndex == 0)...{
+                          // 新規要素
+                          elemSetting(true, size.width),
+                        }
+                        else if(controller.selectElemNumber >= 0)...{
+                          // 既存要素
+                          elemSetting(false, size.width),
+                        }
+                      }
+                    },
+                  ]
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

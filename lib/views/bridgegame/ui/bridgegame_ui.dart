@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/components/tool_ui/tool_bar.dart';
-import '../../../components/tool_ui/tool_bar_divider.dart';
-import '../../../components/tool_ui/tool_dropdown_button.dart';
-import '../../../components/tool_ui/tool_icon_button.dart';
-import '../../../components/tool_ui/tool_toggle_buttons.dart';
-import '../../../constants/paths.dart';
+import '../../../components/component.dart';
+import '../../../constants/constant.dart';
 import '../models/bridgegame_controller.dart';
 
 class BridgegameUI extends StatefulWidget {

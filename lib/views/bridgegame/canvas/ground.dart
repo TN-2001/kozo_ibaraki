@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../../constants/paths.dart';
+import '../../../constants/constant.dart';
 
 class Ground extends StatelessWidget {
   const Ground({super.key, required this.constWidth, required this.canvasWidth, required this.canvasHeight});

@@ -1,6 +1,6 @@
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:kozo_ibaraki/views/beam/beam_page.dart';
 import 'package:kozo_ibaraki/views/bridge/bridge_page.dart';
 import 'package:kozo_ibaraki/views/bridgegame/bridgegame_page.dart';
@@ -10,16 +10,19 @@ import 'package:kozo_ibaraki/views/privacy/privacy_page.dart';
 import 'package:kozo_ibaraki/views/truss/truss_page.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'configs/configure_android.dart';
 import 'configs/configure_nonweb.dart' if (dart.library.html) 'configs/configure_web.dart';
 
-void main() async {
+void main() {
+  // FlutterフレームワークとFlutterエンジンを結びつける
   WidgetsFlutterBinding.ensureInitialized();
 
+  // 各プラットフォームの設定
   if (kIsWeb) {
-    configureApp();
+    configureWeb();
+  } else if (Platform.isAndroid) {
+    configureAndroid();
   }
-
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
 
   runApp(const MyApp());
 }
@@ -31,7 +34,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return MaterialApp(
-      title: "kozo | 茨城大学 構造・地震工学研究室",
+      title: "Kozo App: 茨城大学 車谷研究室",
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
