@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/views/beam/beam_page.dart';
@@ -10,7 +9,6 @@ import 'package:kozo_ibaraki/views/privacy/privacy_page.dart';
 import 'package:kozo_ibaraki/views/truss/truss_page.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'configs/configure_android.dart';
 import 'configs/configure_nonweb.dart' if (dart.library.html) 'configs/configure_web.dart';
 
 void main() {
@@ -20,8 +18,6 @@ void main() {
   // 各プラットフォームの設定
   if (kIsWeb) {
     configureWeb();
-  } else if (Platform.isAndroid) {
-    configureAndroid();
   }
 
   runApp(const MyApp());

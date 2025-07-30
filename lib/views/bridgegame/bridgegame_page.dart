@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../components/component.dart';
 import '../../main.dart';
+import '../../utils/status_bar.dart';
 import 'canvas/bridgegame_canvas.dart';
 import 'models/bridgegame_controller.dart';
 import 'ui/bridgegame_ui.dart';
@@ -16,7 +16,6 @@ class BridgegamePage extends StatefulWidget {
 class _BridgegamePageState extends State<BridgegamePage> {
   late BridgegameController controller;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  Orientation? _lastOrientation;
 
   void _update() => setState(() {});
 
@@ -24,31 +23,26 @@ class _BridgegamePageState extends State<BridgegamePage> {
   @override
   void initState() {
     super.initState();
+
     controller = BridgegameController();
     controller.addListener(_update);
+
+    StatusBar.setStyle(isDarkBackground: true);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    StatusBar.setModeByOrientation(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final orientation = MediaQuery.of(context).orientation;
-
-    // 向きが変わった時
-    if (_lastOrientation != orientation) {
-      _lastOrientation = orientation;
-
-      if (orientation == Orientation.landscape) {
-        // 横向きならステータスバーを非表示
-        SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-      } else {
-        // 縦向きならステータスバーを表示
-        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-      }
-    }
-
     return Scaffold(
       backgroundColor: Colors.black,
       key: _scaffoldKey,
-      drawer: drawer(context),
+      drawer: SafeArea(child: drawer(context)),
       body: SafeArea(
         child: ClipRect(
           child: Column(

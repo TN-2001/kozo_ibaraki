@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:kozo_ibaraki/components/my_decorations.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:kozo_ibaraki/constants/colors.dart' as myc;
 import 'package:kozo_ibaraki/main.dart';
 import '../../components/component.dart';
+import '../../utils/status_bar.dart';
 import 'canvas/beam_painter.dart';
 import 'models/beam_data.dart';
 import 'ui/beam_bar.dart';
@@ -20,7 +20,6 @@ class BeamPage extends StatefulWidget {
 class _BeamPageState extends State<BeamPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late BeamData controller;
-  Orientation? _lastOrientation;
   bool isSumaho = false;
   Elem currentElem = Elem();
 
@@ -35,9 +34,19 @@ class _BeamPageState extends State<BeamPage> {
   @override
   void initState() {
     super.initState();
+
     controller = BeamData(onDebug: (value){},);
     controller.node = Node();
     controller.addListener(_onUpdate);
+
+    StatusBar.setStyle(isDarkBackground: true);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    StatusBar.setModeByOrientation(context);
   }
 
   @override
@@ -54,27 +63,12 @@ class _BeamPageState extends State<BeamPage> {
       setState(() {
         isSumaho = false;
       });
-    }  
-
-    final orientation = MediaQuery.of(context).orientation;
-
-    // 向きが変わった時
-    if (_lastOrientation != orientation) {
-      _lastOrientation = orientation;
-
-      if (orientation == Orientation.landscape) {
-        // 横向きならステータスバーを非表示
-        SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-      } else {
-        // 縦向きならステータスバーを表示
-        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-      }
     }
 
     return Scaffold(
       backgroundColor: Colors.black,
       key: _scaffoldKey,
-      drawer: drawer(context), // スマホアプリのときはコメントアウト
+      drawer: SafeArea(child: drawer(context)),
       body: SafeArea(
         child: ClipRect(
           child: Column(
