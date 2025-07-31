@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../components/component.dart';
+import '../../../constants/colors.dart';
 import '../models/beam_data.dart';
 
 class BeamBar extends StatefulWidget {
@@ -23,7 +25,37 @@ class _BeamBarState extends State<BeamBar> {
 
   void _onPressedMenuButton() {
     _scaffoldKey.currentState!.openDrawer();
-    // openBaseDrawer(context);
+    // showDialog(
+    //   context: context,
+    //   builder: (context) {
+    //     return AlertDialog(
+    //       backgroundColor: MyColors.baseBackground,
+    //       title: const Text("使い方（動画リンク）"),
+    //       content: SizedBox(
+    //         width: MediaQuery.sizeOf(context).width / 1.5,
+    //         height: MediaQuery.sizeOf(context).width / 1.5 /16*9,
+    //         child: MouseRegion(
+    //           cursor: SystemMouseCursors.click,
+    //           child: GestureDetector(
+    //             onTap: (){
+    //               final url = Uri.parse('https://youtu.be/44JrBWd-lS4');
+    //               launchUrl(url);
+    //             },
+    //             child: Image.asset(
+    //               "assets/images/youtube/1.jpg",
+    //             )
+    //           ),
+    //         ),
+    //       ),
+    //       actions: [
+    //         TextButton(
+    //           child: const Text("閉じる"),
+    //           onPressed: () => Navigator.pop(context),
+    //         ),
+    //       ],
+    //     );
+    //   },
+    // );
   }
 
   void _onPressedTypeToggle(int index) {

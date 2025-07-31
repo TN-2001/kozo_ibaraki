@@ -3,17 +3,17 @@ import '../../../components/component.dart';
 import '../../../constants/constant.dart';
 import '../models/bridgegame_controller.dart';
 
-class BridgegameUI extends StatefulWidget {
-  const BridgegameUI({super.key, required this.controller, required this.scaffoldKey});
+class BridgegameBar extends StatefulWidget {
+  const BridgegameBar({super.key, required this.controller, required this.scaffoldKey});
 
   final BridgegameController controller;
   final GlobalKey<ScaffoldState> scaffoldKey;
 
   @override
-  State<BridgegameUI> createState() => _BridgegameUIState();
+  State<BridgegameBar> createState() => _BridgegameBarState();
 }
 
-class _BridgegameUIState extends State<BridgegameUI> {
+class _BridgegameBarState extends State<BridgegameBar> {
   late BridgegameController _controller;
   late GlobalKey<ScaffoldState> _scaffoldKey;
   int state = 0;

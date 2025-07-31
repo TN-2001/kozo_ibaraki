@@ -5,7 +5,7 @@ import '../../components/component.dart';
 import '../../utils/status_bar.dart';
 import 'canvas/bridgegame_canvas.dart';
 import 'models/bridgegame_controller.dart';
-import 'ui/bridgegame_ui.dart';
+import 'ui/bridgegame_bar.dart';
 
 class BridgegamePage extends StatefulWidget {
   const BridgegamePage({super.key});
@@ -98,7 +98,7 @@ class _BridgegamePageState extends State<BridgegamePage> {
         child: ClipRect(
           child: Column(
             children: [
-              BridgegameUI(controller: controller, scaffoldKey: _scaffoldKey,),
+              BridgegameBar(controller: controller, scaffoldKey: _scaffoldKey,),
 
               const BaseDivider(),
 
