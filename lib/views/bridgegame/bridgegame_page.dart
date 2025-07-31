@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/constants/colors.dart';
 import 'package:kozo_ibaraki/views/common/common_drawer.dart';
 import '../../components/component.dart';
 import '../../utils/status_bar.dart';
@@ -42,7 +43,57 @@ class _BridgegamePageState extends State<BridgegamePage> {
     return Scaffold(
       backgroundColor: Colors.black,
       key: _scaffoldKey,
-      drawer: const CommonDrawer(),
+
+      drawer: CommonDrawer(
+        onPressedHelpButton: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return Dialog.fullscreen(
+                backgroundColor: MyColors.baseBackground,
+
+                child: Column(
+                  children: [
+                    ToolBar(
+                      children: [
+                        ToolIconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          }, 
+                          icon: const Icon(Icons.keyboard_arrow_left_sharp),
+                          message: "戻る",
+                        ),
+                      ]
+                    ),
+
+                    const BaseDivider(),
+
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Center(
+                          child: Container(
+                            constraints: const BoxConstraints(maxWidth: 1080),
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 10),
+                                Image.asset("assets/images/help/help_01.png"),
+                                const SizedBox(height: 10),
+                                Image.asset("assets/images/help/help_02.png"),
+                                const SizedBox(height: 10),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
+
       body: SafeArea(
         child: ClipRect(
           child: Column(

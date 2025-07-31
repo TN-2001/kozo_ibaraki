@@ -33,6 +33,8 @@ flutter:
     - assets/images/
     - assets/images/background/
     - assets/images/icons/
+    - assets/images/youtube/
+    - assets/images/help/
 
 flutter_icons:       
   android: true

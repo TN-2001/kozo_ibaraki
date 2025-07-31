@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
-import 'package:kozo_ibaraki/main.dart';
+import 'package:kozo_ibaraki/views/common/common_drawer.dart';
 
 Future<String> _loadHtmlFromAssets() async {
   return await rootBundle.loadString('assets/privacy.html');
@@ -35,7 +35,11 @@ class _PrivacyPageState extends State<PrivacyPage> {
         ],
       ),
 
-      drawer: drawer(context),
+      drawer: CommonDrawer(
+        onPressedHelpButton: () {
+          
+        },
+      ),
 
       body: FutureBuilder<String>(
         future: _loadHtmlFromAssets(),

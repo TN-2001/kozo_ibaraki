@@ -3,7 +3,8 @@ import 'package:kozo_ibaraki/views/bridge/bridge_data.dart';
 import 'package:kozo_ibaraki/views/bridge/bridge_painter.dart';
 import 'package:kozo_ibaraki/components/my_decorations.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
-import 'package:kozo_ibaraki/main.dart';
+import 'package:kozo_ibaraki/views/common/common_drawer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BridgePage extends StatefulWidget {
   const BridgePage({super.key});
@@ -32,7 +33,40 @@ class _BridgePageState extends State<BridgePage> {
     return MyScaffold (
       scaffoldKey: _scaffoldKey,
 
-      drawer: drawer(context),
+      drawer: CommonDrawer(
+        onPressedHelpButton: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("使い方（動画リンク）"),
+                content: SizedBox(
+                  width: MediaQuery.sizeOf(context).width / 1.5,
+                  height: MediaQuery.sizeOf(context).width / 1.5 /16*9,
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: (){
+                        final url = Uri.parse('https://youtu.be/9TabbZ8wR9A');
+                        launchUrl(url);
+                      },
+                      child: Image.asset(
+                        "assets/images/youtube/3.jpg",
+                      )
+                    ),
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    child: const Text("閉じる"),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      ),
 
       // ヘッダーメニュー
       header: MyHeader(

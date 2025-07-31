@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/views/common/common_drawer.dart';
 import 'package:kozo_ibaraki/views/fem/fem_data.dart';
 import 'package:kozo_ibaraki/views/fem/fem_painter.dart';
 import 'package:kozo_ibaraki/components/my_decorations.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
-import 'package:kozo_ibaraki/main.dart';
 
 class FemPage extends StatefulWidget {
   const FemPage({super.key});
@@ -36,7 +36,11 @@ class _FemPageState extends State<FemPage> {
     return MyScaffold(
       scaffoldKey: _scaffoldKey,
 
-      drawer: drawer(context),
+      drawer: CommonDrawer(
+        onPressedHelpButton: () {
+          
+        },
+      ),
 
       header: MyHeader(
         isBorder: true,

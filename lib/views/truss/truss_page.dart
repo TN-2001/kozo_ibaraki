@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/views/common/common_drawer.dart';
 import 'package:kozo_ibaraki/views/truss/truss_data.dart';
 import 'package:kozo_ibaraki/views/truss/truss_painter.dart';
 import 'package:kozo_ibaraki/components/my_decorations.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
-import 'package:kozo_ibaraki/main.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class TrussPage extends StatefulWidget {
@@ -45,7 +46,40 @@ class _TrussPageState extends State<TrussPage> {
     return MyScaffold(
       scaffoldKey: _scaffoldKey,
 
-      drawer: drawer(context),
+      drawer: CommonDrawer(
+        onPressedHelpButton: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("使い方（動画リンク）"),
+                content: SizedBox(
+                  width: MediaQuery.sizeOf(context).width / 1.5,
+                  height: MediaQuery.sizeOf(context).width / 1.5 /16*9,
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: (){
+                        final url = Uri.parse('https://youtu.be/heslu9QKW1E');
+                        launchUrl(url);
+                      },
+                      child: Image.asset(
+                        "assets/images/youtube/2.jpg",
+                      )
+                    ),
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    child: const Text("閉じる"),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      ),
 
       header: MyHeader(
         isBorder: true,

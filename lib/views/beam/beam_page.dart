@@ -3,6 +3,7 @@ import 'package:kozo_ibaraki/components/my_decorations.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:kozo_ibaraki/constants/colors.dart' as myc;
 import 'package:kozo_ibaraki/views/common/common_drawer.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../components/component.dart';
 import '../../utils/status_bar.dart';
 import 'canvas/beam_painter.dart';
@@ -68,7 +69,42 @@ class _BeamPageState extends State<BeamPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       key: _scaffoldKey,
-      drawer: const CommonDrawer(),
+
+      drawer: CommonDrawer(
+        onPressedHelpButton: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("使い方（動画リンク）"),
+                content: SizedBox(
+                  width: MediaQuery.sizeOf(context).width / 1.5,
+                  height: MediaQuery.sizeOf(context).width / 1.5 /16*9,
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: (){
+                        final url = Uri.parse('https://youtu.be/44JrBWd-lS4');
+                        launchUrl(url);
+                      },
+                      child: Image.asset(
+                        "assets/images/youtube/1.jpg",
+                      )
+                    ),
+                  ),
+                ),
+                actions: [
+                  TextButton(
+                    child: const Text("閉じる"),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      ),
+
       body: SafeArea(
         child: ClipRect(
           child: Column(

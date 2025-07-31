@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/views/bridgegame_free/bridgegame_free_data.dart';
 import 'package:kozo_ibaraki/views/bridgegame_free/bridgegame_free_painter.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
-import 'package:kozo_ibaraki/main.dart';
 import 'package:kozo_ibaraki/utils/camera.dart';
+import 'package:kozo_ibaraki/views/common/common_drawer.dart';
+import '../../components/component.dart';
+import '../../constants/colors.dart';
 
 class BridgegameFreePage extends StatefulWidget {
   const BridgegameFreePage({super.key});
@@ -34,7 +36,55 @@ class _BridgegameFreePageState extends State<BridgegameFreePage> {
     return MyScaffold (
       scaffoldKey: _scaffoldKey,
 
-      drawer: drawer(context),
+      drawer: CommonDrawer(
+        onPressedHelpButton: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return Dialog.fullscreen(
+                backgroundColor: MyColors.baseBackground,
+
+                child: Column(
+                  children: [
+                    ToolBar(
+                      children: [
+                        ToolIconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          }, 
+                          icon: const Icon(Icons.keyboard_arrow_left_sharp),
+                          message: "戻る",
+                        ),
+                      ]
+                    ),
+
+                    const BaseDivider(),
+
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Center(
+                          child: Container(
+                            constraints: const BoxConstraints(maxWidth: 1080),
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 10),
+                                Image.asset("assets/images/help/help_01.png"),
+                                const SizedBox(height: 10),
+                                Image.asset("assets/images/help/help_02.png"),
+                                const SizedBox(height: 10),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
 
       // ヘッダーメニュー
       header: MyHeader(

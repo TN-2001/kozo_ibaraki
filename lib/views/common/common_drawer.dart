@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../../components/component.dart';
 
 class CommonDrawer extends StatelessWidget {
-  const CommonDrawer({super.key});
+  const CommonDrawer({super.key, required this.onPressedHelpButton});
+
+  final void Function() onPressedHelpButton;
 
   @override
   Widget build(BuildContext context) {
@@ -84,6 +86,16 @@ class CommonDrawer extends StatelessWidget {
             if (currentRoute != targetRoute) {
               Navigator.pushNamed(context, targetRoute);
             }
+          },
+        ),
+
+        const BaseDivider(),
+
+        ListTile(
+          title: const Text("ヘルプ"),
+          onTap: () {
+            Navigator.pop(context);
+            onPressedHelpButton();
           },
         ),
       ]
