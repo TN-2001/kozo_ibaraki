@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/components/my_decorations.dart';
 import 'package:kozo_ibaraki/components/my_widgets.dart';
 import 'package:kozo_ibaraki/constants/colors.dart' as myc;
-import 'package:kozo_ibaraki/main.dart';
+import 'package:kozo_ibaraki/views/common/common_drawer.dart';
 import '../../components/component.dart';
 import '../../utils/status_bar.dart';
 import 'canvas/beam_painter.dart';
@@ -68,7 +68,7 @@ class _BeamPageState extends State<BeamPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       key: _scaffoldKey,
-      drawer: SafeArea(child: drawer(context)),
+      drawer: const CommonDrawer(),
       body: SafeArea(
         child: ClipRect(
           child: Column(

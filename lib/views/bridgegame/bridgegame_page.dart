@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/views/common/common_drawer.dart';
 import '../../components/component.dart';
-import '../../main.dart';
 import '../../utils/status_bar.dart';
 import 'canvas/bridgegame_canvas.dart';
 import 'models/bridgegame_controller.dart';
@@ -42,7 +42,7 @@ class _BridgegamePageState extends State<BridgegamePage> {
     return Scaffold(
       backgroundColor: Colors.black,
       key: _scaffoldKey,
-      drawer: SafeArea(child: drawer(context)),
+      drawer: const CommonDrawer(),
       body: SafeArea(
         child: ClipRect(
           child: Column(

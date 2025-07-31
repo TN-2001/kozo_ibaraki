@@ -23,6 +23,7 @@ class _BeamBarState extends State<BeamBar> {
 
   void _onPressedMenuButton() {
     _scaffoldKey.currentState!.openDrawer();
+    // openBaseDrawer(context);
   }
 
   void _onPressedTypeToggle(int index) {
