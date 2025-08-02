@@ -150,6 +150,9 @@ import 'dart:math';
   int n4 = (npx1+1)*npx2 + npx1 - 1;
   int n5 = (npx1+1)*npx2 + npx1;
   int n6 = (npx1+1)*npx2 + npx1 + 1;
+  // 要素が多いとき用
+  int n7 = (npx1+1)*npx2 + 4;
+  int n8 = (npx1+1)*npx2 + npx1 - 2;
   for (int k = 0; k < nd; k++) {
     mdof[nd*(n1-1)+k] = 0;
     mdof[nd*(n2-1)+k] = 0;
@@ -157,6 +160,11 @@ import 'dart:math';
     mdof[nd*(n4-1)+k] = 0;
     mdof[nd*(n5-1)+k] = 0;
     mdof[nd*(n6-1)+k] = 0;
+    // 要素が多いとき用
+    if (npx1 > 80) {
+      mdof[nd*(n7-1)+k] = 0;
+      mdof[nd*(n8-1)+k] = 0;
+    }
   }
 
   // Diagonal component

@@ -37,7 +37,7 @@ class BridgegameCanvas extends StatelessWidget {
           if (controller.isCalculation) {
             return;
           }
-          controller.saveToUndo();
+          controller.pcController.saveToUndo();
           controller.paintPixel(camera.screenToWorld(details.localPosition));
         },
         onPanUpdate: (details) {
@@ -51,7 +51,7 @@ class BridgegameCanvas extends StatelessWidget {
             controller.selectElem(camera.screenToWorld(details.localPosition));
             return;
           }
-          controller.saveToUndo();
+          controller.pcController.saveToUndo();
           controller.paintPixel(camera.screenToWorld(details.localPosition));
         },
         child: CustomPaint(
@@ -227,7 +227,7 @@ class BridgegamePainter extends CustomPainter {
         ..strokeWidth = 3;
 
       if(data.selectedElemIndex >= 0){
-        if(data.getElem(data.selectedElemIndex).e > 0){
+        if(data.getElem(data.selectedElemIndex).isPainted){
           final path = Path();
           for(int j = 0; j < 4; j++){
             Offset pos = camera.worldToScreen(
@@ -243,7 +243,7 @@ class BridgegamePainter extends CustomPainter {
         }
       }
       if(data.selectedElemIndex >= 0){
-        if(data.getElem(data.selectedElemIndex).e > 0){
+        if(data.getElem(data.selectedElemIndex).isPainted){
           MyPainter.text(canvas, camera.worldToScreen(data.getElem(data.selectedElemIndex).nodeList[0].pos + data.getElem(data.selectedElemIndex).nodeList[0].becPos*data.dispScale), 
             MyPainter.doubleToString(data.getSelectedResult(data.selectedElemIndex), 3), 14, Colors.black, true, size.width);
         }
@@ -301,7 +301,7 @@ class BridgegamePainter extends CustomPainter {
 
     if(data.elemListLength > 0){
       for(int i = 0; i < data.elemListLength; i++){
-        if((data.getElem(i).e > 0 && isAfter) || !isAfter){
+        if((data.getElem(i).isPainted && isAfter) || !isAfter){
           final path = Path();
           for(int j = 0; j < 4; j++){
             Offset pos;
@@ -330,18 +330,18 @@ class BridgegamePainter extends CustomPainter {
       ..color = const Color.fromARGB(255, 49, 49, 49);
 
     for(int i = 0; i < data.elemListLength; i++){
-      if(data.getElem(i).e > 0 || data.pixelColors[i].a != 0){
+      if(data.getElem(i).isPainted || data.pcController.getPixelColor(i).a != 0){
         if(isAfter && (data.selectedResultMax != 0 || data.selectedResultMin != 0)){
           paint.color = MyPainter.getColor((data.getSelectedResult(i) - data.selectedResultMin) / (data.selectedResultMax - data.selectedResultMin) * 100);
         }
         else if(!isAfter){
           if(data.getElem(i).isCanPaint){
             // paint.color = const Color.fromARGB(255, 184, 25, 63);
-            paint.color = data.pixelColors[i];
+            paint.color = data.pcController.getPixelColor(i);
           }
           else{
             // paint.color = const Color.fromARGB(255, 106, 23, 43);
-            paint.color = data.pixelColors[i];
+            paint.color = data.pcController.getPixelColor(i);
           }
         }
 
@@ -371,10 +371,10 @@ class BridgegamePainter extends CustomPainter {
 
     for(int i = 0; i < data.elemListLength; i++){
       if(data.getElem(i).isCanPaint){
-        paint.color = data.pixelColors[i];
+        paint.color = data.pcController.getPixelColor(i);
       }
       else{
-        paint.color = data.pixelColors[i];
+        paint.color = data.pcController.getPixelColor(i);
       }
 
       final path = Path();

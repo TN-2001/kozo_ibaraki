@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/views/bridgegame/models/pixel_canvas_controller.dart';
 import '../../../utils/my_calculator.dart';
 import 'des_fem70x25.dart';
 
@@ -8,11 +9,6 @@ class BridgegameController extends ChangeNotifier {
   BridgegameController() {
     _init();
   }
-
-  Color selectedColor = Colors.black;
-  late List<Color> pixelColors;
-  final List<List<Color>> undoStack = [];
-  final List<List<Color>> redoStack = [];
 
   /*
     パラメータ
@@ -34,6 +30,8 @@ class BridgegameController extends ChangeNotifier {
 
   double vvar = 0; // 荷重中央たわみ/体積（基準モデル）
 
+  final PixelCanvasController _pcController = PixelCanvasController();
+
 
   /*
     ゲッター
@@ -44,6 +42,9 @@ class BridgegameController extends ChangeNotifier {
   int get powerIndex => _powerIndex;
   int get selectedElemIndex => _selectedElemIndex;
   double get resultPoint => _resultPoint;
+
+  PixelCanvasController get pcController => _pcController;
+
 
   // 節点を取得
   Node getNode(int index) {
@@ -61,8 +62,8 @@ class BridgegameController extends ChangeNotifier {
   // 塗られた要素数
   int get onElemListLength {
     int elemCount = 0;
-    for (int i = 0; i < _elemList.length; i++) {
-      if (pixelColors[i].a != 0) {
+    for (int i = 0; i < elemListLength; i++) {
+      if (pcController.getPixelColor(i).a != 0) {
         elemCount++;
       }
     }
@@ -127,9 +128,9 @@ class BridgegameController extends ChangeNotifier {
     // 2段確定
     for(int i = 0; i < gridWidth; i++){
       _elemList[i].isCanPaint = false;
-      _elemList[i].e = 1;
+      _elemList[i].isPainted = true;
       _elemList[gridWidth+i].isCanPaint = false;
-      _elemList[gridWidth+i].e = 1;
+      _elemList[gridWidth+i].isPainted = true;
     }
 
     _initCanvas();
@@ -139,10 +140,10 @@ class BridgegameController extends ChangeNotifier {
   void changeToolIndex(int index) {
     _toolIndex = index;
     if (_toolIndex == 0) {
-      selectedColor = const Color.fromARGB(255, 184, 25, 63); // ツールが選択モードのときは選択要素をクリア
+      pcController.setSelectedColor(const Color.fromARGB(255, 184, 25, 63));
     }
     else {
-      selectedColor = const Color.fromARGB(0, 0, 0, 0); // ツールが選択モード以外のときは黒色に設定
+      pcController.setSelectedColor(const Color.fromARGB(0, 0, 0, 0));
     }
   }
 
@@ -152,59 +153,16 @@ class BridgegameController extends ChangeNotifier {
   }
 
   void _initCanvas() {
-    _initPixelColors();
-    undoStack.clear();
-    redoStack.clear();
-    notifyListeners();
-  }
+    pcController.resizeCanvas(70, 25);
+    pcController.setSelectedColor(const Color.fromARGB(255, 106, 23, 43));
+    for (int i = 0; i < pcController.gridWidth; i++) {
+      pcController.paintPixel(i);
+      pcController.paintPixel(i+pcController.gridWidth);
 
-  _initPixelColors() {
-    pixelColors = List.generate(_gridWidth * _gridHeight, (_) => const Color.fromARGB(0, 255, 255, 255));
-    for (int i = 0; i < elemListLength; i++) {
-      if (!_elemList[i].isCanPaint) {
-        pixelColors[i] = const Color.fromARGB(255, 106, 23, 43); // 塗れない要素は透明にする
-      }
+      pcController.setPixelPaintableFlag(i, false);
+      pcController.setPixelPaintableFlag(i+pcController.gridWidth, false);
     }
-  }
 
-  void saveToUndo() {
-    undoStack.add(List<Color>.from(pixelColors));
-    redoStack.clear();
-  }
-
-  void undo() {
-    if (undoStack.isNotEmpty) {
-      redoStack.add(List<Color>.from(pixelColors));
-      pixelColors = undoStack.removeLast();
-      notifyListeners();
-    }
-  }
-
-  void redo() {
-    if (redoStack.isNotEmpty) {
-      undoStack.add(List<Color>.from(pixelColors));
-      pixelColors = redoStack.removeLast();
-      notifyListeners();
-    }
-  }
-
-  // 対称化
-  void symmetrical() {
-    saveToUndo();
-    for (int y = 0; y < _gridHeight; y++) {
-      for (int x = 0; x < _gridWidth / 2; x++) {
-        if (_elemList[_gridWidth * y + _gridWidth - x - 1].isCanPaint) {
-          // _elemList[_gridWidth * y + _gridWidth - x - 1].e = _elemList[_gridWidth * y + x].e;
-          pixelColors[_gridWidth * y + _gridWidth - x - 1] = pixelColors[_gridWidth * y + x];
-        }
-      }
-    }
-    notifyListeners();
-  }
-
-  void clear() {
-    saveToUndo();
-    _initPixelColors();
     notifyListeners();
   }
 
@@ -216,20 +174,18 @@ class BridgegameController extends ChangeNotifier {
       return; // 選択要素がない場合は終了
     }
 
-    if (pixelColors[index] != selectedColor && _elemList[index].isCanPaint == true) {
-      pixelColors[index] = selectedColor;
-      notifyListeners();
-    }
+    pcController.paintPixel(index);
+    notifyListeners();
   }
 
 
 
   void paintToElem() {
     for (int i = 0; i < _elemList.length; i++) {
-      if (pixelColors[i].a != 0) {
-        _elemList[i].e = 1; // 塗られた要素は1に設定
+      if (pcController.getPixelColor(i).a != 0) {
+        _elemList[i].isPainted = true; // 塗られた要素は1に設定
       } else {
-        _elemList[i].e = 0; // 塗られていない要素は0に設定
+        _elemList[i].isPainted = false; // 塗られていない要素は0に設定
       }
     }
   }
@@ -249,7 +205,7 @@ class BridgegameController extends ChangeNotifier {
     List<List<int>> zeroOneList = List.generate(npx1, (_) => List.filled(npx2, 0));
     for (int n2 = 0; n2 < npx2; n2++) {
       for (int n1 = 0; n1 < npx1; n1++) {
-        zeroOneList[n1][n2] = _elemList[npx1*(npx2-n2-1)+n1].e.toInt();
+        zeroOneList[n1][n2] = _elemList[npx1*(npx2-n2-1)+n1].isPainted ? 1 : 0;
       }
     }
 
@@ -596,10 +552,12 @@ class Node {
 
 class Elem {
   // パラメータ
-  double e = 0.0;
   List<Node> nodeList = [Node(), Node(), Node(), Node()];
   // 0:X方向ひずみ、1:Y方向ひずみ、2:せん断ひずみ
   // 3:X方向応力、4:Y方向応力、5:せん断応力、6:最大主応力、7:最小主応力、8:曲げモーメント左、9:曲げモーメント右
   List<double> resultList = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+  // ペイント系
   bool isCanPaint = true; // 色がかわるか
+  bool isPainted = false;
 }

@@ -41,11 +41,11 @@ class _BridgegameBarState extends State<BridgegameBar> {
   // }
 
   void _onPressedMirrorButton() {
-    _controller.symmetrical();
+    _controller.pcController.symmetrical();
   }
 
   void _onPressedClearButton() {
-    _controller.clear();
+    _controller.pcController.clear();
   }
 
   void _onPressedPowerDropdown(int indent) {

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/constants/colors.dart';
-import 'package:kozo_ibaraki/views/common/common_drawer.dart';
 import '../../components/component.dart';
+import '../../constants/constant.dart';
 import '../../utils/status_bar.dart';
+import '../common/common_drawer.dart';
 import 'canvas/bridgegame_canvas.dart';
 import 'models/bridgegame_controller.dart';
 import 'ui/bridgegame_bar.dart';
+import 'ui/bridgegame_canvas_ui.dart';
 
 class BridgegamePage extends StatefulWidget {
   const BridgegamePage({super.key});
@@ -105,7 +106,10 @@ class _BridgegamePageState extends State<BridgegamePage> {
               Expanded(
                 child: Stack(
                   children: [
-                    BridgegameCanvas(controller: controller,),
+                    InteractiveViewer(
+                      child: BridgegameCanvas(controller: controller,),
+                    ),
+                    BridgegameCanvasUi(controller: controller),
                   ],
                 ),
               ),

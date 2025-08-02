@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class PixelCanvasController extends ChangeNotifier {
+  PixelCanvasController() {
+    _initCanvas();
+  }
+
 
   // パラメータ
   int _gridWidth = 16;
@@ -9,31 +13,30 @@ class PixelCanvasController extends ChangeNotifier {
   late List<Color> _pixelColors;
   final List<List<Color>> _undoStack = [];
   final List<List<Color>> _redoStack = [];
+  late List<bool> _pixelPaintableFlags;
 
-  final TextEditingController widthController = TextEditingController(text: '16');
-  final TextEditingController heightController = TextEditingController(text: '16');
+  // final TextEditingController widthController = TextEditingController(text: '16');
+  // final TextEditingController heightController = TextEditingController(text: '16');
+
 
   // ゲッター
   int get gridWidth => _gridWidth;
   int get gridHeight => _gridHeight;
   Color get selectedColor => _selectedColor;
   Color getPixelColor(int index) {
-    if (index < 0 || index >= _pixelColors.length) {
-      // エラーで一時停止
-      throw RangeError('Index out of bounds: $index');
-    }
     return _pixelColors[index];
   }
-
-
-  PixelCanvasController() {
-    _initCanvas();
+  bool getPixelPaintableFlag(int index) {
+    return _pixelPaintableFlags[index];
   }
 
+
+  // 関数
   void _initCanvas() {
     _pixelColors = List.generate(_gridWidth * _gridHeight, (_) => const Color.fromARGB(0, 255, 255, 255));
     _undoStack.clear();
     _redoStack.clear();
+    _pixelPaintableFlags = List.generate(_gridWidth * _gridHeight, (_) => true);
     notifyListeners();
   }
 
@@ -58,22 +61,36 @@ class PixelCanvasController extends ChangeNotifier {
     }
   }
 
-  void clear() {
+  void symmetrical() {
     saveToUndo();
-    _pixelColors = List.generate(_gridWidth * _gridHeight, (_) => const Color.fromARGB(0, 255, 255, 255));
+    for (int y = 0; y < _gridHeight; y++) {
+      for (int x = 0; x < _gridWidth / 2; x++) {
+        _pixelColors[_gridWidth * y + _gridWidth - x - 1] = _pixelColors[_gridWidth * y + x];
+      }
+    }
     notifyListeners();
   }
 
-  void resizeCanvas() {
-    final newW = int.tryParse(widthController.text);
-    final newH = int.tryParse(heightController.text);
-    if (newW != null && newW > 0 && newH != null && newH > 0) {
-      _gridWidth = newW;
-      _gridHeight = newH;
-      _initCanvas();
+  void clear() {
+    saveToUndo();
+    for (var i = 0; i < gridWidth * gridHeight; i++) {
+      if (_pixelPaintableFlags[i]) {
+        _pixelColors[i] = const Color.fromARGB(0, 255, 255, 255);
+      }
     }
+    notifyListeners();
   }
-  void resizeCanvasTo(int width, int height) {
+
+  // void resizeCanvas() {
+  //   final newW = int.tryParse(widthController.text);
+  //   final newH = int.tryParse(heightController.text);
+  //   if (newW != null && newW > 0 && newH != null && newH > 0) {
+  //     _gridWidth = newW;
+  //     _gridHeight = newH;
+  //     _initCanvas();
+  //   }
+  // }
+  void resizeCanvas(int width, int height) {
     if (width > 0 && height > 0) {
       _gridWidth = width;
       _gridHeight = height;
@@ -86,24 +103,44 @@ class PixelCanvasController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void paintPixel(Offset localPos, Size size) {
-    final cellWidth = size.width / _gridWidth;
-    final cellHeight = size.height / _gridHeight;
+  // void paintPixel(Offset localPos, Size size) {
+  //   final cellWidth = size.width / _gridWidth;
+  //   final cellHeight = size.height / _gridHeight;
 
-    final x = (localPos.dx ~/ cellWidth).clamp(0, _gridWidth - 1);
-    final y = (localPos.dy ~/ cellHeight).clamp(0, _gridHeight - 1);
-    final index = y * _gridWidth + x;
+  //   final x = (localPos.dx ~/ cellWidth).clamp(0, _gridWidth - 1);
+  //   final y = (localPos.dy ~/ cellHeight).clamp(0, _gridHeight - 1);
+  //   final index = y * _gridWidth + x;
 
-    if (_pixelColors[index] != _selectedColor) {
-      _pixelColors[index] = _selectedColor;
-      notifyListeners();
+  //   if (_pixelColors[index] != _selectedColor) {
+  //     _pixelColors[index] = _selectedColor;
+  //     notifyListeners();
+  //   }
+  // }
+  void paintPixel(int index) {
+    if (index < 0 || index >= gridWidth * gridHeight) {
+      return;
     }
+    if (getPixelPaintableFlag(index) == false) {
+      return;
+    }
+
+    _pixelColors[index] = _selectedColor;
+    notifyListeners();
   }
+
+  void setPixelPaintableFlag(int index, bool value) {
+    if (index < 0 || index >= gridWidth * gridHeight) {
+      return;
+    }
+
+    _pixelPaintableFlags[index] = value;
+  }
+
 
   @override
   void dispose() {
-    widthController.dispose();
-    heightController.dispose();
+    // widthController.dispose();
+    // heightController.dispose();
     super.dispose();
   }
 }
