@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/views/beam/beam_page.dart';
-import 'package:kozo_ibaraki/views/bridge/bridge_page.dart';
 import 'package:kozo_ibaraki/views/bridgegame/bridgegame_page.dart';
 import 'package:kozo_ibaraki/views/bridgegame_free/bridgegame_free_page.dart';
 import 'package:kozo_ibaraki/views/fem/fem_page.dart';
@@ -34,10 +33,9 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const BeamPage(),
         '/truss':(context) => const TrussPage(),
-        '/bridge':(context) => const BridgePage(),
+        '/fem':(context) => const FemPage(),
         '/bridgegame':(context) => const BridgegamePage(),
         '/bridgegamefree':(context) => const BridgegameFreePage(),
-        '/fem':(context) => const FemPage(),
         '/privacy':(context) => const PrivacyPage(),
       },
     );
