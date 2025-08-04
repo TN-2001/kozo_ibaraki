@@ -197,14 +197,6 @@ class BridgegamePainter extends CustomPainter {
           MyPainter.arrow(camera.worldToScreen(pos), camera.worldToScreen(Offset(pos.dx, pos.dy-1.5)), arrowSize*camera.scale, const Color.fromARGB(255, 0, 63, 95), canvas);
         }
       }
-
-      // 体積
-      int elemLength = data.onElemListLength;
-      Color color = Colors.black;
-      if(elemLength > 1000){
-        color = Colors.red;
-      }
-      MyPainter.text(canvas, const Offset(10, 10), "体積：$elemLength", 16, color, true, size.width, );
     } else {
       if (data.powerIndex == 0) {
         data.dispScale = 90.0; // 3点曲げの変位倍率
@@ -248,47 +240,6 @@ class BridgegamePainter extends CustomPainter {
             MyPainter.doubleToString(data.getSelectedResult(data.selectedElemIndex), 3), 14, Colors.black, true, size.width);
         }
       }
-
-      // 虹色
-      if(size.width > size.height){
-        Rect cRect = Rect.fromLTRB(size.width - 85, 50, size.width - 60, size.height - 50);
-        if(cRect.height > 500){
-          cRect = Rect.fromLTRB(cRect.left, size.height/2-250, cRect.right, size.height/2+250);
-        }
-        // 虹色
-        MyPainter.rainbowBand(canvas, cRect, 50);
-
-        // 最大最小
-        MyPainter.text(canvas, Offset(cRect.left+5, cRect.top-20), 
-          "大", 14, Colors.black, true, size.width);
-        MyPainter.text(canvas, Offset(cRect.left+5, cRect.bottom+5), 
-          "小", 14, Colors.black, true, size.width);
-        
-        // ラベル
-        MyPainter.text(canvas, Offset(cRect.right+5, cRect.center.dy-40), "引張の力", 14, Colors.black, true, 14);
-      }else{
-        Rect cRect = Rect.fromLTRB(50, size.height - 75, size.width - 50, size.height - 50);
-        if(cRect.width > 500){
-          cRect = Rect.fromLTRB(size.width/2-250, cRect.top, size.width/2+250, cRect .bottom);
-        }
-        // 虹色
-        MyPainter.rainbowBand(canvas, cRect, 50);
-
-        // 最大最小
-        MyPainter.text(canvas, Offset(cRect.right+5, cRect.top+3), 
-          "大", 14, Colors.black, true, size.width);
-        MyPainter.text(canvas, Offset(cRect.left-20, cRect.top+3), 
-          "小", 14, Colors.black, true, size.width);
-        
-        // ラベル
-        MyPainter.text(canvas, Offset(cRect.center.dx-20, cRect.bottom+5), "引張の力", 14, Colors.black, true, size.width);
-      }
-
-      // 点数
-      MyPainter.text(canvas, const Offset(10, 10), "${data.resultPoint.toStringAsFixed(2)}点", 32, Colors.black, true, size.width, );
-
-      // 体積
-      MyPainter.text(canvas, const Offset(10, 50), "体積：${data.onElemListLength}", 16, Colors.black, true, size.width, );
     }
   }
 
