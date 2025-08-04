@@ -40,7 +40,12 @@ class ToolDropdownButton extends StatelessWidget {
         items: items.map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
-            child: Text(value),
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontSize: MyDimens.toolDropdownItemFontSize,
+              ),
+            ),
           );
         }).toList(),
         // イベント

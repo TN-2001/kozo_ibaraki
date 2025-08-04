@@ -14,7 +14,7 @@ class ToolBarDivider extends StatelessWidget {
     if (isVertivcal) {
       return const SizedBox(
         height: MyDimens.toolBarHeight,
-        width: MyDimens.toolBarGapWidth * 2,
+        width: MyDimens.toolBarSpacing * 2,
         child: VerticalDivider(
           width: MyDimens.toolBarDividerWidth,
           thickness: MyDimens.toolBarDividerWidth,

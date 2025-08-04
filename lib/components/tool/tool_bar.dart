@@ -14,13 +14,13 @@ class ToolBar extends StatelessWidget {
       color: MyColors.toolBarBackground,
       child: Row(
         children: [
-          const SizedBox(width: MyDimens.toolBarGapWidth,),
+          const SizedBox(width: MyDimens.toolBarSpacing,),
           
           for(int i = 0; i < children.length; i++)...{
             children[i],
           },
 
-          const SizedBox(width: MyDimens.toolBarGapWidth,),
+          const SizedBox(width: MyDimens.toolBarSpacing,),
         ],
       )
     );
