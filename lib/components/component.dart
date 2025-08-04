@@ -1,5 +1,6 @@
 export 'base/base_divider.dart';
 export 'base/base_drawer.dart';
+export 'base/base_text.dart';
 
 export 'tool/tool_bar.dart';
 export 'tool/tool_bar_divider.dart';
