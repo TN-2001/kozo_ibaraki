@@ -106,9 +106,7 @@ class _BridgegamePageState extends State<BridgegamePage> {
               Expanded(
                 child: Stack(
                   children: [
-                    InteractiveViewer(
-                      child: BridgegameCanvas(controller: controller,),
-                    ),
+                    BridgegameCanvas(controller: controller,),
                     BridgegameCanvasUi(controller: controller),
                   ],
                 ),
