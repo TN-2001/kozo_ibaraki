@@ -486,6 +486,7 @@ class BridgegameController extends ChangeNotifier {
     _resultPoint = 100 * (1-1/(1+(pow(e, -a*(vvvar)/vvar))));
     selectResult(3);
 
+    initSelect();
     isCalculation = true;
     notifyListeners();
   }
