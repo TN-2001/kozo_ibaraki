@@ -16,7 +16,7 @@ class CommonDrawer extends StatelessWidget {
           child: Container(
             alignment: Alignment.centerLeft,
             padding: const EdgeInsets.only(left: 15, right: 15),
-            child: const Text("ツール", style: TextStyle(fontSize: 20),),
+            child: const Text("Kozo App", style: TextStyle(fontSize: 20),),
           ),
         ),
         
