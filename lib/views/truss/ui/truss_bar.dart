@@ -175,7 +175,7 @@ class _TrussBarState extends State<TrussBar> {
           ToolDropdownButton(
             selectedIndex: _selectedResultIndex, 
             onPressed: _onPressedResultDropdown, 
-            items: const ["変形図", "反力", "せん断力図","曲げモーメント図",],
+            items: const ["応力", "ひずみ"],
           ),
 
           const ToolBarDivider(isVertivcal: true,),

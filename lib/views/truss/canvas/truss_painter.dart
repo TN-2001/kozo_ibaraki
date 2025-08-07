@@ -182,7 +182,7 @@ class TrussPainter extends CustomPainter {
         }
       }
       if(nodes[i].constXY[1]){
-        if(pos.dy >= data.rect.center.dy){
+        if(pos.dy > data.rect.center.dy){
           canvas.drawCircle(camera.worldToScreen(Offset(pos.dx, pos.dy+data.nodeRadius*1.75)), data.nodeRadius * camera.scale * 0.75, paint);
           canvas.drawLine(
             camera.worldToScreen(Offset(pos.dx-data.nodeRadius * 1.5, pos.dy+data.nodeRadius * 2.5)), 

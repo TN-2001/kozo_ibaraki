@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/utils/canvas_data.dart';
 import 'package:kozo_ibaraki/utils/my_calculator.dart';
+import 'package:kozo_ibaraki/views/truss/models/truss2d.dart';
 
 class TrussData extends ChangeNotifier {
 
@@ -37,13 +37,15 @@ class TrussData extends ChangeNotifier {
     }
     return nodeList[number];
   }
-  
+  int get nodeCount => nodeList.length; // 節点の数を取得
+
   Elem getElem(int number) {
     if (number < 0 || number >= elemList.length) {
       throw RangeError('Element number out of range: $number');
     }
     return elemList[number];
   }
+  int get elemCount => elemList.length; // 要素の数を取得
 
   // 節点の範囲座標
   Rect get rect {
@@ -64,7 +66,7 @@ class TrussData extends ChangeNotifier {
       }
     }
 
-    if (left == right || top == bottom) {
+    if (left == right && top == bottom) {
       // 範囲が0の場合、適当な範囲を設定
       left -= 1;
       right += 1;
@@ -130,7 +132,6 @@ class TrussData extends ChangeNotifier {
     return e;
   }
   
-  CanvasData canvasData = CanvasData();
 
   /*
     関数
@@ -168,6 +169,25 @@ class TrussData extends ChangeNotifier {
   // 解析結果の選択インデックスを変更
   void changeResultIndex(int index) {
     _resultIndex = index;
+
+    resultList = List.filled(elemList.length, 0);
+    for (int i = 0; i < elemList.length; i++) {
+      if(index == 0) {
+        resultList[i] = elemList[i].result[0];
+      } else if (index == 1) {
+        resultList[i] = elemList[i].result[1];
+      }
+    }
+
+    for (int i = 0; i < resultList.length; i++) {
+      if(i == 0){
+        resultMax = resultList[i];
+        resultMin = resultList[i];
+      }else{
+        resultMax = max(resultMax, resultList[i]);
+        resultMin = min(resultMin, resultList[i]);
+      }
+    }
 
     notifyListeners();
   }
@@ -256,7 +276,7 @@ class TrussData extends ChangeNotifier {
   }
 
   // 解析
-  String checkCalculation(){
+  String checkCalculation() {
     bool isPower = false;
 
     int xyConstCount = 0;
@@ -285,11 +305,6 @@ class TrussData extends ChangeNotifier {
     }else if(!isPower){
       return "荷重条件が不足";
     }else{
-      if(resultIndex == 0){
-        selectResult(resultIndex);
-      }else{
-        selectResult(5);
-      }
       return ""; // 問題なし
     }
   }
@@ -308,159 +323,96 @@ class TrussData extends ChangeNotifier {
       }
     }
 
-    // 要素データ
-    List<double> lengthList = List.empty(growable: true);
-    List<double> cosList = List.empty(growable: true);
-    List<double> sinList = List.empty(growable: true);
+    final int nx = nodeCount; // 節点数
+    final List<List<double>> xyzn = List.generate(nx, (_) => List.filled(2, 0.0));
+    final List<List<int>> mfix = List.generate(nx, (_) => List.filled(2, 0));
+    final List<List<double>> fnod = List.generate(nx, (_) => List.filled(2, 0.0));
+    final int nelx = elemCount; // 要素数
+    final List<List<int>> ijke = List.generate(nelx, (_) => List.filled(2, 0));
+    final List<List<double>> prop = List.generate(nelx, (_) => List.filled(2, 0.0));
 
-    for(int i = 0; i < elemList.length; i++){
-      Offset pos0 = elemList[i].nodeList[0]!.pos;
-      Offset pos1 = elemList[i].nodeList[1]!.pos;
-
-      lengthList.add((pos1 - pos0).distance);
-
-      double angle = atan2(pos1.dy - pos0.dy, pos1.dx - pos0.dx);
-      cosList.add(cos(angle));
-      sinList.add(sin(angle));
+    for (int i = 0; i < nx; i++) {
+      Node node = getNode(i);
+      xyzn[i][0] = node.pos.dx;
+      xyzn[i][1] = node.pos.dy;
+      mfix[i][0] = node.constXY[0] ? 1 : 0;
+      mfix[i][1] = node.constXY[1] ? 1 : 0;
+      fnod[i][0] = node.loadXY[0];
+      fnod[i][1] = node.loadXY[1];
     }
 
-    // 全体剛性行列
-    List<List<double>> kkk = List.generate(nodeList.length * 2, (i) => List.generate(nodeList.length * 2, (j) => 0.0));
+    for (int i = 0; i < nelx; i++) {
+      Elem elem = getElem(i);
+      ijke[i][0] = min(elem.nodeList[0]!.number, elem.nodeList[1]!.number);
+      ijke[i][1] = max(elem.nodeList[0]!.number, elem.nodeList[1]!.number);
+      prop[i][0] = elem.e;
+      prop[i][1] = elem.v;
+    }
+
+    Map<String, Object> input = {
+      'nx': nx,
+      'xyzn': xyzn,
+      'mfix': mfix,
+      'fnod': fnod,
+      'nelx': nelx,
+      'ijke': ijke,
+      'prop': prop,
+    };
+
+    Map<String, Object> output = truss2d(input);
+
+    final int ndof = output['ndof'] as int;
+    final List<double> disp = output['disp'] as List<double>;
+    final List<double> fint = output['fint'] as List<double>;
+    final List<double> frea = output['frea'] as List<double>;
+
+    // 変位
+    double maxDisp = 0;
+    double rectWidth = max(rect.width, rect.height);
+    for (int ix = 0; ix < nx; ix++) {
+      Node node = getNode(ix);
+      node.becPos = Offset(disp[ndof * ix + 0], disp[ndof * ix + 1]);
+      maxDisp = max(maxDisp, node.becPos.distance.abs());
+    }
+    for (int ix = 0; ix < nx; ix++) {
+      Node node = getNode(ix);
+      node.afterPos = Offset(
+        node.pos.dx + node.becPos.dx / maxDisp * rectWidth / 4,
+        node.pos.dy + node.becPos.dy / maxDisp * rectWidth / 4,
+      );
+    }
     
-    for(int i = 0; i < elemList.length; i++){
-      double eal = elemList[i].e * elemList[i].v / lengthList[i];
-      double k11 = eal * cosList[i] * cosList[i];
-      double k12 = eal * cosList[i] * sinList[i];
-      double k21 = k12;
-      double k22 = eal * sinList[i] * sinList[i];
-
-      kkk[elemList[i].nodeList[0]!.number*2][elemList[i].nodeList[0]!.number*2] += k11;
-      kkk[elemList[i].nodeList[0]!.number*2][elemList[i].nodeList[0]!.number*2+1] += k12;
-      kkk[elemList[i].nodeList[0]!.number*2+1][elemList[i].nodeList[0]!.number*2] += k21;
-      kkk[elemList[i].nodeList[0]!.number*2+1][elemList[i].nodeList[0]!.number*2+1] += k22;
-
-      kkk[elemList[i].nodeList[0]!.number*2][elemList[i].nodeList[1]!.number*2] -= k11;
-      kkk[elemList[i].nodeList[0]!.number*2][elemList[i].nodeList[1]!.number*2+1] -= k12;
-      kkk[elemList[i].nodeList[0]!.number*2+1][elemList[i].nodeList[1]!.number*2] -= k21;
-      kkk[elemList[i].nodeList[0]!.number*2+1][elemList[i].nodeList[1]!.number*2+1] -= k22;
-
-      kkk[elemList[i].nodeList[1]!.number*2][elemList[i].nodeList[0]!.number*2] -= k11;
-      kkk[elemList[i].nodeList[1]!.number*2][elemList[i].nodeList[0]!.number*2+1] -= k12;
-      kkk[elemList[i].nodeList[1]!.number*2+1][elemList[i].nodeList[0]!.number*2] -= k21;
-      kkk[elemList[i].nodeList[1]!.number*2+1][elemList[i].nodeList[0]!.number*2+1] -= k22;
-
-      kkk[elemList[i].nodeList[1]!.number*2][elemList[i].nodeList[1]!.number*2] += k11;
-      kkk[elemList[i].nodeList[1]!.number*2][elemList[i].nodeList[1]!.number*2+1] += k12;
-      kkk[elemList[i].nodeList[1]!.number*2+1][elemList[i].nodeList[1]!.number*2] += k21;
-      kkk[elemList[i].nodeList[1]!.number*2+1][elemList[i].nodeList[1]!.number*2+1] += k22;
-    }
-
-    // 縮約行列
-    List<List<double>> kk = List.generate(kkk.length, (i) => List.generate(kkk[i].length, (j) => kkk[i][j]));
-
-    for(int i = nodeList.length - 1; i > - 1; i--){
-      if(nodeList[i].constXY[1]){
-        for (var row in kk) {
-          row.removeAt(i*2+1);
-        }
-        kk.removeAt(i*2+1);
-      }
-      if(nodeList[i].constXY[0]){
-        for (var row in kk) {
-          row.removeAt(i*2);
-        }
-        kk.removeAt(i*2);
-      }
-    }
-
-    // 荷重
-    List<double> powList = List.empty(growable: true);
-    for(int i = 0; i < nodeList.length; i++){
-      if(nodeList[i].constXY[0] == false){
-        powList.add(nodeList[i].loadXY[0]);
-      }
-      if(nodeList[i].constXY[1] == false) powList.add(nodeList[i].loadXY[1]);
-    }
-
-    // 変位計算
-    List<double> becList = MyCalculator.conjugateGradient(kk, powList, 100, 1e-10);
-    int count = 0;
-    for(int i = 0; i < nodeList.length; i++){
-      if(nodeList[i].constXY[0] == false){
-        nodeList[i].becPos = Offset(becList[count], nodeList[i].becPos.dy);
-        count ++;
-      }
-      if(nodeList[i].constXY[1] == false){
-        nodeList[i].becPos = Offset(nodeList[i].becPos.dx, becList[count]);
-        count ++;
-      }
-      nodeList[i].afterPos = Offset(nodeList[i].pos.dx+nodeList[i].becPos.dx, nodeList[i].pos.dy+nodeList[i].becPos.dy); // 変位後の座標
+    // 軸力
+    for (int ie = 0; ie < nelx; ie++) {
+      Elem elem = getElem(ie);
+      elem.result[0] = fint[ie] / prop[ie][1];
     }
 
     // ひずみ
-    for(int i = 0; i < elemList.length; i++){
-      elemList[i].strainXY[0] = ((cosList[i]*elemList[i].nodeList[1]!.becPos.dx + sinList[i]*elemList[i].nodeList[1]!.becPos.dy) 
-        - (cosList[i]*elemList[i].nodeList[0]!.becPos.dx + sinList[i]*elemList[i].nodeList[0]!.becPos.dy)) / lengthList[i];
+    for(int ie = 0; ie < nelx; ie++){
+      Elem elem = getElem(ie);
+      elem.result[1] = elem.result[0] / prop[ie][0];
+    }
+    
+    // 反力
+    for (int ix = 0; ix < nx; ix++) {
+      Node node = getNode(ix);
+      node.result[0] = mfix[ix][0] == 1 ? frea[ndof * ix + 0] : 0; // 水平方向の反力
+      node.result[1] = mfix[ix][1] == 1 ? frea[ndof * ix + 1] : 0; // 垂直方向の反力
     }
 
-    // 応力
-    for(int i = 0; i < elemList.length; i++){
-      elemList[i].stlessXY[0] = elemList[i].e * elemList[i].strainXY[0];
-    }
+
 
     node = null; // 新規節点データをリセット
     elem = null; // 新規要素データをリセット
     _selectedNumber = -1; // 選択番号をリセット
     isCalculation = true;
-    notifyListeners();
+    changeResultIndex(resultIndex); // 結果のインデックスを変更
   }
-  void resetCalculation(){
-    for(int i = 0; i < elemList.length; i++){
-      for(int j = 0; j < elemList[i].stlessXY.length; j++){
-        elemList[i].stlessXY[j] = 0;
-      }
-      for(int j = 0; j < elemList[i].strainXY.length; j++){
-        elemList[i].strainXY[j] = 0;
-      }
-    }
-
+  void resetCalculation() {
     changeTypeIndex(typeIndex);
     isCalculation = false;
     notifyListeners();
-  }
-  void selectResult(int num){ // 結果
-    resultList = List.filled(elemList.length, 0);
-    for (int i = 0; i < elemList.length; i++) {
-      if(num == 0) {
-        resultList[i] = elemList[i].stlessXY[0];
-      } else if(num == 1) {
-        resultList[i] = elemList[i].stlessXY[1];
-      } else if(num == 2) {
-        resultList[i] = elemList[i].stlessXY[2];
-      } else if(num == 3) {
-        resultList[i] = elemList[i].stlessXY[3];
-      } else if(num == 4) {
-        resultList[i] = elemList[i].stlessXY[4];
-      } else if(num == 5) {
-        resultList[i] = elemList[i].strainXY[0];
-      } else if(num == 6) {
-        resultList[i] = elemList[i].strainXY[1];
-      } else if(num == 7) {
-        resultList[i] = elemList[i].strainXY[2];
-      } else {
-        resultList = List.empty();
-      }
-    }
-
-    for (int i = 0; i < resultList.length; i++) {
-      if(i == 0){
-        resultMax = resultList[i];
-        resultMin = resultList[i];
-      }else{
-        resultMax = max(resultMax, resultList[i]);
-        resultMin = min(resultMin, resultList[i]);
-      }
-    }
   }
 
   // キャンバスに要素があるか
@@ -508,7 +460,7 @@ class TrussData extends ChangeNotifier {
   }
 }
 
-class Node{
+class Node {
   // 基本データ
   int number = 0;
   Offset pos = Offset.zero;
@@ -518,13 +470,10 @@ class Node{
   // 計算結果
   Offset becPos = Offset.zero;
   Offset afterPos = Offset.zero;
-  List<double> result = [0,0,0,0,0,0,0,0,0]; // 0:たわみ、1:たわみ角1、2:たわみ角2
-
-  // キャンバス情報
-  double canvasRadius = 10;
+  List<double> result = [0,0]; // 0:水平方向の反力、1:垂直方向の反力
 }
 
-class Elem{
+class Elem {
   // 基本データ
   int number = 0;
   double e = 1.0;
@@ -532,6 +481,5 @@ class Elem{
   List<Node?> nodeList = [null, null];
 
   // 計算結果
-  List<double> strainXY = [0,0,0]; // 0:X方向ひずみ、1:Y方向ひずみ、2:せん断ひずみ
-  List<double> stlessXY = [0,0,0,0,0,0,0]; // 0:X方向応力、1:Y方向応力、2:せん断応力、3:最大主応力、4:最小主応力、5:曲げモーメント左、6:曲げモーメント右
+  List<double> result = [0,0]; // 0:軸力、1:ひずみ
 }
