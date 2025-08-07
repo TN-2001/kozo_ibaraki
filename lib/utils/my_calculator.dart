@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
-class MyCalculator{
+class MyCalculator {
   // ベクトルの加算
   static List<double> addVectors(List<double> v1, List<double> v2) {
     return List.generate(v1.length, (i) => v1[i] + v2[i]);
@@ -193,6 +193,29 @@ class MyCalculator{
   static List<double> normalizeArray(List<double> array) {
     double maxVal = max(array.reduce(max).abs(), array.reduce(min).abs());
     return array.map((number) => number/maxVal).toList();
+  }
+
+  // 2点 Offset p1, Offset p2 を結ぶ直線があり、その幅が width の長方形（線を太くしたときの形）
+  static List<Offset> getRectanglePoints(Offset p1, Offset p2, double width) {
+    final dx = p2.dx - p1.dx;
+    final dy = p2.dy - p1.dy;
+    final length = sqrt(dx * dx + dy * dy);
+
+    // 法線ベクトル（垂直方向）を単位ベクトルに
+    final nx = -dy / length;
+    final ny = dx / length;
+
+    // 幅の半分だけ法線方向にオフセット
+    final offsetX = nx * width / 2;
+    final offsetY = ny * width / 2;
+
+    // 長方形の4頂点（反時計回り）
+    return [
+      Offset(p1.dx + offsetX, p1.dy + offsetY), // 左下
+      Offset(p1.dx - offsetX, p1.dy - offsetY), // 左上
+      Offset(p2.dx - offsetX, p2.dy - offsetY), // 右上
+      Offset(p2.dx + offsetX, p2.dy + offsetY), // 右下
+    ];
   }
 }
 

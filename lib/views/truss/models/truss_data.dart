@@ -1,58 +1,52 @@
 import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/utils/canvas_data.dart';
 import 'package:kozo_ibaraki/utils/my_calculator.dart';
 
-class TrussData{
-  TrussData({required this.onDebug});
-  final Function(String value) onDebug;
+class TrussData extends ChangeNotifier {
 
-  // データ
-  int elemNode = 2; // 要素節点数
+  /*
+    パラメータ
+  */
+  // ツール操作関係
+  int _typeIndex = 0; // 選択されているタイプのインデックス（0:節点、1:要素）
+  int _toolIndex = 0; // 選択されているツールのインデックス（0:新規、2修正）
+  int _resultIndex = 0; // 選択されている結果のインデックス（"変形図", "反力", "せん断力図","曲げモーメント図",）
+
   List<Node> nodeList = []; // 節点データ
   List<Elem> elemList = []; // 要素データ
-  // 追加データ
-  Node? node; // 新規節点データ
-  Elem? elem; // 新規要素データ
+
+  final double _nodeRadiusPercent = 2.0;
+  final double _elemWidthPercent = 3.0; // 要素の幅のパーセンテージ
+
+  int _selectedNumber = -1; // 選択番号
 
   bool isCalculation = false; // 解析したかどうか
-  List<double> resultList = [];
-  double resultMin = 0, resultMax = 0;
-  // 選択番号
-  int selectedNumber = -1;
 
-  // 全データ
-  List<Node> allNodeList() // 節点データ+新規節点データ
-  {
-    List<Node> n = List.empty(growable: true);
+  /*
+    ゲッター
+  */
+  // ツール操作関係
+  int get typeIndex => _typeIndex; // 選択されているタイプのインデックスを取得
+  int get toolIndex => _toolIndex; // 選択されているツールのインデックスを取得
+  int get resultIndex => _resultIndex; // 選択されている結果のインデックスを取得
 
-    for(int i = 0; i < nodeList.length; i++){
-      n.add(nodeList[i]);
+  Node getNode(int number) {
+    if (number < 0 || number >= nodeList.length) {
+      throw RangeError('Node number out of range: $number');
     }
-    if(node != null){
-      node!.isSelect = true;
-      n.add(node!);
-    }
-
-    return n;
+    return nodeList[number];
   }
-  List<Elem> allElemList() // 要素データ+新規要素データ
-  {
-    List<Elem> e = List.empty(growable: true);
-
-    for(int i = 0; i < elemList.length; i++){
-      e.add(elemList[i]);
+  
+  Elem getElem(int number) {
+    if (number < 0 || number >= elemList.length) {
+      throw RangeError('Element number out of range: $number');
     }
-    if(elem != null){
-      elem!.isSelect = true;
-      e.add(elem!);
-    }
-
-    return e;
+    return elemList[number];
   }
+
   // 節点の範囲座標
-  Rect rect(){
+  Rect get rect {
     List<Node> nodes = allNodeList();
     if(nodes.isEmpty) return Rect.zero; // 節点データがないとき終了
 
@@ -70,10 +64,113 @@ class TrussData{
       }
     }
 
+    if (left == right || top == bottom) {
+      // 範囲が0の場合、適当な範囲を設定
+      left -= 1;
+      right += 1;
+      top -= 1;
+      bottom += 1;
+    }
+
     return Rect.fromLTRB(left, top, right, bottom);
   }
+
+  double get nodeRadius {
+    if (rect.width > rect.height) {
+      return rect.width * _nodeRadiusPercent / 100;
+    } else {
+      return rect.height * _nodeRadiusPercent / 100;
+    }
+  }
+
+  double get elemWidth {
+    if (rect.width > rect.height) {
+      return rect.width * _elemWidthPercent / 100;
+    } else {
+      return rect.height * _elemWidthPercent / 100;
+    }
+  }
+
+  int get selectedNumber => _selectedNumber; // 選択番号
+
+  // データ
+  int elemNode = 2; // 要素節点数
+  // 追加データ
+  Node? node; // 新規節点データ
+  Elem? elem; // 新規要素データ
+
+  List<double> resultList = [];
+  double resultMin = 0, resultMax = 0;
+
+  // 全データ
+  List<Node> allNodeList() // 節点データ+新規節点データ
+  {
+    List<Node> n = List.empty(growable: true);
+
+    for(int i = 0; i < nodeList.length; i++){
+      n.add(nodeList[i]);
+    }
+    if(node != null){
+      n.add(node!);
+    }
+
+    return n;
+  }
+  List<Elem> allElemList() // 要素データ+新規要素データ
+  {
+    List<Elem> e = List.empty(growable: true);
+
+    for(int i = 0; i < elemList.length; i++){
+      e.add(elemList[i]);
+    }
+    if(elem != null){
+      e.add(elem!);
+    }
+
+    return e;
+  }
+  
   CanvasData canvasData = CanvasData();
 
+  /*
+    関数
+  */
+  // 選択されたタイプとツールのインデックスを変更
+  void _changeTypeAndToolIndex() {
+    node = null; // 新規節点データをリセット
+    elem = null; // 新規要素データをリセット
+    if(_typeIndex == 0 && _toolIndex == 0){
+      node = Node();
+      node!.number = nodeList.length;
+    }else if(_typeIndex == 1 && _toolIndex == 0){
+      elem = Elem();
+      elem!.number = elemList.length;
+      elem!.e = 1;
+      elem!.v = 1;
+    }
+    initSelect();
+  }
+  void changeTypeIndex(int index) {
+    _typeIndex = index;
+
+    _changeTypeAndToolIndex();
+
+    notifyListeners();
+  }
+  void changeToolIndex(int index) {
+    _toolIndex = index;
+
+    _changeTypeAndToolIndex();
+
+    notifyListeners();
+  }
+
+  // 解析結果の選択インデックスを変更
+  void changeResultIndex(int index) {
+    _resultIndex = index;
+
+    notifyListeners();
+  }
 
   // 追加削除
   void addNode(){
@@ -89,6 +186,7 @@ class TrussData{
     nodeList.add(node!);
     node = Node();
     node!.number = nodeList.length;
+    initSelect();
   }
   void removeNode(int number){
     // バグ対策
@@ -142,6 +240,7 @@ class TrussData{
     elemList.add(elem!);
     elem = Elem();
     elem!.number = elemList.length;
+    initSelect();
   }
   void removeElem(int number){
     // バグ対策
@@ -157,6 +256,43 @@ class TrussData{
   }
 
   // 解析
+  String checkCalculation(){
+    bool isPower = false;
+
+    int xyConstCount = 0;
+    int xConstCount = 0;
+    int yConstCount = 0;
+
+    for(int i = 0; i < nodeList.length; i++){
+      if(nodeList[i].constXY[0] && nodeList[i].constXY[1]){
+        xyConstCount ++;
+      }else if(nodeList[i].constXY[0]){
+        xConstCount ++;
+      }else if(nodeList[i].constXY[1]){
+        yConstCount ++;
+      }
+
+      if((!nodeList[i].constXY[0] && nodeList[i].loadXY[0] != 0)
+        || (!nodeList[i].constXY[1] && nodeList[i].loadXY[1] != 0)){
+          isPower = true;
+      }
+    }
+
+    if(elemList.length < 3){
+      return "節点と要素はそれぞれ3つ以上必要";
+    }else if(!(xyConstCount > 0 && (xConstCount > 0 || yConstCount > 0))){
+      return "拘束条件が不足";
+    }else if(!isPower){
+      return "荷重条件が不足";
+    }else{
+      if(resultIndex == 0){
+        selectResult(resultIndex);
+      }else{
+        selectResult(5);
+      }
+      return ""; // 問題なし
+    }
+  }
   void calculation(){
     // バグ対策
     if(nodeList.isEmpty) return;
@@ -272,7 +408,11 @@ class TrussData{
       elemList[i].stlessXY[0] = elemList[i].e * elemList[i].strainXY[0];
     }
 
+    node = null; // 新規節点データをリセット
+    elem = null; // 新規要素データをリセット
+    _selectedNumber = -1; // 選択番号をリセット
     isCalculation = true;
+    notifyListeners();
   }
   void resetCalculation(){
     for(int i = 0; i < elemList.length; i++){
@@ -284,7 +424,9 @@ class TrussData{
       }
     }
 
+    changeTypeIndex(typeIndex);
     isCalculation = false;
+    notifyListeners();
   }
   void selectResult(int num){ // 結果
     resultList = List.filled(elemList.length, 0);
@@ -322,72 +464,47 @@ class TrussData{
   }
 
   // キャンバスに要素があるか
-  void updateCanvasPos(Rect canvasRect, double nodeRadius, double elemWidth){
-    canvasData.setScale(canvasRect, rect());
-
-    List<Node> nodes = allNodeList();
-    double maxx = 0;
-    for(int i = 0; i < nodes.length; i++){
-      maxx = max(maxx, nodes[i].becPos.dx.abs());
-      maxx = max(maxx, nodes[i].becPos.dy.abs());
-    }
-    for(int i = 0; i < nodes.length; i++){
-      nodes[i].canvasRadius = nodeRadius*5;
-      nodes[i].canvasPos = canvasData.dToC(nodes[i].pos);
-      nodes[i].canvasAfterPos = nodes[i].canvasPos + Offset(nodes[i].becPos.dx, -nodes[i].becPos.dy)/maxx*canvasData.percentToCWidth(20);
-    }
-    List<Elem> elems = allElemList();
-    for(int i = 0; i < elems.length; i++){
-      if(elems[i].nodeList[0] != null && elems[i].nodeList[1] != null){
-        var p = MyCalculator.angleRectanglePos(elems[i].nodeList[0]!.canvasPos, elems[i].nodeList[1]!.canvasPos, elemWidth*5);
-        elems[i].canvasPosList[0] = p.$1;
-        elems[i].canvasPosList[1] = p.$2;
-        elems[i].canvasPosList[2] = p.$3;
-        elems[i].canvasPosList[3] = p.$4;
-      }
-    }
-  }
   void initSelect(){
-    selectedNumber = -1;
-    for(int i = 0; i < elemList.length; i++){
-      elemList[i].isSelect = false;
-    }
-    for(int i = 0; i < nodeList.length; i++){
-      nodeList[i].isSelect = false;
+    _selectedNumber = -1;
+
+    if (node != null) {
+      _selectedNumber = node!.number; // 新規節点の選択番号を設定
+    } else if (elem != null) {
+      _selectedNumber = elem!.number; // 新規要素の選択番号を設定
     }
   }
-  void selectElem(Offset pos){
+  void selectElem(Offset pos) {
     initSelect();
 
-    for(int i = 0; i < elemList.length; i++){
-      List<Offset> nodePosList = List.empty(growable: true);
-      for(int j = 0; j < elemNode; j++){
+    for (int i = 0; i < elemList.length; i++) {
+      List<Offset> nodePosList = [];
+      for (int j = 0; j < 2; j++) {
         nodePosList.add(elemList[i].nodeList[j]!.pos);
       }
 
-      Offset p0 = elemList[i].canvasPosList[0];
-      Offset p1 = elemList[i].canvasPosList[1];
-      Offset p2 = elemList[i].canvasPosList[2];
-      Offset p3 = elemList[i].canvasPosList[3];
+      List<Offset> p = MyCalculator.getRectanglePoints(nodePosList[0], nodePosList[1], elemWidth);
 
-      if(MyCalculator.isPointInRectangle(pos, p0, p1, p2, p3)){
-        selectedNumber = i;
-        elemList[i].isSelect = true;
-        return;
+      if(MyCalculator.isPointInRectangle(pos, p[0], p[1], p[2], p[3])){
+        _selectedNumber = i;
+        break;
       }
     }
+
+    notifyListeners();
   }
   void selectNode(Offset pos){
     initSelect();
 
     for(int i = 0; i < nodeList.length; i++){
-      double dis = (nodeList[i].canvasPos - pos).distance;
-      if(dis <= nodeList[i].canvasRadius){
-        selectedNumber = i;
-        nodeList[i].isSelect = true;
+      double dis = (nodeList[i].pos - pos).distance;
+      if(dis <= nodeRadius){
+        _selectedNumber = i;
+        
         break;
       }
     }
+
+    notifyListeners();
   }
 }
 
@@ -405,9 +522,6 @@ class Node{
 
   // キャンバス情報
   double canvasRadius = 10;
-  Offset canvasPos = Offset.zero;
-  Offset canvasAfterPos = Offset.zero;
-  bool isSelect = false; // 選択されているか
 }
 
 class Elem{
@@ -420,8 +534,4 @@ class Elem{
   // 計算結果
   List<double> strainXY = [0,0,0]; // 0:X方向ひずみ、1:Y方向ひずみ、2:せん断ひずみ
   List<double> stlessXY = [0,0,0,0,0,0,0]; // 0:X方向応力、1:Y方向応力、2:せん断応力、3:最大主応力、4:最小主応力、5:曲げモーメント左、6:曲げモーメント右
-
-  // キャンバス情報
-  List<Offset> canvasPosList = [Offset.zero, Offset.zero, Offset.zero, Offset.zero];
-  bool isSelect = false; // 選択されているか
 }
