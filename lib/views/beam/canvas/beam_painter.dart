@@ -1,45 +1,10 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/components/my_painter.dart';
-import 'package:kozo_ibaraki/utils/canvas_data.dart';
-import '../../../constants/constant.dart';
+
+import '../../../components/my_painter.dart';
+import '../../../utils/canvas_data.dart';
 import '../models/beam_data.dart';
-
-
-class BeamCanvas extends StatelessWidget {
-  const BeamCanvas({super.key, required this.controller, required this.devTypeNum, required this.isSumaho});
-
-  final BeamData controller;
-  final int devTypeNum;
-  final bool isSumaho;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: MyColors.canvasBackground,
-      child: GestureDetector(
-        onTapDown: (details) {
-          if(!controller.isCalculation){
-            if(controller.getToolIndex == 1){
-              if(controller.getTypeIndex == 0){
-                controller.selectNode(details.localPosition);
-              }
-              else if(controller.getTypeIndex == 1){
-                controller.selectElem(details.localPosition);
-              }
-            }
-          }
-        },
-        child: CustomPaint(
-          painter: BeamPainter(data: controller, devTypeNum: devTypeNum, isSumaho: isSumaho),
-        ),
-      ),
-    );
-  }
-}
-
 
 class BeamPainter extends CustomPainter {
   const BeamPainter({required this.data, required this.devTypeNum, required this.isSumaho});
@@ -267,7 +232,7 @@ class BeamPainter extends CustomPainter {
   // 拘束
   void _drawConst(List<Node> nodes, Rect dataRect, Rect rect, Canvas canvas) {
     // バグ対策
-    if(nodes.isEmpty){
+    if (nodes.isEmpty) {
       return;
     }
 
@@ -276,29 +241,29 @@ class BeamPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2;
 
-    if(rect.height > 300) {
+    if (rect.height > 300) {
       rect = Rect.fromLTRB(rect.left, rect.center.dy-150, rect.right, rect.center.dy+150);
     }
 
-    for(int i = 0; i < nodes.length; i++){
+
+    for (int i = 0; i < nodes.length; i++) {
       paint.style = PaintingStyle.fill;
-      if(nodes[i].constXYR[0] && nodes[i].constXYR[1] && nodes[i].constXYR[2]){ // 壁
-        if(nodes[i].pos.dx <= dataRect.center.dx){
+      if (nodes[i].constXYR[0] && nodes[i].constXYR[1] && nodes[i].constXYR[2]) { // 壁
+        if (nodes[i].pos.dx <= dataRect.center.dx) {
           Offset cpos = nodes[i].canvasPos;
           paint.color = const Color.fromARGB(255, 181, 181, 181);
           canvas.drawRect(Rect.fromLTRB(cpos.dx-rect.height/5, rect.top, cpos.dx, rect.bottom), paint);
           paint.color = Colors.black;
           canvas.drawLine(Offset(cpos.dx, rect.top), Offset(cpos.dx, rect.bottom), paint);
         }
-        else{
+        else {
           Offset cpos = nodes[i].canvasPos;
           paint.color = const Color.fromARGB(255, 181, 181, 181);
           canvas.drawRect(Rect.fromLTRB(cpos.dx, rect.top, cpos.dx+rect.height/5, rect.bottom), paint);
           paint.color = Colors.black;
           canvas.drawLine(Offset(cpos.dx, rect.top), Offset(cpos.dx, rect.bottom), paint);
-          break;
         }
-      }else if(nodes[i].constXYR[1]){ // 三角
+      } else if (nodes[i].constXYR[1]) { // 三角
         Offset cpos = nodes[i].canvasPos;
         paint.style = PaintingStyle.stroke;
         Path path = Path();
@@ -308,7 +273,7 @@ class BeamPainter extends CustomPainter {
         path.close();
         canvas.drawPath(path, paint);
 
-        if(!nodes[i].constXYR[0]){ // 下線
+        if (!nodes[i].constXYR[0]) { // 下線
           canvas.drawLine(Offset(cpos.dx-20, cpos.dy+30), Offset(cpos.dx+20, cpos.dy+30), paint);
         }
       }

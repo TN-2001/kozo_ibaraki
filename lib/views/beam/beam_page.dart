@@ -6,7 +6,7 @@ import 'package:kozo_ibaraki/views/common/common_drawer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../components/component.dart';
 import '../../utils/status_bar.dart';
-import 'canvas/beam_painter.dart';
+import 'canvas/beam_canvas.dart';
 import 'models/beam_data.dart';
 import 'ui/beam_bar.dart';
 

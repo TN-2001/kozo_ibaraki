@@ -226,6 +226,11 @@ import 'dart:math';
   //-----------------------------------------------------------------------------------------------
 
   // 対角スケーリング
+  for (int i = 0; i < neq; i++) {
+    cgw1[i] = 0.0;
+    cgw2[i] = 0.0;
+    diag[i] = 0.0;
+  }
   for (int ie = 0; ie < nelx2; ie++) {
     for (int io = 0; io < node; io++) {
       int ic = ijke[ie][io];
@@ -406,6 +411,9 @@ import 'dart:math';
     for(int j = 0; j < node; j++){
       result[i][j*2] = disp[mhng[i][j][0]]; //たわみ
       result[i][j*2+1] = disp[mhng[i][j][1]]; // たわみ角
+      if ((result[i][j*2+1]).abs() < 1e-10) {
+        result[i][j*2+1] = 0.0; // たわみ角が小さい場合は0にする
+      }
     }
     result[i][4] = fint[i][0]; // せん断力
     result[i][5] = fint[i][1]; // 曲げモーメント
@@ -420,7 +428,6 @@ import 'dart:math';
     if (mfix[ix][2] == 1 && mfix[ix][3] == 0) {
       freaResult[ix][1] = frea[ndof * ix+1]; // 反力M
     }
-    
   }
 
   return (xyzn, dispY, ijke, result, freaResult);
