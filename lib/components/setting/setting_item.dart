@@ -7,10 +7,12 @@ class SettingItem extends StatelessWidget {
     super.key,
     this.label,
     this.child,
+    this.fieldFlex,
   });
 
   final String? label;
   final Widget? child;
+  final int? fieldFlex;
 
 
   @override
@@ -20,12 +22,26 @@ class SettingItem extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
-          const SizedBox(width: MyDimens.baseSpacing,),
-          Text(label ?? ""),
+          Expanded(
+            flex: 1,
+            child: Container(
+              padding: const EdgeInsets.only(
+                left: MyDimens.baseSpacing,
+                right: MyDimens.baseSpacing,
+              ),
+              child: Text(
+                label ?? "",
+                style: const TextStyle(
+                  fontSize: MyDimens.baseFontSize,
+                )
+              ),
+            ),
+          ),
           
-          const Expanded(child: SizedBox()),
-
-          child ?? const SizedBox(),
+          Expanded(
+            flex: fieldFlex ?? 3,
+            child: child ?? const SizedBox(),
+          ),
         ],
       ),
     );

@@ -15,7 +15,7 @@ class BaseTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: width ?? 200,
+      width: width,
       height: MyDimens.baseTextButtonHeight, // fontSize + contentPadding
 
       child: TextField(
