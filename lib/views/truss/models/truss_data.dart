@@ -4,6 +4,11 @@ import 'package:kozo_ibaraki/utils/my_calculator.dart';
 import 'package:kozo_ibaraki/views/truss/models/truss2d.dart';
 
 class TrussData extends ChangeNotifier {
+  TrussData() {
+    node = Node();
+    node!.number = nodeList.length;
+    initSelect();
+  }
 
   /*
     パラメータ
