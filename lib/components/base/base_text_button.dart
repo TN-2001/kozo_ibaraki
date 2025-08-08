@@ -21,6 +21,7 @@ class BaseTextButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(MyDimens.baseButtonBorderRadius),
         ),
 
+        padding: const EdgeInsets.all(0),
         textStyle: const TextStyle(
           fontSize: MyDimens.baseFontSize,
           letterSpacing: 0,
