@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../../components/component.dart';
 import '../../../constants/constant.dart';
@@ -22,7 +24,57 @@ class _BridgegameBarState extends State<BridgegameBar> {
 
 
   void _onPressedMenuButton() {
-    _scaffoldKey.currentState?.openDrawer();
+    if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+      _scaffoldKey.currentState?.openDrawer();
+      return;
+    } else {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog.fullscreen(
+            backgroundColor: MyColors.baseBackground,
+
+            child: Column(
+              children: [
+                ToolBar(
+                  children: [
+                    ToolIconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      }, 
+                      icon: const Icon(Icons.keyboard_arrow_left_sharp),
+                      message: "戻る",
+                    ),
+                  ]
+                ),
+
+                const BaseDivider(),
+
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Center(
+                      child: Container(
+                        constraints: const BoxConstraints(maxWidth: 1080),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 10),
+                            Image.asset("assets/images/help/help_01.png"),
+                            const SizedBox(height: 10),
+                            Image.asset("assets/images/help/help_02.png"),
+                            const SizedBox(height: 10),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      );
+      return;
+    }
   }
 
   void _onPressedToolToggle(int index) {
