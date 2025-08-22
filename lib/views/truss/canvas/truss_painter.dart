@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/components/my_painter.dart';
-
 import '../../../utils/camera.dart';
+import '../../../utils/my_painter.dart';
 import '../models/truss_data.dart';
 
 

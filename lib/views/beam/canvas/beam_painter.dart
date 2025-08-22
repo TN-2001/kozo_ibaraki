@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import '../../../components/my_painter.dart';
+import '../../../utils/my_painter.dart';
 import '../../../utils/canvas_data.dart';
 import '../models/beam_data.dart';
 

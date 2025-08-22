@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../components/component.dart';
-import '../../../components/my_painter.dart';
+import '../../../utils/my_painter.dart';
 import '../../../constants/constant.dart';
 import '../models/truss_data.dart';
 

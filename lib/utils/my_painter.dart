@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/utils/my_calculator.dart';
+import 'my_calculator.dart';
 
 class MyPainter
 {

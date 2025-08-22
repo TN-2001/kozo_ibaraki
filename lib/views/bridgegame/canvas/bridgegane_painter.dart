@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../components/my_painter.dart';
+import '../../../utils/my_painter.dart';
 import '../../../utils/camera.dart';
 import '../models/bridgegame_controller.dart';
 
