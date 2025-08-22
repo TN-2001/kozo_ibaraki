@@ -31,7 +31,7 @@ class TrussPainter extends CustomPainter {
     camera.init(
       scale,
       data.rect.center,
-      Offset(screenWidth / 2, screenHeight / 2),
+      Offset(screenWidth / 2, screenHeight * 0.4),
     );
 
     List<Node> nodes = data.allNodeList();
@@ -39,60 +39,97 @@ class TrussPainter extends CustomPainter {
 
     if (!data.isCalculation) {
       _drawElem(canvas, size, elems, false); // 要素
-      _drawConst(canvas, size, nodes); // 節点拘束拘束
-      _drawPower(canvas, size, nodes); // 接点荷重
+      _drawConst(canvas, size, nodes, false); // 節点拘束拘束
+      _drawPower(canvas, size, nodes, false); // 節点荷重
       _drawNode(canvas, size, nodes, false); // 節点
       _drawNodeNumber(canvas, size, nodes); // 節点番号
     }
-    else{
-      _drawElem(canvas, size, elems, true); // 要素
+    else {
+      if (data.resultIndex <= 2) {
+        _drawElem(canvas, size, elems, true); // 要素
+      } else {
+        _drawElem(canvas, size, elems, true, isNormalColor: true); // 要素（節点結果表示時）
+      }
+      _drawConst(canvas, size, nodes, true); // 節点拘束拘束
+      _drawPower(canvas, size, nodes, true); // 節点荷重
       _drawNode(canvas, size, nodes, true); // 節点
 
-      if(size.width > size.height){
-        Rect cRect = Rect.fromLTRB(size.width - 85, 50, size.width - 60, size.height - 50);
-        if(cRect.height > 500){
-          cRect = Rect.fromLTRB(cRect.left, size.height/2-250, cRect.right, size.height/2+250);
+      if (data.resultIndex <= 2) {
+        // 要素の結果
+        for(int i = 0; i < data.elemList.length; i++){
+          if(data.elemNode == 2){
+            Offset pos1 = data.elemList[i].nodeList[0]!.afterPos;
+            Offset pos2 = data.elemList[i].nodeList[1]!.afterPos;
+            MyPainter.text(canvas, 
+              camera.worldToScreen(Offset((pos1.dx+pos2.dx)/2, (pos1.dy+pos2.dy)/2)),
+              MyPainter.doubleToString(data.resultList[i], 3), 14, Colors.black, true, size.width, alignment: Alignment.center);
+          }
         }
-        // 虹色
-        MyPainter.rainbowBand(canvas, cRect, 50);
-
-        // 最大最小
-        MyPainter.text(canvas, Offset(cRect.right+5, cRect.top-10), 
-          MyPainter.doubleToString(data.resultMax, 3), 14, Colors.black, false, size.width);
-        MyPainter.text(canvas, Offset(cRect.right+5, cRect.bottom-10), 
-          MyPainter.doubleToString(data.resultMin, 3), 14, Colors.black, false, size.width);
-      }else{
-        Rect cRect = Rect.fromLTRB(50, size.height - 75, size.width - 50, size.height - 50);
-        if(cRect.width > 500){
-          cRect = Rect.fromLTRB(size.width/2-250, cRect.top, size.width/2+250, cRect .bottom);
+      } else if (data.resultIndex == 3) {
+        // 変位
+        for(int i = 0; i < data.nodeCount; i++){
+          Node node = data.getNode(i);
+          String text = "";
+          if (node.becPos.dx != 0) {
+            text = "x：${MyPainter.doubleToString(node.becPos.dx, 3)}";
+          }
+          if (node.becPos.dy != 0) {
+            if (text.isNotEmpty) {
+              text += "\n";
+            }
+            text += "y：${MyPainter.doubleToString(node.becPos.dy, 3)}";
+          }
+          MyPainter.text(canvas, camera.worldToScreen(node.afterPos), text, 16, Colors.black, true, size.width);
         }
-        // 虹色
-        MyPainter.rainbowBand(canvas, cRect, 50);
+      } else if (data.resultIndex == 4) {
+        // 反力
+        for (int i = 0; i < data.nodeCount; i++) {
+          Node node = data.getNode(i);
+          if (node.result[0] != 0) {
+            String text = MyPainter.doubleToString(node.result[0].abs(), 3);
+            if (node.pos.dx <= data.rect.center.dx) {
+              Offset left = camera.worldToScreen(Offset(node.afterPos.dx - data.nodeRadius * 8, node.afterPos.dy));
+              Offset right = camera.worldToScreen(Offset(node.afterPos.dx - data.nodeRadius * 3, node.afterPos.dy));
+              if (node.result[0] > 0) {
+                MyPainter.arrow(left, right, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+              } else {
+                MyPainter.arrow(right, left, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+              }
+              MyPainter.text(canvas, left, text, 16, Colors.black, true, size.width, alignment: Alignment.centerRight);
+            } else {
+              Offset left = camera.worldToScreen(Offset(node.afterPos.dx + data.nodeRadius * 3, node.afterPos.dy));
+              Offset right = camera.worldToScreen(Offset(node.afterPos.dx + data.nodeRadius * 8, node.afterPos.dy));
+              if (node.result[0] > 0) {
+                MyPainter.arrow(left, right, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+              } else {
+                MyPainter.arrow(right, left, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+              }
+              MyPainter.text(canvas, right, text, 16, Colors.black, true, size.width, alignment: Alignment.centerLeft);
+            }
+          }
 
-        // 最大最小
-        MyPainter.text(canvas, Offset(cRect.right-20, cRect.bottom), 
-          MyPainter.doubleToString(data.resultMax, 3), 14, Colors.black, false, size.width);
-        MyPainter.text(canvas, Offset(cRect.left-20, cRect.bottom), 
-          MyPainter.doubleToString(data.resultMin, 3), 14, Colors.black, false, size.width);
-      }
-
-      // 値
-      for(int i = 0; i < data.elemList.length; i++){
-        if(data.elemNode == 2){
-          Offset pos1 = data.elemList[i].nodeList[0]!.afterPos;
-          Offset pos2 = data.elemList[i].nodeList[1]!.afterPos;
-          MyPainter.text(canvas, 
-            camera.worldToScreen(Offset((pos1.dx+pos2.dx)/2, (pos1.dy+pos2.dy)/2)),
-            MyPainter.doubleToString(data.resultList[i], 3), 14, Colors.black, true, size.width);
-        }
-      }
-
-      // 変位
-      for(int i = 0; i < data.nodeList.length; i++){
-        if(data.nodeList[i].loadXY[0] != 0 || data.nodeList[i].loadXY[1] != 0){
-          String text = "変位\nx：${MyPainter.doubleToString(data.nodeList[i].becPos.dx, 3)}";
-          text += "\ny：${MyPainter.doubleToString(data.nodeList[i].becPos.dy, 3)}";
-          MyPainter.text(canvas, camera.worldToScreen(data.nodeList[i].afterPos), text, 16, Colors.black, true, size.width);
+          if (node.result[1] != 0) {
+            String text = MyPainter.doubleToString(node.result[1].abs(), 3);
+            if (node.pos.dy <= data.rect.center.dy) {
+              Offset bottom = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy - data.nodeRadius * 8));
+              Offset top = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy - data.nodeRadius * 3));
+              if (node.result[1] > 0) {
+                MyPainter.arrow(bottom, top, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+              } else {
+                MyPainter.arrow(top, bottom, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+              }
+              MyPainter.text(canvas, bottom, text, 16, Colors.black, true, size.width, alignment: Alignment.topCenter);
+            } else {
+              Offset bottom = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy + data.nodeRadius * 3));
+              Offset top = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy + data.nodeRadius * 8));
+              if (node.result[1] > 0) {
+                MyPainter.arrow(bottom, top, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+              } else {
+                MyPainter.arrow(top, bottom, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+              }
+              MyPainter.text(canvas, top, text, 16, Colors.black, true, size.width, alignment: Alignment.bottomCenter);
+            }
+          }
         }
       }
     }
@@ -117,7 +154,7 @@ class TrussPainter extends CustomPainter {
 
       // 丸を描画
       paint.style = PaintingStyle.fill;
-      paint.color = const Color.fromARGB(255, 234, 234, 234);
+      paint.color = const Color.fromARGB(255, 255, 255, 255);
       canvas.drawCircle(camera.worldToScreen(pos), data.nodeRadius * camera.scale, paint);
 
       // 丸枠を描画
@@ -151,7 +188,7 @@ class TrussPainter extends CustomPainter {
   }
 
   // 拘束
-  void _drawConst(Canvas canvas, Size size, List<Node> nodes) {
+  void _drawConst(Canvas canvas, Size size, List<Node> nodes, bool isAfter) {
     // バグ対策
     if(nodes.isEmpty){
       return;
@@ -164,6 +201,9 @@ class TrussPainter extends CustomPainter {
 
     for(int i = 0; i < nodes.length; i++){
       Offset pos = nodes[i].pos;
+      if(isAfter){
+        pos = nodes[i].afterPos;
+      }
       if(nodes[i].constXY[0]){
         if(pos.dx > data.rect.center.dx){
           canvas.drawCircle(camera.worldToScreen(Offset(pos.dx+data.nodeRadius*1.7, pos.dy)), data.nodeRadius * camera.scale * 0.75, paint);
@@ -202,7 +242,7 @@ class TrussPainter extends CustomPainter {
   }
 
   // 荷重
-  void _drawPower(Canvas canvas, Size size, List<Node> nodes) {  
+  void _drawPower(Canvas canvas, Size size, List<Node> nodes, bool isAfter) {  
     // バグ対策
     if(nodes.isEmpty){
       return;
@@ -210,37 +250,40 @@ class TrussPainter extends CustomPainter {
   
     for(int i = 0; i < nodes.length; i++){
       Offset pos = nodes[i].pos;
+      if(isAfter){
+        pos = nodes[i].afterPos;
+      }
       if(nodes[i].loadXY[0] != 0){
         if(nodes[i].loadXY[0] < 0){
           MyPainter.arrow(
             camera.worldToScreen(Offset(pos.dx-data.nodeRadius, pos.dy)), 
-            camera.worldToScreen(Offset(pos.dx-data.nodeRadius*4, pos.dy)), 
-            data.nodeRadius * camera.scale / 3, const Color.fromARGB(255, 0, 63, 95), canvas);
+            camera.worldToScreen(Offset(pos.dx-data.nodeRadius*6, pos.dy)), 
+            data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 0, 63, 95), canvas);
         }else{
           MyPainter.arrow(
             camera.worldToScreen(Offset(pos.dx+data.nodeRadius, pos.dy)), 
-            camera.worldToScreen(Offset(pos.dx+data.nodeRadius*4, pos.dy)), 
-            data.nodeRadius * camera.scale / 3, const Color.fromARGB(255, 0, 63, 95), canvas);
+            camera.worldToScreen(Offset(pos.dx+data.nodeRadius*6, pos.dy)), 
+            data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 0, 63, 95), canvas);
         }
       }
-      if(nodes[i].loadXY[1] != 0){
-        if(nodes[i].loadXY[1] > 0){
-          MyPainter.arrow(
-            camera.worldToScreen(Offset(pos.dx, pos.dy-data.nodeRadius)), 
-            camera.worldToScreen(Offset(pos.dx, pos.dy-data.nodeRadius*4)), 
-            data.nodeRadius * camera.scale / 3, const Color.fromARGB(255, 0, 63, 95), canvas);
-        }else{
+      if (nodes[i].loadXY[1] != 0) {
+        if (nodes[i].loadXY[1] > 0) {
           MyPainter.arrow(
             camera.worldToScreen(Offset(pos.dx, pos.dy+data.nodeRadius)), 
-            camera.worldToScreen(Offset(pos.dx, pos.dy+data.nodeRadius*4)), 
-            data.nodeRadius * camera.scale / 3, const Color.fromARGB(255, 0, 63, 95), canvas);
+            camera.worldToScreen(Offset(pos.dx, pos.dy+data.nodeRadius*6)), 
+            data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 0, 63, 95), canvas);
+        } else {
+          MyPainter.arrow(
+            camera.worldToScreen(Offset(pos.dx, pos.dy-data.nodeRadius)), 
+            camera.worldToScreen(Offset(pos.dx, pos.dy-data.nodeRadius*6)), 
+            data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 0, 63, 95), canvas);
         }
       }
     }
   }
 
   // 要素
-  void _drawElem(Canvas canvas, Size size, List<Elem> elems, bool isAfter) {
+  void _drawElem(Canvas canvas, Size size, List<Elem> elems, bool isAfter, {bool isNormalColor = false}) {
     // バグ対策
     if (elems.isEmpty) {
       return;
@@ -251,20 +294,22 @@ class TrussPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = data.elemWidth * camera.scale;
 
-    for(int i = 0; i < elems.length; i++){
-      if(elems[i].nodeList[0] != null && elems[i].nodeList[1] != null){
+    for (int i = 0; i < elems.length; i++) {
+      if (elems[i].nodeList[0] != null && elems[i].nodeList[1] != null) {
         Offset pos1 = Offset.zero;
         Offset pos2 = Offset.zero;
-        if(isAfter){
+        if (isAfter) {
           pos1 = elems[i].nodeList[0]!.afterPos;
           pos2 = elems[i].nodeList[1]!.afterPos;
-          paint.color = MyPainter.getColor((data.resultList[i] - data.resultMin) / (data.resultMax - data.resultMin) * 100);
-        }else{
+          if (!isNormalColor) {
+            paint.color = MyPainter.getColor((data.resultList[i] - data.resultMin) / (data.resultMax - data.resultMin) * 100);
+          }
+        } else {
           pos1 = elems[i].nodeList[0]!.pos;
           pos2 = elems[i].nodeList[1]!.pos;
-          if(elems[i].number == data.selectedNumber && data.typeIndex == 1){
+          if (elems[i].number == data.selectedNumber && data.typeIndex == 1) {
             paint.color = Colors.red;
-          }else{
+          } else {
             paint.color = const Color.fromARGB(255, 86, 86, 86);
           }
         }

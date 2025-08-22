@@ -31,8 +31,8 @@ class _TrussCanvasState extends State<TrussCanvas> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // final double width = constraints.maxWidth;
-        // final double height = constraints.maxHeight;
+        final double width = constraints.maxWidth;
+        final double height = constraints.maxHeight;
         // final double worldWidth = _controller.rect.width;
         // final double worldHeight = _controller.rect.height;
 
@@ -52,28 +52,28 @@ class _TrussCanvasState extends State<TrussCanvas> {
         //   Offset(constraints.maxWidth / 2, constraints.maxHeight / 2),
         // );
 
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: MyColors.canvasBackground,
-      child: GestureDetector(
-        onTapUp: (details) {
-          if(!_controller.isCalculation){
-            if(_controller.toolIndex == 1){
-              if(_controller.typeIndex == 0){
-                _controller.selectNode(_camera.screenToWorld(details.localPosition));
+        return Container(
+          width: width,
+          height: height,
+          color: MyColors.canvasBackground,
+          child: GestureDetector(
+            onTapUp: (details) {
+              if(!_controller.isCalculation){
+                if(_controller.toolIndex == 1){
+                  if(_controller.typeIndex == 0){
+                    _controller.selectNode(_camera.screenToWorld(details.localPosition));
+                  }
+                  else if(_controller.typeIndex == 1){
+                    _controller.selectElem(_camera.screenToWorld(details.localPosition));
+                  }
+                }
               }
-              else if(_controller.typeIndex == 1){
-                _controller.selectElem(_camera.screenToWorld(details.localPosition));
-              }
-            }
-          }
-        },
-        child: CustomPaint(
-          painter: TrussPainter(data: _controller, camera: _camera),
-        ),
-      ),
-    );
+            },
+            child: CustomPaint(
+              painter: TrussPainter(data: _controller, camera: _camera),
+            ),
+          ),
+        );
       },
     );
   }

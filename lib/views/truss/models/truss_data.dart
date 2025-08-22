@@ -181,6 +181,8 @@ class TrussData extends ChangeNotifier {
         resultList[i] = elemList[i].result[0];
       } else if (index == 1) {
         resultList[i] = elemList[i].result[1];
+      } else if (index == 2) {
+        resultList[i] = elemList[i].result[2];
       }
     }
 
@@ -303,9 +305,9 @@ class TrussData extends ChangeNotifier {
       }
     }
 
-    if(elemList.length < 3){
-      return "節点と要素はそれぞれ3つ以上必要";
-    }else if(!(xyConstCount > 0 && (xConstCount > 0 || yConstCount > 0))){
+    if(elemList.length < 2){
+      return "節点か要素が不足";
+    }else if(!(xyConstCount > 0 && (xyConstCount + xConstCount + yConstCount) >= 2)){
       return "拘束条件が不足";
     }else if(!isPower){
       return "荷重条件が不足";
@@ -382,21 +384,27 @@ class TrussData extends ChangeNotifier {
     for (int ix = 0; ix < nx; ix++) {
       Node node = getNode(ix);
       node.afterPos = Offset(
-        node.pos.dx + node.becPos.dx / maxDisp * rectWidth / 4,
-        node.pos.dy + node.becPos.dy / maxDisp * rectWidth / 4,
+        node.pos.dx + node.becPos.dx / maxDisp * rectWidth / 8,
+        node.pos.dy + node.becPos.dy / maxDisp * rectWidth / 8,
       );
     }
     
     // 軸力
     for (int ie = 0; ie < nelx; ie++) {
       Elem elem = getElem(ie);
-      elem.result[0] = fint[ie] / prop[ie][1];
+      elem.result[0] = fint[ie];
+    }
+
+    // 応力（軸方向）
+    for (int ie = 0; ie < nelx; ie++) {
+      Elem elem = getElem(ie);
+      elem.result[1] = fint[ie] / prop[ie][1];
     }
 
     // ひずみ
     for(int ie = 0; ie < nelx; ie++){
       Elem elem = getElem(ie);
-      elem.result[1] = elem.result[0] / prop[ie][0];
+      elem.result[2] = elem.result[0] / prop[ie][0];
     }
     
     // 反力
@@ -486,5 +494,5 @@ class Elem {
   List<Node?> nodeList = [null, null];
 
   // 計算結果
-  List<double> result = [0,0]; // 0:軸力、1:ひずみ
+  List<double> result = [0,0,0]; // 0:軸力、1:応力、2:ひずみ
 }

@@ -172,9 +172,22 @@ class MyPainter
   }
 
   // 文字
-  static void text(Canvas canvas, Offset offset, String text, double fontSize, Color color, bool isOutline, double width) {
+  static void text(
+    Canvas canvas, 
+    Offset offset, 
+    String text, 
+    double fontSize, 
+    Color color, 
+    bool isOutline, 
+    double width,
+    {Alignment alignment = Alignment.topLeft}) {
+  
+    Offset alignOffset(Offset base, TextPainter tp, Alignment align) {
+      return base - Offset(tp.width * (align.x + 1) / 2, tp.height * (align.y + 1) / 2);
+    }
+
     if(isOutline) {
-      final textSpan1 = TextSpan(
+      final textSpanOutline = TextSpan(
         text: text,
         style: TextStyle(
           foreground: Paint()
@@ -185,15 +198,15 @@ class MyPainter
           fontSize: fontSize,
         ),
       );
-      final textPainter1 = TextPainter(
-        text: textSpan1,
+      final textPainterOutline = TextPainter(
+        text: textSpanOutline,
         textDirection: TextDirection.ltr,
       );
-      textPainter1.layout(
+      textPainterOutline.layout(
         minWidth: 0,
         maxWidth: width,
       );
-      textPainter1.paint(canvas, offset);
+      textPainterOutline.paint(canvas, alignOffset(offset, textPainterOutline, alignment));
     }
     
     final textSpan = TextSpan(
@@ -211,7 +224,7 @@ class MyPainter
       minWidth: 0,
       maxWidth: width,
     );
-    textPainter.paint(canvas, offset);
+    textPainter.paint(canvas, alignOffset(offset, textPainter, alignment));
   }
 
   // 正三角形

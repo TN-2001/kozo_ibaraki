@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/views/truss/ui/truss_canvas_ui.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../components/component.dart';
@@ -113,6 +114,8 @@ class _TrussPageState extends State<TrussPage> {
                 child: Stack(
                   children: [
                     TrussCanvas(controller: _controller),
+
+                    TrussCanvasUi(controller: _controller),
 
                     TrussSettingWindow(controller: _controller),
                   ]

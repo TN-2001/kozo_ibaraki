@@ -64,7 +64,12 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
         left: MyDimens.baseSpacing,
         right: MyDimens.baseSpacing,
       ),
-      child: Text(text),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: MyDimens.baseFontSize,
+        ),
+      ),
     );
   }
 
