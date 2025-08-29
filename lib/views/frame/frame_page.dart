@@ -4,6 +4,7 @@ import 'package:kozo_ibaraki/views/frame/models/frame_controller.dart';
 import '../../components/component.dart';
 import '../../utils/status_bar.dart';
 import '../common/common_drawer.dart';
+import 'canvas/frame_canvas.dart';
 import 'ui/frame_bar.dart';
 
 
@@ -79,7 +80,7 @@ class _FramePageState extends State<FramePage> {
               Expanded(
                 child: Stack(
                   children: [
-                    // TrussCanvas(controller: _controller),
+                    FrameCanvas(controller: _controller),
 
                     // TrussCanvasUi(controller: _controller),
 

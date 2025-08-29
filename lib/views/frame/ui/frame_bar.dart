@@ -61,14 +61,14 @@ class _FrameBarState extends State<FrameBar> {
     setState(() {
       _selectedTypeIndex = index;
     });
-    // _controller.changeTypeIndex(_selectedTypeIndex);
+    _controller.changeTypeIndex(_selectedTypeIndex);
   }
 
   void _onPressedToolToggle(int index) {
     setState(() {
       _selectedToolIndex = index;
     });
-    // _controller.changeToolIndex(_selectedToolIndex);
+    _controller.changeToolIndex(_selectedToolIndex);
   }
 
   Future<void> _onPressedAnalysisButton() async {
@@ -91,7 +91,7 @@ class _FrameBarState extends State<FrameBar> {
     setState(() {
       _selectedResultIndex = index;
     });
-    // _controller.changeResultIndex(_selectedResultIndex);
+    _controller.changeResultIndex(_selectedResultIndex);
   }
 
   void _onPressedEditButton() {
