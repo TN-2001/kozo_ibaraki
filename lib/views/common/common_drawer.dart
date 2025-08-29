@@ -49,6 +49,19 @@ class CommonDrawer extends StatelessWidget {
         ),
 
         ListTile(
+          title: const Text("フレームの構造解析"),
+          onTap: () {
+            String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
+            String targetRoute = '/frame';
+
+            Navigator.pop(context);
+            if (currentRoute != targetRoute) {
+              Navigator.pushNamed(context, targetRoute);
+            }
+          },
+        ),
+
+        ListTile(
           title: const Text("有限要素解析"),
           onTap: () {
             String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';

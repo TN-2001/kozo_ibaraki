@@ -4,6 +4,7 @@ import 'package:kozo_ibaraki/views/beam/beam_page.dart';
 import 'package:kozo_ibaraki/views/bridgegame/bridgegame_page.dart';
 import 'package:kozo_ibaraki/views/bridgegame_free/bridgegame_free_page.dart';
 import 'package:kozo_ibaraki/views/fem/fem_page.dart';
+import 'package:kozo_ibaraki/views/frame/frame_page.dart';
 import 'package:kozo_ibaraki/views/privacy/privacy_page.dart';
 import 'package:kozo_ibaraki/views/truss/truss_page.dart';
 import 'configs/configure_nonweb.dart' if (dart.library.html) 'configs/configure_web.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const BeamPage(),
         '/truss':(context) => const TrussPage(),
+        '/frame':(context) => const FramePage(),
         '/fem':(context) => const FemPage(),
         '/bridgegame':(context) => const BridgegamePage(),
         '/bridgegamefree':(context) => const BridgegameFreePage(),
