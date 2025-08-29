@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/views/common/common_drawer.dart';
-import 'package:kozo_ibaraki/views/fem/fem_data.dart';
-import 'package:kozo_ibaraki/views/fem/fem_painter.dart';
-import 'package:kozo_ibaraki/components/my_decorations.dart';
-import 'package:kozo_ibaraki/components/my_widgets.dart';
+import '../../components/component.dart';
+import '../../utils/status_bar.dart';
+import 'canvas/fem_canvas.dart';
+import 'models/fem_data.dart';
+import 'ui/fem_bar.dart';
+import 'ui/fem_setting_window.dart';
 
 class FemPage extends StatefulWidget {
   const FemPage({super.key});
@@ -13,28 +15,54 @@ class FemPage extends StatefulWidget {
 }
 
 class _FemPageState extends State<FemPage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  late FemData data;
-  int devTypeNum = 0;
-  int toolTypeNum = 0, toolNum = 0;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); // メニュー用キー
+  late FemData _controller;
+  bool isSumaho = false;
 
+
+
+  void _onUpdate() {
+    setState(() {
+      // 画面更新
+    });
+  }
 
 
   @override
   void initState() {
     super.initState();
 
-    data = FemData(onDebug: (value){},);
-    data.node = Node();
+    _controller = FemData();
+    _controller.node = Node();
+    _controller.addListener(_onUpdate);
+
+    StatusBar.setStyle(isDarkBackground: true);
   }
 
   @override
-  Widget build(BuildContext context) {
-    // 画面サイズ取得
-    final Size size = MediaQuery.of(context).size;
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-    return MyScaffold(
-      scaffoldKey: _scaffoldKey,
+    StatusBar.setModeByOrientation(context);
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    final Size size = MediaQuery.of(context).size; // 画面サイズ取得
+    if(size.height > size.width && isSumaho == false) {
+      setState(() {
+        isSumaho = true;
+      });
+    }else if (size.height < size.width && isSumaho == true) {
+      setState(() {
+        isSumaho = false;
+      });
+    }
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      key: _scaffoldKey,
 
       drawer: CommonDrawer(
         onPressedHelpButton: () {
@@ -42,496 +70,29 @@ class _FemPageState extends State<FemPage> {
         },
       ),
 
-      header: MyHeader(
-        isBorder: true,
-        left: [
-          // メニューボタン
-          MyIconButton(
-            icon: Icons.menu,
-            message: "メニュー", 
-            onPressed: (){
-              _scaffoldKey.currentState!.openDrawer();
-            },
+      body: SafeArea(
+        child: ClipRect(
+          child: Column(
+            children: [
+              FemBar(controller: _controller, scaffoldKey: _scaffoldKey),
+
+              const BaseDivider(),
+
+              Expanded(
+                child: Stack(
+                  children: [
+                    FemCanvas(controller: _controller),
+
+                    // TrussCanvasUi(controller: _controller),
+
+                    FemSettingWindow(controller: _controller),
+                  ]
+                ),
+              ),
+            ]
           ),
-          if(!data.isCalculation)...{
-            // ツールタイプ
-            MyIconToggleButtons(
-              icons: const [Icons.circle, Icons.square], 
-              messages: const ["節点", "要素"],
-              value: toolTypeNum, 
-              onPressed: (value){
-                setState(() {
-                  toolTypeNum = value;
-                  data.node = null;
-                  data.elem = null;
-                  if(toolTypeNum == 0 && toolNum == 0){
-                    data.node = Node();
-                    data.node!.number = data.nodeList.length;
-                  }else if(toolTypeNum == 1 && toolNum == 0){
-                    data.elem = Elem();
-                    data.elem!.number = data.elemList.length;
-                    data.elem!.e = 1;
-                    data.elem!.v = 1;
-                  }
-                  data.initSelect();
-                });
-              }
-            ),
-            // ツール
-            MyIconToggleButtons(
-              icons: const [Icons.add, Icons.touch_app], 
-              messages: const ["新規","修正"],
-              value: toolNum, 
-              onPressed: (value){
-                setState(() {
-                  toolNum = value;
-                  data.node = null;
-                  data.elem = null;
-                  if(toolTypeNum == 0 && toolNum == 0){
-                    data.node = Node();
-                    data.node!.number = data.nodeList.length;
-                  }else if(toolTypeNum == 1 && toolNum == 0){
-                    data.elem = Elem();
-                    data.elem!.number = data.elemList.length;
-                    data.elem!.e = 1;
-                    data.elem!.v = 1;
-                  }
-                  data.initSelect();
-                });
-              }
-            ),
-          },
-        ],
-
-        right: [
-          if(!data.isCalculation)...{
-            // 解析開始ボタン
-            MyIconButton(
-              icon: Icons.play_arrow,
-              message: "計算",
-              onPressed: (){
-                setState(() {
-                  data.calculation();
-                });
-              },
-            ),
-          }else...{
-            // 解析結果選択
-            MyMenuDropdown(
-              items: const ["X方向応力","y方向応力","せん断応力","X方向ひずみ","y方向ひずみ","せん断ひずみ"],
-              value: devTypeNum,
-              onPressed: (value){
-                setState(() {
-                  devTypeNum = value;
-                  data.selectResult(value);
-                });
-              },
-            ),
-            // 再開ボタン
-            MyIconButton(
-              icon: Icons.restart_alt,
-              message: "再編集",
-              onPressed: (){
-                setState(() {
-                  data.resetCalculation();
-                });
-              },
-            ),
-          }
-        ]
-      ),
-
-      body: Stack(
-        children: [
-          // メインビュー
-          MyCustomPaint(
-            backgroundColor: MyColors.wiget1,
-            onTap: (position) {
-              if(!data.isCalculation){
-                setState(() {
-                  if(toolNum == 1){
-                    if(toolTypeNum == 0){
-                      data.selectNode(position);
-                    }
-                    else if(toolTypeNum == 1){
-                      data.selectElem(position, 0);
-                    }
-                  }
-                  data.selectedNumber = data.selectedNumber;
-                });
-                if(toolNum == 0 && toolTypeNum == 1){
-                  data.selectNode(position);
-                  newElem(data.nodeList[data.selectedNumber]);
-                }
-              }
-            },
-            painter: FemPainter(data: data, devTypeNum: devTypeNum),
-          ),
-
-          // 設定
-          if(!data.isCalculation)...{
-            if(toolTypeNum == 0)...{
-              if(toolNum == 0)...{
-                // 新規ノード
-                nodeSetting(true, size.width),
-              }
-              else if(data.selectedNumber >= 0)...{
-                // 既存ノード
-                nodeSetting(false, size.width),
-              }
-            }
-            else if(toolTypeNum == 1)...{
-              if(toolNum == 0)...{
-                // 新規要素
-                textElem(),
-              }
-              else if(data.selectedNumber >= 0)...{
-                // 既存要素
-                elemSetting(false, size.width),
-              }
-            }
-          },
-
-        ]
+        ),
       ),
     );
-  }
-
-  // 要素
-  Widget textElem(){
-    String text = "節点を3つ選択して要素作成\nNo. ${data.elemList.length+1}";
-    if(data.elem!.nodeList[0] != null){
-      text += "   a：${data.elem!.nodeList[0]!.number+1}";
-    }else{
-      text += "   a： ";
-    }
-    if(data.elem!.nodeList[1] != null){
-      text += "   b：${data.elem!.nodeList[1]!.number+1}";
-    }else{
-      text += "   b： ";
-    }
-    if(data.elem!.nodeList[2] != null){
-      text += "   c：${data.elem!.nodeList[2]!.number+1}";
-    }else{
-      text += "   c： ";
-    }
-
-    return MyAlign(
-      alignment: Alignment.bottomCenter,
-      isIntrinsicHeight: true,
-      isIntrinsicWidth: true,
-      child: Container(
-        margin: const EdgeInsets.all(10),
-        padding: const EdgeInsets.all(5),
-        child: Text(text),
-      ),
-    );
-  }
-
-  // 要素生成
-  void newElem(Node node){
-    if(data.elem!.nodeList[0] == null){
-      data.elem!.nodeList[0] = node;
-    }else if(data.elem!.nodeList[1] == null){
-      data.elem!.nodeList[1] = node;
-    }else if(data.elem!.nodeList[2] == null){
-      data.elem!.nodeList[2] = node;
-      setState(() {
-        data.addElem();
-        data.initSelect();
-      });
-    }
-  }
-
-  Widget setting(List<MyProperty> propertyList, String title, String buttonName, Function() onButtonPressed, double width) {
-    return MyAlign(
-      alignment: Alignment.bottomCenter,
-      isIntrinsicHeight: true,
-      isIntrinsicWidth: true,
-      child: Container(
-        margin: const EdgeInsets.all(10),
-        padding: const EdgeInsets.all(5),
-        decoration: myBoxDecoration,
-        child: Column(children: [
-          MyProperty(
-            name: title,
-            width: (width > 505) ? 475 : width-30,
-            buttonName: buttonName,
-            onButtonPressed: onButtonPressed,
-          ),
-          const SizedBox(height: 5,),
-          const Divider(height: 0, color: MyColors.border,),
-          const SizedBox(height: 5,),
-          for(int i = 0; i < propertyList.length; i++)...{
-            propertyList[i],
-            if(i < propertyList.length-1)...{
-              const SizedBox(height: 2.5,),
-            }
-          },
-        ],),
-      )
-      
-    );
-  }
-
-  Widget nodeSetting(bool isAdd, double width) {
-    double propWidth = (width > 505) ? 100 : (width-30-75-4)/4;
-    double labelWidth = 75;
-
-    List<MyProperty> propertyList(Node node) {
-      MyProperty prop2_1(Node node) {
-        return MyProperty(
-          name: "水平",
-          labelAlignment: Alignment.centerRight,
-          width: propWidth+50,
-          filledWidth: propWidth,
-          boolValue: node.constXY[0],
-          onChangedBool: (value) {
-            setState(() {
-              node.constXY[0] = value;
-            });
-          },
-        );
-      }
-      MyProperty prop2_2(Node node) {
-        return MyProperty(
-          name: "鉛直",
-          labelAlignment: Alignment.centerRight,
-          width: propWidth+50,
-          filledWidth: propWidth,
-          boolValue: node.constXY[1],
-          onChangedBool: (value) {
-            setState(() {
-              node.constXY[1] = value;
-            });
-          },
-        );
-      }
-      MyProperty prop3_1(Node node) {
-        return MyProperty(
-          name: "水平",
-          labelAlignment: Alignment.centerRight,
-          width: propWidth+50,
-          filledWidth: propWidth,
-          doubleValue: (node.loadXY[0] != 0.0) ? node.loadXY[0] : null,
-          onChangedDouble: (value) {
-            node.loadXY[0] = value;
-          },
-        );
-      }
-      MyProperty prop3_2(Node node) {
-        return MyProperty(
-          name: "鉛直",
-          labelAlignment: Alignment.centerRight,
-          width: propWidth+50,
-          filledWidth: propWidth,
-          doubleValue: (node.loadXY[1] != 0.0) ? node.loadXY[1] : null,
-          onChangedDouble: (value) {
-            node.loadXY[1] = value;
-          },
-        );
-      }
-
-      return [
-        MyProperty(
-          name: "節点座標",
-          width: labelWidth+propWidth*4,
-          children: [
-            MyProperty(
-              name: "水平",
-              labelAlignment: Alignment.centerRight,
-              width: propWidth+50,
-              filledWidth: propWidth,
-              doubleValue: node.pos.dx,
-              onChangedDouble: (value) {
-                node.pos = Offset(value, node.pos.dy);
-              },
-            ),
-            MyProperty(
-              name: "鉛直",
-              labelAlignment: Alignment.centerRight,
-              width: propWidth+50,
-              filledWidth: propWidth,
-              doubleValue: node.pos.dy,
-              onChangedDouble: (value) {
-                node.pos = Offset(node.pos.dx, value);
-              },
-            )
-          ],
-        ),
-        MyProperty(
-          name: "拘束条件",
-          width: labelWidth+propWidth*4,
-          children: [
-            prop2_1(node),
-            prop2_2(node),
-          ],
-        ),
-        MyProperty(
-          name: "強制変位",
-          width: labelWidth+propWidth*4,
-          children: [
-            prop3_1(node),
-            prop3_2(node),
-          ],
-        ),
-      ];
-    }
-
-    if(isAdd){
-      // 追加時
-      return setting(
-        propertyList(data.node!), 
-        "No. ${data.node!.number+1}", 
-        "追加", 
-        (){
-          setState(() {
-            data.addNode();
-            data.initSelect();
-          });
-        },
-        width
-      );
-    }
-    else{
-      // タッチ時
-      return setting(
-        propertyList(data.nodeList[data.selectedNumber]), 
-        "No. ${data.nodeList[data.selectedNumber].number+1}", 
-        "削除", 
-        (){
-          setState(() {
-            data.removeNode(data.selectedNumber);
-            data.initSelect();
-          });
-        },
-        width
-      );
-    }
-  }
-
-  Widget elemSetting(bool isAdd, double width) {
-    double propWidth = (width > 505) ? 100 : (width-30-75-4)/4;
-    List<MyProperty> propertyList(Elem elem) {
-      return [
-        MyProperty(
-          name: "結合情報（節点番号）",
-          labelWidth: 75+propWidth*2,
-          children: [
-            MyProperty(
-              width: propWidth*2/3,
-              filledWidth: propWidth*2/3,
-              intValue: (elem.nodeList[0] != null) ? (elem.nodeList[0]!.number+1) : null,
-              onChangedInt: (value) {
-                if(value-1 >= 0 && value-1 < data.nodeList.length){
-                  elem.nodeList[0] = data.nodeList[value-1];
-                }else{
-                  elem.nodeList[0] = null;
-                }
-              },
-            ),
-            MyProperty(
-              width: propWidth*2/3,
-              filledWidth: propWidth*2/3,
-              intValue: (elem.nodeList[1] != null) ? (elem.nodeList[1]!.number+1) : null,
-              onChangedInt: (value) {
-                if(value-1 >= 0 && value-1 < data.nodeList.length){
-                  elem.nodeList[1] = data.nodeList[value-1];
-                }else{
-                  elem.nodeList[1] = null;
-                }
-              },
-            ),
-            MyProperty(
-              width: propWidth*2/3,
-              filledWidth: propWidth*2/3,
-              intValue: (elem.nodeList[2] != null) ? (elem.nodeList[2]!.number+1) : null,
-              onChangedInt: (value) {
-                if(value-1 >= 0 && value-1 < data.nodeList.length){
-                  elem.nodeList[2] = data.nodeList[value-1];
-                }else{
-                  elem.nodeList[2] = null;
-                }
-              },
-            ),
-          ],
-        ),
-        MyProperty(
-          name: "ヤング率",
-          labelWidth: 75+propWidth*2,
-          filledWidth: propWidth*2,
-          doubleValue: elem.e,
-          onChangedDouble: (value) {
-            elem.e = value;
-          },
-        ),
-        MyProperty(
-          name: "ポアソン比",
-          labelWidth: 75+propWidth*2,
-          filledWidth: propWidth*2,
-          doubleValue: elem.v,
-          onChangedDouble: (value) {
-            elem.v = value;
-          },
-        ),
-        // MyProperty(
-        //   name: "剛性",
-        //   labelWidth: 75,
-        //   children: [
-        //     MyProperty(
-        //       name: "ヤング率",
-        //       labelAlignment: Alignment.centerRight,
-        //       width: propWidth*2,
-        //       filledWidth: 75,
-        //       doubleValue: elem.e,
-        //       onChangedDouble: (value) {
-        //         elem.e = value;
-        //       },
-        //     ),
-        //     MyProperty(
-        //       name: "ポアソン比",
-        //       labelAlignment: Alignment.centerRight,
-        //       width: propWidth*2,
-        //       filledWidth: 75,
-        //       doubleValue: elem.v,
-        //       onChangedDouble: (value) {
-        //         elem.v = value;
-        //       },
-        //     ),
-        //   ],
-        // ),
-      ];
-    }
-
-    if(isAdd){
-      // 追加時
-      return setting(
-        propertyList(data.elem!), 
-        "No. ${data.elem!.number+1}", 
-        "追加", 
-        (){
-          setState(() {
-            data.addElem();
-            data.initSelect();
-          });
-        },
-        width
-      );
-    }
-    else{
-      // タッチ時
-      return setting(
-        propertyList(data.elemList[data.selectedNumber]), 
-        "No. ${data.elemList[data.selectedNumber].number+1}",
-        "削除", 
-        (){
-          setState(() {
-            data.removeElem(data.selectedNumber);
-            data.initSelect();
-          });
-        },
-        width
-      );
-    }
   }
 }

@@ -1,20 +1,18 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/views/fem/fem_data.dart';
 import 'package:kozo_ibaraki/utils/my_painter.dart';
 import 'package:kozo_ibaraki/utils/camera.dart';
+import '../models/fem_data.dart';
 
 class FemPainter extends CustomPainter {
-  FemPainter({required this.data, required this.devTypeNum});
+  FemPainter({required this.controller, required this.camera});
 
-  final FemData data;
-  final int devTypeNum;
-  Camera camera = Camera(1.0, Offset.zero, Offset.zero); // カメラ
+  final FemData controller;
+  final Camera camera; // カメラ
 
   @override
   void paint(Canvas canvas, Size size) {
-
-    
-
     // サイズに関する変数
     double width = 0;
     double heigh = 0;
@@ -35,9 +33,9 @@ class FemPainter extends CustomPainter {
       nodeWidth = elemWidth*0.6;
     }
     
-    Rect dataRect = data.rect();
-    List<Node> nodes = data.allNodeList();
-    List<Elem> elems = data.allElemList();
+    Rect dataRect = controller.rect();
+    List<Node> nodes = controller.allNodeList();
+    List<Elem> elems = controller.allElemList();
 
     // キャンバスの広さ
     width = size.width-(size.width/4);
@@ -52,14 +50,14 @@ class FemPainter extends CustomPainter {
     
     // カメラの初期化
     camera.init(
-      _getCameraScale(rect, data.rect()), 
-      data.rect().center, 
+      _getCameraScale(rect, controller.rect()), 
+      controller.rect().center, 
       Offset(size.width/2, size.height/2)
     );
 
-    if (!data.isCalculation) {
+    if (!controller.isCalculation) {
       setSize();
-      data.updateCanvasPos(rect, 1);
+      controller.updateCanvasPos(rect, 1);
       _drawElem(elems, true, canvas); // 要素
       _drawConst(nodes, dataRect, rect, canvas); // 節点拘束
       _drawPower(nodes, dataRect, canvas); // 荷重
@@ -68,11 +66,11 @@ class FemPainter extends CustomPainter {
     }
     else{
       setSize();
-      data.updateCanvasPos(rect, 1);
-      _drawElem(data.elemList, false, canvas); // 要素
-      _drawConst(data.nodeList, dataRect, rect, canvas); // 節点拘束
-      _drawPower(data.nodeList, dataRect, canvas); // 荷重
-      _drawNode(data.nodeList, false, nodeWidth, canvas); // 節点
+      controller.updateCanvasPos(rect, 1);
+      _drawElem(controller.elemList, false, canvas); // 要素
+      _drawConst(controller.nodeList, dataRect, rect, canvas); // 節点拘束
+      _drawPower(controller.nodeList, dataRect, canvas); // 荷重
+      _drawNode(controller.nodeList, false, nodeWidth, canvas); // 節点
       _drawResultElem(Rect.fromLTRB(rect.left, rect.top+rect.height/6, rect.right, rect.bottom-rect.height/6), elemWidth, canvas); // 変形図
       // MyPainter.rainbowBand(canvas, Offset(size.width - 60, size.height/4), Offset(size.width - 80, size.height - size.height/4), 50); // 虹色
       // 最大最小
@@ -183,54 +181,48 @@ class FemPainter extends CustomPainter {
 
   // 拘束
   void _drawConst(List<Node> nodes, Rect dataRect, Rect rect, Canvas canvas) {
-    Paint paint = Paint()
-      ..color = const Color.fromARGB(255, 0, 0, 0)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+    if (nodes.isEmpty) return;
 
-    if(nodes.isNotEmpty){
-      for(int i = 0; i < nodes.length; i++){
-        Offset pos = camera.worldToScreen(nodes[i].pos);
-        if(nodes[i].constXY[0]){
-          if(pos.dx > rect.center.dx){
-            canvas.drawCircle(Offset(pos.dx+20, pos.dy), 7.5, paint);
-            canvas.drawLine(Offset(pos.dx+30, pos.dy-15), Offset(pos.dx+30, pos.dy+15), paint);
-          }else{
-            canvas.drawCircle(Offset(pos.dx-20, pos.dy), 7.5, paint);
-            canvas.drawLine(Offset(pos.dx-30, pos.dy-15), Offset(pos.dx-30, pos.dy+15), paint);
-          }
+    for(int i = 0; i < nodes.length; i++){
+      Offset pos = camera.worldToScreen(nodes[i].pos);
+      if (nodes[i].constXY[0]) {
+        if (pos.dx <= rect.center.dx) {
+          MyPainter.roller(canvas, Offset(pos.dx - 10, pos.dy), pi/2, radius: 7.5);
+        } else {
+          MyPainter.roller(canvas, Offset(pos.dx + 10, pos.dy), -pi/2, radius: 7.5);
         }
-        if(nodes[i].constXY[1]){
-          if(pos.dy >= rect.center.dy){
-            canvas.drawCircle(Offset(pos.dx, pos.dy+20), 7.5, paint);
-            canvas.drawLine(Offset(pos.dx-15, pos.dy+30), Offset(pos.dx+15, pos.dy+30), paint);
-          }else{
-            canvas.drawCircle(Offset(pos.dx, pos.dy-20), 7.5, paint);
-            canvas.drawLine(Offset(pos.dx-15, pos.dy-30), Offset(pos.dx+15, pos.dy-30), paint);
-          }
+      }
+      if (nodes[i].constXY[1]) {
+        if (pos.dy >= rect.center.dy) {
+          MyPainter.roller(canvas, Offset(pos.dx, pos.dy + 10), 0, radius: 7.5);
+        } else {
+          MyPainter.roller(canvas, Offset(pos.dx, pos.dy - 10), pi, radius: 7.5);
         }
       }
     }
   }
 
   // 荷重
-  void _drawPower(List<Node> nodes, Rect dataRect, Canvas canvas) {    
-    if(nodes.isNotEmpty){
-      for(int i = 0; i < nodes.length; i++){
-        Offset pos = camera.worldToScreen(nodes[i].pos);
-        if(nodes[i].loadXY[0] != 0){
-          if(nodes[i].loadXY[0] < 0){
-            MyPainter.arrow(Offset(pos.dx-5, pos.dy), Offset(pos.dx-50, pos.dy), 2.5, const Color.fromARGB(255, 0, 63, 95), canvas);
-          }else{
-            MyPainter.arrow(Offset(pos.dx+5, pos.dy), Offset(pos.dx+50, pos.dy), 2.5, const Color.fromARGB(255, 0, 63, 95), canvas);
-          }
+  void _drawPower(List<Node> nodes, Rect dataRect, Canvas canvas) {   
+    if (nodes.isEmpty) return;
+
+    double headSize = 15;
+    Color color = const Color.fromARGB(255, 0, 63, 95);
+
+    for (int i = 0; i < nodes.length; i++) {
+      Offset pos = camera.worldToScreen(nodes[i].pos);
+      if (nodes[i].loadXY[0] != 0) {
+        if (nodes[i].loadXY[0] < 0) {
+          MyPainter.arrow2(canvas, Offset(pos.dx - 5, pos.dy), Offset(pos.dx - 50, pos.dy), headSize: headSize, color: color);
+        } else {
+          MyPainter.arrow2(canvas, Offset(pos.dx + 5, pos.dy), Offset(pos.dx + 50, pos.dy), headSize: headSize, color: color);
         }
-        if(nodes[i].loadXY[1] != 0){
-          if(nodes[i].loadXY[1] > 0){
-            MyPainter.arrow(Offset(pos.dx, pos.dy-5), Offset(pos.dx, pos.dy-50), 2.5, const Color.fromARGB(255, 0, 63, 95), canvas);
-          }else{
-            MyPainter.arrow(Offset(pos.dx, pos.dy+5), Offset(pos.dx, pos.dy+50), 2.5, const Color.fromARGB(255, 0, 63, 95), canvas);
-          }
+      }
+      if (nodes[i].loadXY[1] != 0) {
+        if (nodes[i].loadXY[1] > 0) {
+          MyPainter.arrow2(canvas, Offset(pos.dx, pos.dy - 5), Offset(pos.dx, pos.dy - 50), headSize: headSize, color: color);
+        } else {
+          MyPainter.arrow2(canvas, Offset(pos.dx, pos.dy + 5), Offset(pos.dx, pos.dy + 50), headSize: headSize, color: color);
         }
       }
     }
@@ -246,14 +238,14 @@ class FemPainter extends CustomPainter {
     paint = Paint()
       ..color = const Color.fromARGB(255, 49, 49, 49);
 
-    for(int i = 0; i < data.elemList.length; i++){
-      if(data.resultMax != 0 || data.resultMin != 0){
-        paint.color = MyPainter.getColor((data.resultList[i] - data.resultMin) / (data.resultMax - data.resultMin) * 100);
+    for(int i = 0; i < controller.elemList.length; i++){
+      if(controller.resultMax != 0 || controller.resultMin != 0){
+        paint.color = MyPainter.getColor((controller.resultList[i] - controller.resultMin) / (controller.resultMax - controller.resultMin) * 100);
       }
 
       final path = Path();
-      for(int j = 0; j < data.elemNode; j++){
-        Offset pos = data.elemList[i].nodeList[j]!.canvasAfterPos;
+      for(int j = 0; j < controller.elemNode; j++){
+        Offset pos = controller.elemList[i].nodeList[j]!.canvasAfterPos;
         if(j == 0){
           path.moveTo(pos.dx, pos.dy);
         }else{
@@ -269,11 +261,11 @@ class FemPainter extends CustomPainter {
       ..color = const Color.fromARGB(255, 49, 49, 49)
       ..style = PaintingStyle.stroke;
 
-    if(data.elemList.isNotEmpty){
-      for(int i = 0; i < data.elemList.length; i++){
+    if(controller.elemList.isNotEmpty){
+      for(int i = 0; i < controller.elemList.length; i++){
         final path = Path();
-        for(int j = 0; j < data.elemNode; j++){
-          Offset pos = data.elemList[i].nodeList[j]!.canvasAfterPos;
+        for(int j = 0; j < controller.elemNode; j++){
+          Offset pos = controller.elemList[i].nodeList[j]!.canvasAfterPos;
           if(j == 0){
             path.moveTo(pos.dx, pos.dy);
           }else{

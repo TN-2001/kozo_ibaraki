@@ -1,20 +1,33 @@
 import 'dart:math';
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/views/fem/lcst2ebe.dart';
 import 'package:kozo_ibaraki/utils/canvas_data.dart';
 import 'package:kozo_ibaraki/utils/my_calculator.dart';
+import 'lcst2ebe.dart';
 
-class FemData
-{
-  FemData({required this.onDebug});
-  final Function(String value) onDebug;
+class FemData extends ChangeNotifier {
+  FemData();
+
+  /*
+    パラメータ
+  */
+  // ツール操作関係
+  int _typeIndex = 0; // 選択されているタイプのインデックス（0:節点、1:要素）
+  int _toolIndex = 0; // 選択されているツールのインデックス（0:新規、2修正）
+  int _resultIndex = 0; // 選択されている結果のインデックス（"変形図", "反力", "せん断力図","曲げモーメント図",）
+
+  /*
+    ゲッター
+  */
+  // ツール操作関係
+  int get typeIndex => _typeIndex; // 選択されているタイプのインデックスを取得
+  int get toolIndex => _toolIndex; // 選択されているツールのインデックスを取得
+  int get resultIndex => _resultIndex; // 選択されている結果のインデックスを取得
+
 
   // データ
   int elemNode = 3; // 要素節点数
   List<Node> nodeList = []; // 節点データ
   List<Elem> elemList = []; // 要素データ
-  List<Mat> matList = []; // 要素パラメータデータ（まだ使ったいない）
   // 追加データ
   Node? node; // 新規節点データ
   Elem? elem; // 新規要素データ
@@ -80,6 +93,68 @@ class FemData
   CanvasData canvasData = CanvasData();
   List<Node> resultNodeList = [];
   List<Elem> resultElemList = [];
+
+
+  /*
+    関数
+  */
+  // 選択されたタイプとツールのインデックスを変更
+  void _changeTypeAndToolIndex() {
+    node = null; // 新規節点データをリセット
+    elem = null; // 新規要素データをリセット
+    if(_typeIndex == 0 && _toolIndex == 0){
+      node = Node();
+      node!.number = nodeList.length;
+    }else if(_typeIndex == 1 && _toolIndex == 0){
+      elem = Elem();
+      elem!.number = elemList.length;
+      elem!.e = 1;
+      elem!.v = 1;
+    }
+    initSelect();
+  }
+  void changeTypeIndex(int index) {
+    _typeIndex = index;
+
+    _changeTypeAndToolIndex();
+
+    notifyListeners();
+  }
+  void changeToolIndex(int index) {
+    _toolIndex = index;
+
+    _changeTypeAndToolIndex();
+
+    notifyListeners();
+  }
+
+  // 解析結果の選択インデックスを変更
+  void changeResultIndex(int index) {
+    _resultIndex = index;
+
+    resultList = List.filled(elemList.length, 0);
+    for (int i = 0; i < elemList.length; i++) {
+      if(index == 0) {
+        resultList[i] = elemList[i].result[0];
+      } else if (index == 1) {
+        resultList[i] = elemList[i].result[1];
+      } else if (index == 2) {
+        resultList[i] = elemList[i].result[2];
+      }
+    }
+
+    for (int i = 0; i < resultList.length; i++) {
+      if(i == 0){
+        resultMax = resultList[i];
+        resultMin = resultList[i];
+      }else{
+        resultMax = max(resultMax, resultList[i]);
+        resultMin = min(resultMin, resultList[i]);
+      }
+    }
+
+    notifyListeners();
+  }
 
   // 追加削除
   void addNode()
@@ -167,6 +242,38 @@ class FemData
   }
 
   // 解析
+  String checkCalculation() {
+    // bool isPower = false;
+
+    // int xyConstCount = 0;
+    // int xConstCount = 0;
+    // int yConstCount = 0;
+
+    // for(int i = 0; i < nodeList.length; i++){
+    //   if(nodeList[i].constXY[0] && nodeList[i].constXY[1]){
+    //     xyConstCount ++;
+    //   }else if(nodeList[i].constXY[0]){
+    //     xConstCount ++;
+    //   }else if(nodeList[i].constXY[1]){
+    //     yConstCount ++;
+    //   }
+
+    //   if((!nodeList[i].constXY[0] && nodeList[i].loadXY[0] != 0)
+    //     || (!nodeList[i].constXY[1] && nodeList[i].loadXY[1] != 0)){
+    //       isPower = true;
+    //   }
+    // }
+
+    // if(elemList.length < 2){
+    //   return "節点か要素が不足";
+    // }else if(!(xyConstCount > 0 && (xyConstCount + xConstCount + yConstCount) >= 2)){
+    //   return "拘束条件が不足";
+    // }else if(!isPower){
+    //   return "荷重条件が不足";
+    // }else{
+      return ""; // 問題なし
+    // }
+  }
   void calculation(){
     // 要素の節点を反時計回りに
     for(int i = 0; i < elemList.length; i++){
@@ -174,7 +281,6 @@ class FemData
       Offset pos2 = elemList[i].nodeList[1]!.pos;
       Offset pos3 = elemList[i].nodeList[2]!.pos;
       if(pos1.dx * (pos2.dy - pos3.dy) + pos2.dx * (pos3.dy - pos1.dy) + pos3.dx * (pos1.dy - pos2.dy) == 0){
-        onDebug("要素の大きさが0");
         return;
       }
       if(pos1.dx * (pos2.dy - pos3.dy) + pos2.dx * (pos3.dy - pos1.dy) + pos3.dx * (pos1.dy - pos2.dy) < 0){
@@ -186,7 +292,6 @@ class FemData
 
     Lcst2ebe lcst2ebe = Lcst2ebe(
       onDebug:(value) {
-        onDebug(value);
       },
     );
 
@@ -351,7 +456,7 @@ class FemData
       nodeList[i].isSelect = false;
     }
   }
-  void selectElem(Offset pos, int type)
+  void selectElem(Offset pos)
   {
     initSelect();
 
@@ -416,7 +521,6 @@ class Elem
   double e = 1.0;
   double v = 1.0;
   List<Node?> nodeList = [null, null, null, null];
-  Mat? mat;
   double load = 0.0; // 分布荷重
 
   // 計算結果
@@ -427,11 +531,4 @@ class Elem
   // キャンバス情報
   List<Offset> canvasPosList = [Offset.zero, Offset.zero, Offset.zero, Offset.zero];
   bool isSelect = false; // 選択されているか
-}
-
-class Mat
-{
-  int number = 0;
-  double e = 0;
-  double v = 0;
 }

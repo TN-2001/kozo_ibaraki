@@ -296,4 +296,67 @@ class MyPainter
       text(canvas, Offset(rect.center.dx + 10, p.dy-13), label, 16, Colors.black, false, 500);
     }
   }
+
+  // ローラー支点
+  static void roller(Canvas canvas, Offset pos, double angle, {double radius = 5, double? lineWidth}) {
+    // pos を中心に回転
+    canvas.save();
+    canvas.translate(pos.dx, pos.dy);
+    canvas.rotate(angle); // ラジアン単位
+
+    Paint paint = Paint()
+      ..color = const Color.fromARGB(255, 0, 0, 0)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2;
+    
+    // 円の半径
+    double newRadius = radius;
+    // ラインの幅
+    double newlineWidth = lineWidth ?? radius * 4;
+
+    // 支点（円）
+    canvas.drawCircle(Offset(0, newRadius), newRadius, paint);
+    // 地面ライン
+    canvas.drawLine(
+      Offset(newlineWidth / 2, newRadius * 2),
+      Offset(-newlineWidth / 2, newRadius * 2),
+      paint,
+    );
+
+    canvas.restore();
+  }
+
+  // 矢印
+  static void arrow2(Canvas canvas, Offset start, Offset end, 
+    {double headSize = 20, double? lineWidth, Color color = const Color.fromARGB(255, 0, 0, 0)}) {
+
+    Paint paint = Paint()
+    ..color = color
+    ..style = PaintingStyle.fill
+    ..strokeWidth = lineWidth ?? headSize / 2.5;
+
+
+    // 方向ベクトル
+    final dx = end.dx - start.dx;
+    final dy = end.dy - start.dy;
+    final angle = atan2(dy, dx);
+
+    // 本体の線
+    canvas.drawLine(start, Offset(end.dx - headSize * cos(angle) / 1.7, end.dy - headSize * sin(angle) / 1.7), paint);
+
+    // 矢じりの両側を計算
+    final path = Path();
+    path.moveTo(end.dx, end.dy);
+    path.lineTo(
+      end.dx - headSize * cos(angle - pi / 6),
+      end.dy - headSize * sin(angle - pi / 6),
+    );
+    path.lineTo(
+      end.dx - headSize * cos(angle + pi / 6),
+      end.dy - headSize * sin(angle + pi / 6),
+    );
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
 }
