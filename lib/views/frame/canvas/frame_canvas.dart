@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../constants/constant.dart';
 import '../../../utils/camera.dart';
 import '../models/frame_controller.dart';
+import 'frame_painter.dart';
 
 class FrameCanvas extends StatefulWidget {
   const FrameCanvas({super.key, required this.controller});
@@ -68,7 +69,7 @@ class _FrameCanvasState extends State<FrameCanvas> {
               }
             },
             child: CustomPaint(
-              // painter: TrussPainter(data: _controller, camera: _camera),
+              painter: FramePainter(controller: _controller, camera: _camera),
             ),
           ),
         );

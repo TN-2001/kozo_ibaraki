@@ -6,6 +6,7 @@ export 'data_manager.dart';
 class FrameController extends ChangeNotifier {
   FrameController() {
     data.addNode();
+    initSelect();
   }
 
   // パラメータ
@@ -19,6 +20,7 @@ class FrameController extends ChangeNotifier {
   // ゲッター
   int get typeIndex => _typeIndex;
   int get toolIndex => _toolIndex;
+  int get resultIndex => _resultIndex;
   int get selectedNumber => _selectedNumber;
   bool get isCalculated => _isCalculated;
 
@@ -33,14 +35,15 @@ class FrameController extends ChangeNotifier {
         data.removeElem(data.elemCount - 1);
       }
     }
+    initSelect();
   }
   void _changeTypeAndToolIndex() {
-    if(_typeIndex == 0 && _toolIndex == 0){
+    if (_typeIndex == 0 && _toolIndex == 0) {
       data.addNode();
-    }else if(_typeIndex == 1 && _toolIndex == 0){
+    } else if (_typeIndex == 1 && _toolIndex == 0) {
       data.addElem();
     }
-    // initSelect();
+    initSelect();
   }
   void changeTypeIndex(int index) {
     _removeTemporaryData();
@@ -83,5 +86,15 @@ class FrameController extends ChangeNotifier {
     // }
 
     notifyListeners();
+  }
+
+  // 選択の初期化
+  void initSelect() {
+    _selectedNumber = -1;
+    if (_typeIndex == 0 && _toolIndex == 0) {
+      _selectedNumber = data.nodeCount - 1;
+    } else if (_typeIndex == 1 && _toolIndex == 0) {
+      _selectedNumber = data.elemCount - 1;
+    }
   }
 }

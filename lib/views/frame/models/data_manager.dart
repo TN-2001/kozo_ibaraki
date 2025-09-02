@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 class DataManager {
@@ -14,6 +15,81 @@ class DataManager {
     return _elemList[index];
   }
   int get elemCount => _elemList.length;
+  // 節点の範囲座標
+  Rect get rect {
+    if(_nodeList.isEmpty) {
+      return Rect.zero; // 節点データがないとき終了
+    } 
+
+    Offset pos = _nodeList[0].pos;
+
+    double left = pos.dx;
+    double right = pos.dx;
+    double top = pos.dy;
+    double bottom = pos.dy;
+
+    if(_nodeList.length > 1){
+      for (int i = 1; i < _nodeList.length; i++) {
+        pos = _nodeList[i].pos;
+        left = min(left, pos.dx);
+        right = max(right, pos.dx);
+        top = min(top, pos.dy);
+        bottom = max(bottom, pos.dy);
+      }
+    }
+
+    if (left == right && top == bottom) {
+      // 範囲が0の場合、適当な範囲を設定
+      left -= 1;
+      right += 1;
+      top -= 1;
+      bottom += 1;
+    }
+
+    return Rect.fromLTRB(left, top, right, bottom);
+  }
+  // 節点の半径
+  double get nodeRadius {
+    Rect newRect = rect;
+    if (newRect.width > newRect.height) {
+      return newRect.width * 2 / 100;
+    } else {
+      return newRect.height * 2 / 100;
+    }
+  }
+  // 要素の幅
+  double get elemWidth {
+    Rect newRect = rect;
+    if (newRect.width > newRect.height) {
+      return newRect.width * 3 / 100;
+    } else {
+      return newRect.height * 3 / 100;
+    }
+  }
+  double getMaxElemResult(int index) {
+    if (_elemList.isEmpty) {
+      return 0.0;
+    }
+
+    double value = _elemList[0].getResult(index);
+    for (int i = 1; i < _elemList.length; i++) {
+      value = max(value, _elemList[i].getResult(index));
+    }
+
+    return value;
+  }
+  double getMinElemResult(int index) {
+    if (_elemList.isEmpty) {
+      return 0.0;
+    }
+
+    double value = _elemList[0].getResult(index);
+    for (int i = 1; i < _elemList.length; i++) {
+      value = min(value, _elemList[i].getResult(index));
+    }
+
+    return value;
+  }
 
   // 関数
   void addNode() {
@@ -44,8 +120,11 @@ class Node {
   // パラメータ
   int _number = 0;
   Offset _pos = Offset.zero;
-  final List<bool> _const = [false, false]; // 拘束条件
-  final List<double> _load = [0.0, 0.0]; // 荷重条件
+  final List<bool> _const = [false, false, false]; // 拘束条件
+  final List<double> _load = [0.0, 0.0, 0.0]; // 荷重条件 0:水平、1：鉛直、2：曲げモーメント
+  Offset _becPos = Offset.zero;
+  Offset _afterPos = Offset.zero;
+  List<double> _result = [0.0, 0.0]; // 0:水平方向の反力、1:垂直方向の反力
 
   // ゲッター
   int get number => _number;
@@ -55,6 +134,11 @@ class Node {
   }
   double getLoad(int index) {
     return _load[index];
+  }
+  Offset get becPos => _becPos;
+  Offset get afterPos => _afterPos;
+  double getResult(int index) {
+    return _result[index];
   }
 
   // 関数
@@ -80,7 +164,9 @@ class Elem {
   // パラメータ
   int _number = 0;
   final List<Node?> _nodeList = [null, null];
-  final List<double> _rigid = [0.0, 0.0]; // 0:ヤング率、1：断面積
+  final List<double> _rigid = [1.0, 1.0, 1.0]; // 0:ヤング率、1：断面二次モーメント、2:断面積
+  double _load = 0.0; // 荷重
+  List<double> _result = [0,0,0]; // 0:軸力、1:応力、2:ひずみ
 
   // ゲッター
   int get number => _number;
@@ -90,7 +176,10 @@ class Elem {
   double getRigid(int index) {
     return _rigid[index];
   }
-  
+  double get load => _load;
+  double getResult(int index) {
+    return _result[index];
+  }
 
   // 関数
   void changeNumber(int number) {
@@ -101,5 +190,8 @@ class Elem {
   }
   void changeLigid(int index, double value) {
     _rigid[index] = value;
+  }
+  void changeLoad(double value) {
+    _load = value;
   }
 }

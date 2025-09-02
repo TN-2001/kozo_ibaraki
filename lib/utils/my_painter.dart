@@ -326,6 +326,110 @@ class MyPainter
     canvas.restore();
   }
 
+  // 壁支点
+  static void drawNodeWallConst(Canvas canvas, Offset pos, {double size = 10, Direction direction = Direction.up}) {
+    Color wallColor = Colors.grey;
+    Color lineColor = Colors.black;
+
+    Paint wallPaint = Paint()..color = wallColor;
+    Paint linePaint = Paint()
+      ..color = lineColor
+      ..strokeWidth = 2.0;
+
+    switch (direction) {
+      case Direction.up:
+        canvas.drawRect(
+            Rect.fromLTRB(pos.dx - size / 2, pos.dy, pos.dx + size / 2, pos.dy + size / 4),
+            wallPaint);
+        canvas.drawLine(
+            Offset(pos.dx - size / 2, pos.dy),
+            Offset(pos.dx + size / 2, pos.dy),
+            linePaint);
+        break;
+
+      case Direction.down:
+        canvas.drawRect(
+            Rect.fromLTRB(pos.dx - size / 2, pos.dy - size / 4, pos.dx + size / 2, pos.dy),
+            wallPaint);
+        canvas.drawLine(
+            Offset(pos.dx - size / 2, pos.dy),
+            Offset(pos.dx + size / 2, pos.dy),
+            linePaint);
+        break;
+
+      case Direction.left:
+        canvas.drawRect(
+            Rect.fromLTRB(pos.dx, pos.dy - size / 2, pos.dx + size / 4, pos.dy + size / 2),
+            wallPaint);
+        canvas.drawLine(
+            Offset(pos.dx, pos.dy - size / 2),
+            Offset(pos.dx, pos.dy + size / 2),
+            linePaint);
+        break;
+
+      case Direction.right:
+        canvas.drawRect(
+            Rect.fromLTRB(pos.dx - size / 4, pos.dy - size / 2, pos.dx, pos.dy + size / 2),
+            wallPaint);
+        canvas.drawLine(
+            Offset(pos.dx, pos.dy - size / 2),
+            Offset(pos.dx, pos.dy + size / 2),
+            linePaint);
+        break;
+    }
+  }
+
+  // 三角支点
+  static void drawNodeTriangleConst(Canvas canvas, Offset pos, {double size = 10, Direction direction = Direction.up}) {
+    Color lineColor = Colors.black;
+
+    Paint linePaint = Paint()
+      ..color = lineColor
+      ..strokeWidth = 2.0;
+
+    switch (direction) {
+      case Direction.up:
+        canvas.drawRect(
+            Rect.fromLTRB(pos.dx - size / 2, pos.dy, pos.dx + size / 2, pos.dy + size / 4),
+            wallPaint);
+        canvas.drawLine(
+            Offset(pos.dx - size / 2, pos.dy),
+            Offset(pos.dx + size / 2, pos.dy),
+            linePaint);
+        break;
+
+      case Direction.down:
+        canvas.drawRect(
+            Rect.fromLTRB(pos.dx - size / 2, pos.dy - size / 4, pos.dx + size / 2, pos.dy),
+            wallPaint);
+        canvas.drawLine(
+            Offset(pos.dx - size / 2, pos.dy),
+            Offset(pos.dx + size / 2, pos.dy),
+            linePaint);
+        break;
+
+      case Direction.left:
+        canvas.drawRect(
+            Rect.fromLTRB(pos.dx, pos.dy - size / 2, pos.dx + size / 4, pos.dy + size / 2),
+            wallPaint);
+        canvas.drawLine(
+            Offset(pos.dx, pos.dy - size / 2),
+            Offset(pos.dx, pos.dy + size / 2),
+            linePaint);
+        break;
+
+      case Direction.right:
+        canvas.drawRect(
+            Rect.fromLTRB(pos.dx - size / 4, pos.dy - size / 2, pos.dx, pos.dy + size / 2),
+            wallPaint);
+        canvas.drawLine(
+            Offset(pos.dx, pos.dy - size / 2),
+            Offset(pos.dx, pos.dy + size / 2),
+            linePaint);
+        break;
+    }
+  }
+
   // 矢印
   static void arrow2(Canvas canvas, Offset start, Offset end, 
     {double headSize = 20, double? lineWidth, Color color = const Color.fromARGB(255, 0, 0, 0)}) {
@@ -360,3 +464,5 @@ class MyPainter
     canvas.drawPath(path, paint);
   }
 }
+
+enum Direction {up, down, left, right}

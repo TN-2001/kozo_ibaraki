@@ -189,7 +189,16 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                 value: node.getConst(1), 
                 onChanged: (value){
                   setState(() {
-                    node.changeConst(0, value!);
+                    node.changeConst(1, value!);
+                  });
+                },
+              ),
+              _textBox("回転"),
+              Checkbox(
+                value: node.getConst(2), 
+                onChanged: (value){
+                  setState(() {
+                    node.changeConst(2, value!);
                   });
                 },
               ),
@@ -233,6 +242,25 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                       }
                     }, 
                     text: node.getLoad(1) != 0 ? "${node.getLoad(1)}" : "",
+                  ),
+                ),
+              ],
+            ),
+
+            Row(
+              children: [
+                _textBox("モーメント"),
+                Expanded(
+                  child: BaseTextField(
+                    width: 100,
+                    onChanged: (String text) {
+                      if (double.tryParse(text) != null) {
+                        node.changeLoad(2, double.parse(text));
+                      } else {
+                        node.changeLoad(2, 0);
+                      }
+                    }, 
+                    text: node.getLoad(2) != 0 ? "${node.getLoad(2)}" : "",
                   ),
                 ),
               ],
@@ -332,7 +360,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
         ),
 
         SettingItem(
-          label: "断面積",
+          label: "断面二次モーメント",
           child: BaseTextField(
             width: 200,
             onChanged: (String text) {
@@ -343,6 +371,36 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
               }
             }, 
             text: "${elem.getRigid(1)}"
+          ),
+        ),
+
+        SettingItem(
+          label: "断面積",
+          child: BaseTextField(
+            width: 200,
+            onChanged: (String text) {
+              if (double.tryParse(text) != null) {
+                elem.changeLigid(2, double.parse(text));
+              } else {
+                elem.changeLigid(2, 0.0);
+              }
+            }, 
+            text: "${elem.getRigid(2)}"
+          ),
+        ),
+
+        SettingItem(
+          label: "分布荷重",
+          child: BaseTextField(
+            width: 200,
+            onChanged: (String text) {
+              if (double.tryParse(text) != null) {
+                elem.changeLoad(double.parse(text));
+              } else {
+                elem.changeLoad(0.0);
+              }
+            }, 
+            text: "${elem.load}"
           ),
         ),
       ]);

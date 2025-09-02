@@ -6,6 +6,7 @@ import '../../utils/status_bar.dart';
 import '../common/common_drawer.dart';
 import 'canvas/frame_canvas.dart';
 import 'ui/frame_bar.dart';
+import 'ui/frame_setting_window.dart';
 
 
 class FramePage extends StatefulWidget {
@@ -84,7 +85,7 @@ class _FramePageState extends State<FramePage> {
 
                     // TrussCanvasUi(controller: _controller),
 
-                    // TrussSettingWindow(controller: _controller),
+                    FrameSettingWindow(controller: _controller),
                   ]
                 ),
               ),
