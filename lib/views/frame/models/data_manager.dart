@@ -5,6 +5,8 @@ class DataManager {
   // パラメータ
   final List<Node> _nodeList = [];
   final List<Elem> _elemList = [];
+  List<Node> _resultNodeList = [];
+  List<Elem> _resultElemList = [];
 
   // ゲッター
   Node getNode(int index) {
@@ -90,6 +92,15 @@ class DataManager {
 
     return value;
   }
+  
+  Node getResultNode(int index) {
+    return _resultNodeList[index];
+  }
+  int get resultNodeCount => _resultNodeList.length;
+  Elem getResultElem(int index) {
+    return _resultElemList[index];
+  }
+  int get resultElemCount => _resultElemList.length;
 
   // 関数
   void addNode() {
@@ -110,6 +121,12 @@ class DataManager {
       _elemList[i].changeNumber(i);
     }
   }
+  void initResultNode(int length) {
+    _resultNodeList = List.generate(length, (i) => Node(i));
+  }
+  void initResultElem(int length) {
+    _resultElemList = List.generate(length, (i) => Elem(i));
+  }
 }
 
 class Node {
@@ -120,11 +137,11 @@ class Node {
   // パラメータ
   int _number = 0;
   Offset _pos = Offset.zero;
-  final List<bool> _const = [false, false, false]; // 拘束条件
+  final List<bool> _const = [false, false, false, false]; // 拘束条件 0:水平、1：鉛直、2：回転、3:ヒンジ
   final List<double> _load = [0.0, 0.0, 0.0]; // 荷重条件 0:水平、1：鉛直、2：曲げモーメント
   Offset _becPos = Offset.zero;
   Offset _afterPos = Offset.zero;
-  List<double> _result = [0.0, 0.0]; // 0:水平方向の反力、1:垂直方向の反力
+  final List<double> _result = [0.0, 0.0, 0.0]; // 0:水平方向の反力、1:垂直方向の反力、2:モーメン
 
   // ゲッター
   int get number => _number;
@@ -154,6 +171,15 @@ class Node {
   void changeLoad(int index, double value) {
     _load[index] = value;
   }
+  void changeBecPos(Offset pos) {
+    _becPos = pos;
+  }
+  void changeAfterPos(Offset pos) {
+    _afterPos = pos;
+  }
+  void changeResult(int index, double value) {
+    _result[index] = value;
+  }
 }
 
 class Elem {
@@ -166,7 +192,7 @@ class Elem {
   final List<Node?> _nodeList = [null, null];
   final List<double> _rigid = [1.0, 1.0, 1.0]; // 0:ヤング率、1：断面二次モーメント、2:断面積
   double _load = 0.0; // 荷重
-  List<double> _result = [0,0,0]; // 0:軸力、1:応力、2:ひずみ
+  final List<double> _result = [0.0, 0.0, 0.0]; // 0:軸力、1:応力、2:ひずみ
 
   // ゲッター
   int get number => _number;
@@ -193,5 +219,8 @@ class Elem {
   }
   void changeLoad(double value) {
     _load = value;
+  }
+  void changeResult(int index, double value) {
+    _result[index] = value;
   }
 }

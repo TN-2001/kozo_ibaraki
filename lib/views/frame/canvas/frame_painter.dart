@@ -35,21 +35,17 @@ class FramePainter extends CustomPainter {
     );
 
     if (!controller.isCalculated) {
-      _drawElem(canvas, isAfter: false); // 要素
+      _drawElem(canvas); // 要素
       _drawConst(canvas, isAfter: false); // 節点拘束拘束
       _drawPower(canvas, isAfter: false); // 節点荷重
       _drawNode(canvas, isAfter: false); // 節点
       _drawNodeNumber(canvas); // 節点番号
     }
     else {
-      if (controller.resultIndex <= 2) {
-        _drawElem(canvas, isAfter: true); // 要素
-      } else {
-        _drawElem(canvas, isAfter: true, isNormalColor: true); // 要素（節点結果表示時）
-      }
-      _drawConst(canvas, isAfter: false); // 節点拘束拘束
-      _drawPower(canvas, isAfter: false); // 節点荷重
-      _drawNode(canvas, isAfter: false); // 節点
+      _drawResultElem(canvas);
+      _drawConst(canvas, isAfter: true); // 節点拘束拘束
+      _drawPower(canvas, isAfter: true); // 節点荷重
+      _drawNode(canvas, isAfter: true); // 節点
 
       if (controller.resultIndex <= 2) {
         // 要素の結果
@@ -158,7 +154,7 @@ class FramePainter extends CustomPainter {
 
       // 丸枠を描画
       paint.style = PaintingStyle.stroke;
-      if (node.number == controller.selectedNumber) {
+      if (node.number == controller.selectedNumber && controller.typeIndex == 0) {
         paint.color = Colors.red;
       } else {
         paint.color = const Color.fromARGB(255, 0, 0, 0);
@@ -178,7 +174,7 @@ class FramePainter extends CustomPainter {
       Node node = data.getNode(i);
       Offset pos = camera.worldToScreen(node.pos);
       Color color = Colors.red;
-      if (node.number == controller.selectedNumber) {
+      if (node.number == controller.selectedNumber && controller.typeIndex == 0) {
         color = Colors.red;
       } else {
         color = Colors.black;
@@ -193,11 +189,6 @@ class FramePainter extends CustomPainter {
     if(data.nodeCount == 0){
       return;
     }
-
-    Paint paint = Paint()
-      ..color = const Color.fromARGB(255, 0, 0, 0)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
 
     for (int i = 0; i < data.nodeCount; i++) {
       Node node = data.getNode(i);
@@ -245,19 +236,22 @@ class FramePainter extends CustomPainter {
         MyPainter.drawNodeWallConst(canvas, newPos, size: newSize, direction: direction);
       }
       else if (node.getConst(1)) {
-        Offset newPos = camera.worldToScreen(pos);
-        Path path = Path();
-        path.moveTo(newPos.dx, newPos.dy + data.nodeRadius * camera.scale);
-        path.lineTo(newPos.dx - data.nodeRadius * camera.scale, newPos.dy + data.nodeRadius * camera.scale * (1 + 2 / 1.4));
-        path.lineTo(newPos.dx + data.nodeRadius * camera.scale, newPos.dy + data.nodeRadius * camera.scale * (1 + 2 / 1.4));
-        path.close();
-        canvas.drawPath(path, paint);
+        Offset newPos = Offset.zero;
+        double newSize = data.nodeRadius * 2 * camera.scale;
+        if (direction == Direction.up) {
+          newPos = camera.worldToScreen(Offset(pos.dx, pos.dy - data.nodeRadius));
+        } else if (direction == Direction.down) {
+          newPos = camera.worldToScreen(Offset(pos.dx, pos.dy + data.nodeRadius));
+        } else if (direction == Direction.left) {
+          newPos = camera.worldToScreen(Offset(pos.dx - data.nodeRadius, pos.dy));
+        } else if (direction == Direction.right) {
+          newPos = camera.worldToScreen(Offset(pos.dx + data.nodeRadius, pos.dy));
+        }
 
         if (node.getConst(0)) {
-          canvas.drawLine(
-            Offset(newPos.dx - data.nodeRadius * 2 * camera.scale, newPos.dy + data.nodeRadius * camera.scale * (1 + 2)),
-            Offset(newPos.dx + data.nodeRadius * 2 * camera.scale, newPos.dy + data.nodeRadius * camera.scale * (1 + 2)),
-            paint);
+          MyPainter.drawNodeTriangleConst(canvas, newPos, size: newSize, direction: direction, isLine: true);
+        } else {
+          MyPainter.drawNodeTriangleConst(canvas, newPos, size: newSize, direction: direction, isLine: false);
         }
       }
     }
@@ -312,7 +306,7 @@ class FramePainter extends CustomPainter {
   }
 
   // 要素
-  void _drawElem(Canvas canvas, {bool isAfter = false, bool isNormalColor = false}) {
+  void _drawElem(Canvas canvas) {
     // バグ対策
     if (data.elemCount == 0) {
       return;
@@ -323,30 +317,36 @@ class FramePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = data.elemWidth * camera.scale;
 
-    double resultMax = data.getMaxElemResult(controller.resultIndex);
-    double resultMin = data.getMinElemResult(controller.resultIndex);
     for (int i = 0; i < data.elemCount; i++) {
       Elem elem = data.getElem(i);
       if (elem.getNode(0) != null && elem.getNode(1) != null) {
-        Offset pos1 = Offset.zero;
-        Offset pos2 = Offset.zero;
-        if (isAfter) {
-          pos1 = elem.getNode(0)!.afterPos;
-          pos2 = elem.getNode(1)!.afterPos;
-          if (!isNormalColor) {
-            paint.color = MyPainter.getColor((elem.getResult(controller.resultIndex) - resultMin) / (resultMax - resultMin) * 100);
-          }
+        Offset pos1 = elem.getNode(0)!.pos;
+        Offset pos2 = elem.getNode(1)!.pos;
+        if (elem.number == controller.selectedNumber && controller.typeIndex == 1) {
+          paint.color = Colors.red;
         } else {
-          pos1 = elem.getNode(0)!.pos;
-          pos2 = elem.getNode(1)!.pos;
-          if (elem.number == controller.selectedNumber) {
-            paint.color = Colors.red;
-          } else {
-            paint.color = const Color.fromARGB(255, 86, 86, 86);
-          }
+          paint.color = const Color.fromARGB(255, 86, 86, 86);
         }
         canvas.drawLine(camera.worldToScreen(pos1), camera.worldToScreen(pos2), paint);
       }
+    }
+  }
+
+  // 結果の要素
+  void _drawResultElem(Canvas canvas, {bool isNormalColor = false}) {
+    Paint paint = Paint()
+      ..color = const Color.fromARGB(255, 99, 99, 99)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = data.elemWidth * camera.scale;
+
+    for (int i = 0; i < data.resultElemCount; i++) {
+      Elem elem = data.getResultElem(i);
+      Offset pos1 = elem.getNode(0)!.afterPos;
+      Offset pos2 = elem.getNode(1)!.afterPos;
+      if (!isNormalColor) {
+        // paint.color = MyPainter.getColor((elem.getResult(controller.resultIndex) - resultMin) / (resultMax - resultMin) * 100);
+      }
+      canvas.drawLine(camera.worldToScreen(pos1), camera.worldToScreen(pos2), paint);
     }
   }
 

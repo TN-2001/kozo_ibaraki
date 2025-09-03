@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import 'data_manager.dart';
+import 'frame2d.dart';
 export 'data_manager.dart';
 
 class FrameController extends ChangeNotifier {
@@ -96,5 +99,166 @@ class FrameController extends ChangeNotifier {
     } else if (_typeIndex == 1 && _toolIndex == 0) {
       _selectedNumber = data.elemCount - 1;
     }
+
+    notifyListeners();
+  }
+
+
+  void calculation() {
+    try {
+      _removeTemporaryData();
+      _calculationFrame2d();
+      _selectedNumber = -1; // 選択番号をリセット
+      _isCalculated = true;
+      changeResultIndex(resultIndex); // 結果のインデックスを変更
+    } catch(e) {
+      _changeTypeAndToolIndex();
+    }
+  }
+  void _calculationFrame2d() {
+    final int nx = data.nodeCount; // 節点数
+    final List<List<double>> xyz0 = List.generate(nx, (_) => List.filled(2, 0.0));
+    final List<List<int>> mfix = List.generate(nx, (_) => List.filled(4, 0));
+    final List<List<double>> fnod = List.generate(nx, (_) => List.filled(3, 0.0));
+    final int nelx = data.elemCount; // 要素数
+    final List<List<int>> ijk0 = List.generate(nelx, (_) => List.filled(2, 0));
+    final List<List<double>> prp0 = List.generate(nelx, (_) => List.filled(3, 0.0));
+    final List<double> felm = List<double>.filled(nelx, 0.0);
+
+    for (int i = 0; i < nx; i++) {
+      Node node = data.getNode(i);
+      xyz0[i][0] = node.pos.dx;
+      xyz0[i][1] = node.pos.dy;
+      mfix[i][0] = node.getConst(0) ? 1 : 0;
+      mfix[i][1] = node.getConst(1) ? 1 : 0;
+      mfix[i][2] = node.getConst(2) ? 1 : 0;
+      mfix[i][3] = node.getConst(3) ? 1 : 0;
+      fnod[i][0] = node.getLoad(0);
+      fnod[i][1] = node.getLoad(1);
+      fnod[i][2] = node.getLoad(2);
+    }
+
+    for (int i = 0; i < nelx; i++) {
+      Elem elem = data.getElem(i);
+      ijk0[i][0] = min(elem.getNode(0)!.number, elem.getNode(1)!.number);
+      ijk0[i][1] = max(elem.getNode(0)!.number, elem.getNode(1)!.number);
+      prp0[i][0] = elem.getRigid(0);
+      prp0[i][1] = elem.getRigid(1);
+      prp0[i][2] = elem.getRigid(2);
+      felm[i] = elem.load;
+    }
+
+    Map<String, Object> input = {
+      'nx': nx,
+      'xyz0': xyz0,
+      'mfix': mfix,
+      'fnod': fnod,
+      'nelx': nelx,
+      'ijk0': ijk0,
+      'prp0': prp0,
+      'felm': felm,
+    };
+
+    Map<String, Object> output = frame2d(input);
+
+    final int nx2 = output['nx2'] as int;
+    final List<List<double>> xyzn = output['xyzn'] as List<List<double>>;
+    final int nelx2 = output['nelx2'] as int;
+    final int node = output['node'] as int;
+    final List<List<int>> ijke = output['ijke'] as List<List<int>>;
+    final List<List<List<int>>> mhng = output['mhng'] as List<List<List<int>>>;
+    final int ndof = output['ndof'] as int;
+    final List<double> disp = output['disp'] as List<double>;
+    final List<List<double>> fint = output['fint'] as List<List<double>>;
+    final List<double> frea = output['frea'] as List<double>;
+
+    data.initResultNode(nx2);
+    data.initResultElem(nelx2);
+
+    // 分割した節点の初期化
+    for (int ix = 0; ix < nx2; ix++) {
+      Node node = data.getResultNode(ix);
+      node.changePos(Offset(xyzn[ix][0], xyzn[ix][1]));
+    }
+
+    // 変位
+    for (int ie = 0; ie < nelx2; ie++) {
+      Elem elem = data.getResultElem(ie);
+      for (int jn = 0; jn < node; jn++) {
+        double ui = disp[mhng[ie][jn][0]];
+        double vi = disp[mhng[ie][jn][1]];
+        double qi = disp[mhng[ie][jn][2]];
+
+        Node node = data.getResultNode(ijke[ie][jn]);
+        node.changeBecPos(Offset(ui, vi));
+        node.changeAfterPos(node.pos + node.becPos / 100);
+        elem.changeNode(jn, node);
+      }
+    }
+
+
+    // // 変位
+    // double maxDisp = 0;
+    // double rectWidth = max(data.rect.width, data.rect.height);
+    // for (int ix = 0; ix < nx; ix++) {
+    //   Node node = data.getNode(ix);
+    //   node.changeBecPos(Offset(disp[ndof * ix + 0], disp[ndof * ix + 1]));
+    //   maxDisp = max(maxDisp, node.becPos.distance.abs());
+    // }
+    // for (int ix = 0; ix < nx; ix++) {
+    //   Node node = data.getNode(ix);
+    //   node.changeAfterPos(
+    //     Offset(
+    //       node.pos.dx + node.becPos.dx / maxDisp * rectWidth / 8,
+    //       node.pos.dy + node.becPos.dy / maxDisp * rectWidth / 8)
+    //   );
+    // }
+    
+    // 力
+    for (int ie = 0; ie < nelx2; ie++) {
+      Elem elem = data.getResultElem(ie);
+      elem.changeResult(0, fint[ie][0]);
+      elem.changeResult(1, fint[ie][1]);
+      elem.changeResult(2, fint[ie][2]);
+    }
+
+    // // 応力（軸方向）
+    // for (int ie = 0; ie < nelx; ie++) {
+    //   Elem elem = data.getElem(ie);
+    //   elem.changeResult(1, fint[ie] / prp0[ie][1]);
+    // }
+
+    // // ひずみ
+    // for(int ie = 0; ie < nelx; ie++){
+    //   Elem elem = data.getElem(ie);
+    //   elem.changeResult(2, elem.getResult(0) / prp0[ie][0]);
+    // }
+    
+    // 反力
+    for (int ix = 0; ix < nx; ix++) {
+      Node node = data.getNode(ix);
+      node.changeResult(0, 0.0);
+      node.changeResult(1, 0.0);
+      node.changeResult(2, 0.0);
+      if (mfix[ix][0] == 1) {
+        node.changeResult(0, frea[ndof * ix + 0]);
+      }
+      if (mfix[ix][1] == 1) {
+        node.changeResult(1, frea[ndof * ix + 1]);
+      }
+      if (mfix[ix][2] == 1 && mfix[ix][3] == 0) {
+        node.changeResult(2, frea[ndof * ix + 2]);
+      }
+    }
+
+    for (int ix = 0; ix < nx; ix++) {
+      Node node = data.getNode(ix);
+      node.changeBecPos(data.getResultNode(ix).becPos);
+      node.changeAfterPos(data.getResultNode(ix).afterPos);
+    }
+  }
+  void resetCalculation() {
+    _isCalculated = false;
+    _changeTypeAndToolIndex();
   }
 }

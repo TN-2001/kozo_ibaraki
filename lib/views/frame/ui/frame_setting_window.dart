@@ -202,6 +202,15 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                   });
                 },
               ),
+              _textBox("ヒンジ"),
+              Checkbox(
+                value: node.getConst(3), 
+                onChanged: (value){
+                  setState(() {
+                    node.changeConst(3, value!);
+                  });
+                },
+              ),
             ],
           ),
         ),

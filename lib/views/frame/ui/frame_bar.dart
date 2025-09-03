@@ -81,10 +81,10 @@ class _FrameBarState extends State<FrameBar> {
     //   return;
     // }
 
-    // // 解析を実行
-    // setState(() {
-    //   _controller.calculation();
-    // });
+    // 解析を実行
+    setState(() {
+      _controller.calculation();
+    });
   }
 
   void _onPressedResultDropdown(int index) {
@@ -96,7 +96,7 @@ class _FrameBarState extends State<FrameBar> {
 
   void _onPressedEditButton() {
     setState(() {
-      // _controller.resetCalculation();
+      _controller.resetCalculation();
     });
   }
 

@@ -497,6 +497,8 @@ Map<String, Object> frame2d(Map<String, Object> input) {
 
   return {
     'nx' : nx,
+    'nx2' : nx2,
+    'xyzn' : xyzn,
     'nelx2' : nelx2,
     'ndof' : ndof,
     'node' : node,

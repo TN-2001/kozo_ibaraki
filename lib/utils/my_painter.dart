@@ -380,53 +380,80 @@ class MyPainter
   }
 
   // 三角支点
-  static void drawNodeTriangleConst(Canvas canvas, Offset pos, {double size = 10, Direction direction = Direction.up}) {
-    Color lineColor = Colors.black;
+  static void drawNodeTriangleConst(Canvas canvas, Offset pos, 
+    {double size = 10, Direction direction = Direction.up, bool isLine = false}) {
 
-    Paint linePaint = Paint()
-      ..color = lineColor
+    final double triangleSize = size;
+    final double lineSize = size * 2;
+    Color color = Colors.black;
+
+    Paint paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
+
+    Path path = Path();
 
     switch (direction) {
       case Direction.up:
-        canvas.drawRect(
-            Rect.fromLTRB(pos.dx - size / 2, pos.dy, pos.dx + size / 2, pos.dy + size / 4),
-            wallPaint);
-        canvas.drawLine(
-            Offset(pos.dx - size / 2, pos.dy),
-            Offset(pos.dx + size / 2, pos.dy),
-            linePaint);
+        path.moveTo(pos.dx, pos.dy);
+        path.lineTo(pos.dx - triangleSize / 2, pos.dy + triangleSize / 2 * sqrt(2));
+        path.lineTo(pos.dx + triangleSize / 2, pos.dy + triangleSize / 2 * sqrt(2));
         break;
 
       case Direction.down:
-        canvas.drawRect(
-            Rect.fromLTRB(pos.dx - size / 2, pos.dy - size / 4, pos.dx + size / 2, pos.dy),
-            wallPaint);
-        canvas.drawLine(
-            Offset(pos.dx - size / 2, pos.dy),
-            Offset(pos.dx + size / 2, pos.dy),
-            linePaint);
+        path.moveTo(pos.dx, pos.dy);
+        path.lineTo(pos.dx - triangleSize / 2, pos.dy - triangleSize / 2 * sqrt(2));
+        path.lineTo(pos.dx + triangleSize / 2, pos.dy - triangleSize / 2 * sqrt(2));
         break;
 
       case Direction.left:
-        canvas.drawRect(
-            Rect.fromLTRB(pos.dx, pos.dy - size / 2, pos.dx + size / 4, pos.dy + size / 2),
-            wallPaint);
-        canvas.drawLine(
-            Offset(pos.dx, pos.dy - size / 2),
-            Offset(pos.dx, pos.dy + size / 2),
-            linePaint);
+        path.moveTo(pos.dx, pos.dy);
+        path.lineTo(pos.dx + triangleSize / 2 * sqrt(2), pos.dy - triangleSize / 2);
+        path.lineTo(pos.dx + triangleSize / 2 * sqrt(2), pos.dy + triangleSize / 2);
         break;
 
       case Direction.right:
-        canvas.drawRect(
-            Rect.fromLTRB(pos.dx - size / 4, pos.dy - size / 2, pos.dx, pos.dy + size / 2),
-            wallPaint);
-        canvas.drawLine(
-            Offset(pos.dx, pos.dy - size / 2),
-            Offset(pos.dx, pos.dy + size / 2),
-            linePaint);
+        path.moveTo(pos.dx, pos.dy);
+        path.lineTo(pos.dx - triangleSize / 2 * sqrt(2), pos.dy - triangleSize / 2);
+        path.lineTo(pos.dx - triangleSize / 2 * sqrt(2), pos.dy + triangleSize / 2);
         break;
+    }
+
+    path.close();
+    canvas.drawPath(path, paint);
+
+    if (isLine) {
+      switch (direction) {
+        case Direction.up:
+          canvas.drawLine(
+            Offset(pos.dx - lineSize / 2, pos.dy + triangleSize),
+            Offset(pos.dx + lineSize / 2, pos.dy + triangleSize),
+            paint,
+          );
+          break;
+        case Direction.down:
+          canvas.drawLine(
+            Offset(pos.dx - lineSize / 2, pos.dy - triangleSize),
+            Offset(pos.dx + lineSize / 2, pos.dy - triangleSize),
+            paint,
+          );
+          break;
+        case Direction.left:
+          canvas.drawLine(
+            Offset(pos.dx - triangleSize, pos.dy - lineSize / 2),
+            Offset(pos.dx - triangleSize, pos.dy + lineSize / 2),
+            paint,
+          );
+          break;
+        case Direction.right:
+          canvas.drawLine(
+            Offset(pos.dx + triangleSize, pos.dy - lineSize / 2),
+            Offset(pos.dx + triangleSize, pos.dy + lineSize / 2),
+            paint,
+          );
+          break;
+      }
     }
   }
 
