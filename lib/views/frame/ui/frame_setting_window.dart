@@ -178,42 +178,102 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
           fieldFlex: 2,
           child: Row(
             children: [
-              _textBox("X"),
-              Checkbox(
-                value: node.getConst(0), 
-                onChanged: (value){
-                  setState(() {
-                    node.changeConst(0, value!);
-                  });
-                },
+              Expanded(
+                flex: 1,
+                child: SettingItem(
+                  label: "X",
+                  fieldFlex: 1,
+                  child: Checkbox(
+                    value: node.getConst(0),
+                    onChanged: (value){
+                      setState(() {
+                        node.changeConst(0, value!);
+                      });
+                    },
+                  ),
+                ),
               ),
-              _textBox("Y"),
-              Checkbox(
-                value: node.getConst(1), 
-                onChanged: (value){
-                  setState(() {
-                    node.changeConst(1, value!);
-                  });
-                },
+              Expanded(
+                flex: 1,
+                child: SettingItem(
+                  label: "Y",
+                  fieldFlex: 1,
+                  child: Checkbox(
+                    value: node.getConst(1),
+                    onChanged: (value){
+                      setState(() {
+                        node.changeConst(1, value!);
+                      });
+                    },
+                  ),
+                ),
               ),
-              _textBox("回転"),
-              Checkbox(
-                value: node.getConst(2), 
-                onChanged: (value){
-                  setState(() {
-                    node.changeConst(2, value!);
-                  });
-                },
+              Expanded(
+                flex: 1,
+                child: SettingItem(
+                  label: "回転",
+                  fieldFlex: 1,
+                  child: Checkbox(
+                    value: node.getConst(2),
+                    onChanged: (value){
+                      setState(() {
+                        node.changeConst(2, value!);
+                      });
+                    },
+                  ),
+                ),
               ),
-              _textBox("ヒンジ"),
-              Checkbox(
-                value: node.getConst(3), 
-                onChanged: (value){
-                  setState(() {
-                    node.changeConst(3, value!);
-                  });
-                },
+              Expanded(
+                flex: 1,
+                child: SettingItem(
+                  label: "ひずみ",
+                  fieldFlex: 1,
+                  child: Checkbox(
+                    value: node.getConst(3),
+                    onChanged: (value){
+                      setState(() {
+                        node.changeConst(3, value!);
+                      });
+                    },
+                  ),
+                ),
               ),
+              // _textBox("X"),
+              // Checkbox(
+              //   value: node.getConst(0),
+              //   onChanged: (value){
+              //     setState(() {
+              //       node.changeConst(0, value!);
+              //     });
+              //   },
+              // ),
+              // _textBox("Y"),
+              // Checkbox(
+              //   value: node.getConst(1), 
+              //   onChanged: (value){
+              //     setState(() {
+              //       node.changeConst(1, value!);
+              //     });
+              //   },
+              // ),
+              // _textBox("回転"),
+              // Checkbox(
+              //   value: node.getConst(2), 
+              //   onChanged: (value){
+              //     setState(() {
+              //       node.changeConst(2, value!);
+              //     });
+              //   },
+              // ),
+              // _textBox("ヒンジ"),
+              // Checkbox(
+              //   value: node.getConst(3), 
+              //   onChanged: (value){
+              //     setState(() {
+              //       node.changeConst(3, value!);
+              //     });
+              //   },
+              // ),
             ],
           ),
         ),
@@ -264,7 +324,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
  
         SettingItem(
           label: "モーメント荷重",
-          fieldFlex: 1,
+          fieldFlex: 2,
           child: BaseTextField(
             width: 100,
             onChanged: (String text) {

@@ -29,11 +29,15 @@ class SettingItem extends StatelessWidget {
                 left: MyDimens.baseSpacing,
                 right: MyDimens.baseSpacing,
               ),
-              child: Text(
-                label ?? "",
-                style: const TextStyle(
-                  fontSize: MyDimens.baseFontSize,
-                )
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  label ?? "",
+                  style: const TextStyle(
+                    fontSize: MyDimens.baseFontSize,
+                  )
+                ),
               ),
             ),
           ),
