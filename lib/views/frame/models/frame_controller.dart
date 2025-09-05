@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import '../../../utils/my_calculator.dart';
 import 'data_manager.dart';
 import 'frame2d.dart';
 export 'data_manager.dart';
@@ -20,12 +21,18 @@ class FrameController extends ChangeNotifier {
   int _selectedNumber = -1;
   bool _isCalculated = false;
 
+  double _resultMin = 0;
+  double _resultMax = 0;
+
   // ゲッター
   int get typeIndex => _typeIndex;
   int get toolIndex => _toolIndex;
   int get resultIndex => _resultIndex;
   int get selectedNumber => _selectedNumber;
   bool get isCalculated => _isCalculated;
+
+  double get resultMin => _resultMin;
+  double get resultMax => _resultMax;
 
 
   // 関数
@@ -67,31 +74,19 @@ class FrameController extends ChangeNotifier {
   void changeResultIndex(int index) {
     _resultIndex = index;
 
-    // resultList = List.filled(elemList.length, 0);
-    // for (int i = 0; i < elemList.length; i++) {
-    //   if(index == 0) {
-    //     resultList[i] = elemList[i].result[0];
-    //   } else if (index == 1) {
-    //     resultList[i] = elemList[i].result[1];
-    //   } else if (index == 2) {
-    //     resultList[i] = elemList[i].result[2];
-    //   }
-    // }
-
-    // for (int i = 0; i < resultList.length; i++) {
-    //   if(i == 0){
-    //     resultMax = resultList[i];
-    //     resultMin = resultList[i];
-    //   }else{
-    //     resultMax = max(resultMax, resultList[i]);
-    //     resultMin = min(resultMin, resultList[i]);
-    //   }
-    // }
+    if (index <= 2) {
+      _resultMin = data.getResultElem(0).getResult(resultIndex);
+      _resultMax = data.getResultElem(0).getResult(resultIndex);
+      for (int i = 0; i < data.resultElemCount; i++) {
+        _resultMin = min(resultMin, data.getResultElem(i).getResult(resultIndex));
+        _resultMax = max(resultMax, data.getResultElem(i).getResult(resultIndex));
+      }
+    }
 
     notifyListeners();
   }
 
-  // 選択の初期化
+  // 選択
   void initSelect() {
     _selectedNumber = -1;
     if (_typeIndex == 0 && _toolIndex == 0) {
@@ -102,8 +97,40 @@ class FrameController extends ChangeNotifier {
 
     notifyListeners();
   }
+  void selectNode(Offset pos) {
+    initSelect();
 
+    for (int i = 0; i < data.nodeCount; i++) {
+      double dis = (data.getNode(i).pos - pos).distance;
+      if (dis <= data.nodeRadius * 3) {
+        _selectedNumber = i;
+        break;
+      }
+    }
 
+    notifyListeners();
+  }
+  void selectElem(Offset pos) {
+    initSelect();
+
+    for (int i = 0; i < data.elemCount; i++) {
+      List<Offset> nodePosList = [];
+      for (int j = 0; j < 2; j++) {
+        nodePosList.add(data.getElem(i).getNode(j)!.pos);
+      }
+
+      List<Offset> p = MyCalculator.getRectanglePoints(nodePosList[0], nodePosList[1], data.elemWidth * 3);
+
+      if(MyCalculator.isPointInRectangle(pos, p[0], p[1], p[2], p[3])){
+        _selectedNumber = i;
+        break;
+      }
+    }
+
+    notifyListeners();
+  }
+  
+  // 計算
   void calculation() {
     try {
       _removeTemporaryData();
@@ -182,37 +209,35 @@ class FrameController extends ChangeNotifier {
     }
 
     // 変位
+    double maxBecPos = 0;
     for (int ie = 0; ie < nelx2; ie++) {
       Elem elem = data.getResultElem(ie);
       for (int jn = 0; jn < node; jn++) {
         double ui = disp[mhng[ie][jn][0]];
         double vi = disp[mhng[ie][jn][1]];
-        double qi = disp[mhng[ie][jn][2]];
+        // double qi = disp[mhng[ie][jn][2]];
 
         Node node = data.getResultNode(ijke[ie][jn]);
         node.changeBecPos(Offset(ui, vi));
         node.changeAfterPos(node.pos + node.becPos / 100);
         elem.changeNode(jn, node);
+
+        maxBecPos = max(maxBecPos, ui.abs());
+        maxBecPos = max(maxBecPos, vi.abs());
       }
     }
 
-
-    // // 変位
-    // double maxDisp = 0;
-    // double rectWidth = max(data.rect.width, data.rect.height);
-    // for (int ix = 0; ix < nx; ix++) {
-    //   Node node = data.getNode(ix);
-    //   node.changeBecPos(Offset(disp[ndof * ix + 0], disp[ndof * ix + 1]));
-    //   maxDisp = max(maxDisp, node.becPos.distance.abs());
-    // }
-    // for (int ix = 0; ix < nx; ix++) {
-    //   Node node = data.getNode(ix);
-    //   node.changeAfterPos(
-    //     Offset(
-    //       node.pos.dx + node.becPos.dx / maxDisp * rectWidth / 8,
-    //       node.pos.dy + node.becPos.dy / maxDisp * rectWidth / 8)
-    //   );
-    // }
+    // ワールド範囲の最大1/8まで変位
+    final double rectWidth = max(data.rect.width, data.rect.height);
+    for (int ix = 0; ix < nx2; ix++) {
+      Node node = data.getResultNode(ix);
+      node.changeAfterPos(
+        Offset(
+          node.pos.dx + node.becPos.dx / maxBecPos * rectWidth / 8,
+          node.pos.dy + node.becPos.dy / maxBecPos * rectWidth / 8
+        )
+      );
+    }
     
     // 力
     for (int ie = 0; ie < nelx2; ie++) {
@@ -221,18 +246,6 @@ class FrameController extends ChangeNotifier {
       elem.changeResult(1, fint[ie][1]);
       elem.changeResult(2, fint[ie][2]);
     }
-
-    // // 応力（軸方向）
-    // for (int ie = 0; ie < nelx; ie++) {
-    //   Elem elem = data.getElem(ie);
-    //   elem.changeResult(1, fint[ie] / prp0[ie][1]);
-    // }
-
-    // // ひずみ
-    // for(int ie = 0; ie < nelx; ie++){
-    //   Elem elem = data.getElem(ie);
-    //   elem.changeResult(2, elem.getResult(0) / prp0[ie][0]);
-    // }
     
     // 反力
     for (int ix = 0; ix < nx; ix++) {

@@ -6,6 +6,7 @@ import '../../utils/status_bar.dart';
 import '../common/common_drawer.dart';
 import 'canvas/frame_canvas.dart';
 import 'ui/frame_bar.dart';
+import 'ui/frame_canvas_ui.dart';
 import 'ui/frame_setting_window.dart';
 
 
@@ -83,7 +84,7 @@ class _FramePageState extends State<FramePage> {
                   children: [
                     FrameCanvas(controller: _controller),
 
-                    // TrussCanvasUi(controller: _controller),
+                    FrameCanvasUi(controller: _controller),
 
                     FrameSettingWindow(controller: _controller),
                   ]

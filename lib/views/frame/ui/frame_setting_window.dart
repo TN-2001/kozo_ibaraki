@@ -27,8 +27,9 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
       margin: const EdgeInsets.all(MyDimens.baseSpacing * 2),
       child: Align(
         alignment: Alignment.bottomCenter,
-        child: SettingWindow(
+        child: SettingWindow.scrolle(
           maxWidth: _windowMaxWidth,
+          maxHeight: 175,
           children: children,
         )
       )
@@ -131,10 +132,11 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
         
         SettingItem(
           label: "節点座標",
+          fieldFlex: 2,
           child: _textFieldsSettingItemField([
             Row(
               children: [
-                _textBox("水平"),
+                _textBox("X"),
                 Expanded(
                   child: BaseTextField(
                     onChanged: (String text) {
@@ -152,7 +154,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
 
             Row(
               children: [
-                _textBox("鉛直"),
+                _textBox("Y"),
                 Expanded(
                   child: 
                   BaseTextField(
@@ -173,9 +175,10 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
 
         SettingItem(
           label: "拘束条件",
+          fieldFlex: 2,
           child: Row(
             children: [
-              _textBox("水平"),
+              _textBox("X"),
               Checkbox(
                 value: node.getConst(0), 
                 onChanged: (value){
@@ -184,7 +187,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                   });
                 },
               ),
-              _textBox("鉛直"),
+              _textBox("Y"),
               Checkbox(
                 value: node.getConst(1), 
                 onChanged: (value){
@@ -214,13 +217,14 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
             ],
           ),
         ),
-      
+
         SettingItem(
           label: "集中荷重",
+          fieldFlex: 2,
           child: _textFieldsSettingItemField([
             Row(
               children: [
-                _textBox("水平"),
+                _textBox("X"),
                 Expanded(
                   child: BaseTextField(
                     onChanged: (String text) {
@@ -239,7 +243,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
             
             Row(
               children: [
-                _textBox("鉛直"),
+                _textBox("Y"),
                 Expanded(
                   child: BaseTextField(
                     width: 100,
@@ -255,26 +259,23 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                 ),
               ],
             ),
-
-            Row(
-              children: [
-                _textBox("モーメント"),
-                Expanded(
-                  child: BaseTextField(
-                    width: 100,
-                    onChanged: (String text) {
-                      if (double.tryParse(text) != null) {
-                        node.changeLoad(2, double.parse(text));
-                      } else {
-                        node.changeLoad(2, 0);
-                      }
-                    }, 
-                    text: node.getLoad(2) != 0 ? "${node.getLoad(2)}" : "",
-                  ),
-                ),
-              ],
-            ),
           ],),
+        ),
+ 
+        SettingItem(
+          label: "モーメント荷重",
+          fieldFlex: 1,
+          child: BaseTextField(
+            width: 100,
+            onChanged: (String text) {
+              if (double.tryParse(text) != null) {
+                node.changeLoad(2, double.parse(text));
+              } else {
+                node.changeLoad(2, 0);
+              }
+            }, 
+            text: node.getLoad(2) != 0 ? "${node.getLoad(2)}" : "",
+          ),
         ),
       ]);
     }
@@ -302,7 +303,8 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
               ),
             ),
           ),
-        } else...{
+        } 
+        else...{
           SettingItem(
             label: "No. ${elem.number + 1}",
             child: _buttonSettingItemField(
@@ -323,6 +325,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
 
         SettingItem(
           label: "節点番号",
+          fieldFlex: 1,
           child: _textFieldsSettingItemField([
             BaseTextField(
               onChanged: (String text) {
@@ -355,6 +358,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
 
         SettingItem(
           label: "ヤング率",
+          fieldFlex: 1,
           child: BaseTextField(
             width: 200,
             onChanged: (String text) {
@@ -370,6 +374,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
 
         SettingItem(
           label: "断面二次モーメント",
+          fieldFlex: 1,
           child: BaseTextField(
             width: 200,
             onChanged: (String text) {
@@ -385,6 +390,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
 
         SettingItem(
           label: "断面積",
+          fieldFlex: 1,
           child: BaseTextField(
             width: 200,
             onChanged: (String text) {
@@ -400,6 +406,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
 
         SettingItem(
           label: "分布荷重",
+          fieldFlex: 1,
           child: BaseTextField(
             width: 200,
             onChanged: (String text) {

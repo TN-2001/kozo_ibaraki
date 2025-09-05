@@ -18,12 +18,19 @@ class _FrameCanvasState extends State<FrameCanvas> {
   late FrameController _controller;
   final Camera _camera = Camera(1, Offset.zero, Offset.zero);
 
+  void _onUpdate() {
+    setState(() {
+      // 画面更新
+    });
+  }
+
 
   @override
   void initState() {
     super.initState();
 
     _controller = widget.controller;
+    _controller.data.addListener(_onUpdate);
   }
 
   @override
@@ -60,10 +67,10 @@ class _FrameCanvasState extends State<FrameCanvas> {
               if(!_controller.isCalculated){
                 if(_controller.toolIndex == 1){
                   if(_controller.typeIndex == 0){
-                    // _controller.selectNode(_camera.screenToWorld(details.localPosition));
+                    _controller.selectNode(_camera.screenToWorld(details.localPosition));
                   }
                   else if(_controller.typeIndex == 1){
-                    // _controller.selectElem(_camera.screenToWorld(details.localPosition));
+                    _controller.selectElem(_camera.screenToWorld(details.localPosition));
                   }
                 }
               }

@@ -1,7 +1,8 @@
 import 'dart:math';
-import 'dart:ui';
 
-class DataManager {
+import 'package:flutter/material.dart';
+
+class DataManager  extends ChangeNotifier {
   // パラメータ
   final List<Node> _nodeList = [];
   final List<Elem> _elemList = [];
@@ -104,32 +105,43 @@ class DataManager {
 
   // 関数
   void addNode() {
-    _nodeList.add(Node(nodeCount));
+    Node node = Node(nodeCount);
+    node.addListener(notifyListeners);
+    _nodeList.add(node);
+    notifyListeners();
   }
   void removeNode(int index) {
     _nodeList.removeAt(index);
     for (int i = index; i < _nodeList.length; i++) {
       _nodeList[i].changeNumber(i);
     }
+    notifyListeners();
   }
   void addElem() {
-    _elemList.add(Elem(elemCount));
+    Elem elem = Elem(elemCount);
+    elem.addListener(notifyListeners);
+    _elemList.add(elem);
+    notifyListeners();
   }
   void removeElem(int index) {
     _elemList.removeAt(index);
     for (int i = index; i < _elemList.length; i++) {
       _elemList[i].changeNumber(i);
     }
+    notifyListeners();
   }
+  
   void initResultNode(int length) {
     _resultNodeList = List.generate(length, (i) => Node(i));
+    notifyListeners();
   }
   void initResultElem(int length) {
     _resultElemList = List.generate(length, (i) => Elem(i));
+    notifyListeners();
   }
 }
 
-class Node {
+class Node extends ChangeNotifier{
   Node(int number) {
     _number = number;
   }
@@ -161,28 +173,35 @@ class Node {
   // 関数
   void changeNumber(int number) {
     _number = number;
+    notifyListeners();
   }
   void changePos(Offset pos) {
     _pos = pos;
+    notifyListeners();
   }
   void changeConst(int index, bool value) {
     _const[index] = value;
+    notifyListeners();
   }
   void changeLoad(int index, double value) {
     _load[index] = value;
+    notifyListeners();
   }
   void changeBecPos(Offset pos) {
     _becPos = pos;
+    notifyListeners();
   }
   void changeAfterPos(Offset pos) {
     _afterPos = pos;
+    notifyListeners();
   }
   void changeResult(int index, double value) {
     _result[index] = value;
+    notifyListeners();
   }
 }
 
-class Elem {
+class Elem extends ChangeNotifier{
   Elem(int number) {
     _number = number;
   }
@@ -192,7 +211,7 @@ class Elem {
   final List<Node?> _nodeList = [null, null];
   final List<double> _rigid = [1.0, 1.0, 1.0]; // 0:ヤング率、1：断面二次モーメント、2:断面積
   double _load = 0.0; // 荷重
-  final List<double> _result = [0.0, 0.0, 0.0]; // 0:軸力、1:応力、2:ひずみ
+  final List<double> _result = [0.0, 0.0, 0.0]; // 0:軸力、1:せん断力、2:曲げモーメント
 
   // ゲッター
   int get number => _number;
@@ -210,17 +229,22 @@ class Elem {
   // 関数
   void changeNumber(int number) {
     _number = number;
+    notifyListeners();
   }
   void changeNode(int index, Node? node) {
     _nodeList[index] = node;
+    notifyListeners();
   }
   void changeLigid(int index, double value) {
     _rigid[index] = value;
+    notifyListeners();
   }
   void changeLoad(double value) {
     _load = value;
+    notifyListeners();
   }
   void changeResult(int index, double value) {
     _result[index] = value;
+    notifyListeners();
   }
 }

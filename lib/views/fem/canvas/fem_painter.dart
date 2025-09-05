@@ -213,16 +213,16 @@ class FemPainter extends CustomPainter {
       Offset pos = camera.worldToScreen(nodes[i].pos);
       if (nodes[i].loadXY[0] != 0) {
         if (nodes[i].loadXY[0] < 0) {
-          MyPainter.arrow2(canvas, Offset(pos.dx - 5, pos.dy), Offset(pos.dx - 50, pos.dy), headSize: headSize, color: color);
+          MyPainter.drawArrow2(canvas, Offset(pos.dx - 5, pos.dy), Offset(pos.dx - 50, pos.dy), headSize: headSize, color: color);
         } else {
-          MyPainter.arrow2(canvas, Offset(pos.dx + 5, pos.dy), Offset(pos.dx + 50, pos.dy), headSize: headSize, color: color);
+          MyPainter.drawArrow2(canvas, Offset(pos.dx + 5, pos.dy), Offset(pos.dx + 50, pos.dy), headSize: headSize, color: color);
         }
       }
       if (nodes[i].loadXY[1] != 0) {
         if (nodes[i].loadXY[1] > 0) {
-          MyPainter.arrow2(canvas, Offset(pos.dx, pos.dy - 5), Offset(pos.dx, pos.dy - 50), headSize: headSize, color: color);
+          MyPainter.drawArrow2(canvas, Offset(pos.dx, pos.dy - 5), Offset(pos.dx, pos.dy - 50), headSize: headSize, color: color);
         } else {
-          MyPainter.arrow2(canvas, Offset(pos.dx, pos.dy + 5), Offset(pos.dx, pos.dy + 50), headSize: headSize, color: color);
+          MyPainter.drawArrow2(canvas, Offset(pos.dx, pos.dy + 5), Offset(pos.dx, pos.dy + 50), headSize: headSize, color: color);
         }
       }
     }
