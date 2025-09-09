@@ -43,7 +43,70 @@ class SettingItem extends StatelessWidget {
           ),
           
           Expanded(
-            flex: fieldFlex ?? 3,
+            flex: fieldFlex ?? MyDimens.settingItemFieldFlex,
+            child: child ?? const SizedBox(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Widget labelFit({String? label, Widget? child}) {
+    return SizedBox(
+      height: MyDimens.settingItemHeight,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (label != null) ...[
+            Flexible(
+              fit: FlexFit.loose,
+              child: Container(
+                padding: const EdgeInsets.only(
+                  left: MyDimens.baseSpacing,
+                  right: MyDimens.baseSpacing,
+                ),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: MyDimens.baseFontSize,
+                    )
+                  ),
+                ),
+              ),
+            ),
+          ],
+          
+          child ?? const SizedBox(),
+        ],
+      ),
+    );
+  }
+
+  static Widget labelNotFit({String? label, Widget? child}) {
+    return SizedBox(
+      height: MyDimens.settingItemHeight,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          if (label != null) ...[
+            Container(
+              padding: const EdgeInsets.only(
+                left: MyDimens.baseSpacing,
+                right: MyDimens.baseSpacing,
+              ),
+              child: Text(
+                label,
+                style: const TextStyle(
+                  fontSize: MyDimens.baseFontSize,
+                )
+              ),
+            ),
+          ],
+          
+          Expanded(
             child: child ?? const SizedBox(),
           ),
         ],

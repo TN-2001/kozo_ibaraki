@@ -29,4 +29,5 @@ class MyDimens {
 
   static const double settingWindowBorderRadius = 4.0;
   static const double settingItemHeight = baseTextButtonHeight;
+  static const int settingItemFieldFlex = 2;
 }

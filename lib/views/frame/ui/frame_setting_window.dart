@@ -15,7 +15,8 @@ class FrameSettingWindow extends StatefulWidget {
 
 class _FrameSettingWindowState extends State<FrameSettingWindow> {
   late FrameController _controller;
-  final double _windowMaxWidth = 500;
+  static const double _windowMaxWidth = 500;
+  static const double _windowMaxHeight = 154;
 
   bool isCheck = false;
 
@@ -29,7 +30,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
         alignment: Alignment.bottomCenter,
         child: SettingWindow.scrolle(
           maxWidth: _windowMaxWidth,
-          maxHeight: 175,
+          maxHeight: _windowMaxHeight,
           children: children,
         )
       )
@@ -42,34 +43,6 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
       children: [
         child,
       ]
-    );
-  }
-
-  Widget _textFieldsSettingItemField(List<Widget> children) {
-    return Row(
-      children: [
-        for (final child in children)...{
-          Expanded(
-            flex: 1,
-            child: child,
-          ),
-        },
-      ],
-    );
-  }
-
-  Widget _textBox(String text) {
-    return Container(
-      padding: const EdgeInsets.only(
-        left: MyDimens.baseSpacing,
-        right: MyDimens.baseSpacing,
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: MyDimens.baseFontSize,
-        ),
-      ),
     );
   }
 
@@ -132,12 +105,11 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
         
         SettingItem(
           label: "節点座標",
-          fieldFlex: 2,
-          child: _textFieldsSettingItemField([
-            Row(
-              children: [
-                _textBox("X"),
-                Expanded(
+          child: Row(
+            children: [
+              Expanded(
+                child: SettingItem.labelNotFit(
+                  label: "X",
                   child: BaseTextField(
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
@@ -149,15 +121,12 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                     text: '${node.pos.dx}',
                   ),
                 ),
-              ],
-            ),
+              ),
 
-            Row(
-              children: [
-                _textBox("Y"),
-                Expanded(
-                  child: 
-                  BaseTextField(
+              Expanded(
+                child: SettingItem.labelNotFit(
+                  label: "Y",
+                  child: BaseTextField(
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.changePos(Offset(node.pos.dx, double.parse(text)));
@@ -168,21 +137,18 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                     text: '${node.pos.dy}',
                   ),
                 ),
-              ]
-            )
-          ]),
+              ),
+            ],
+          ),
         ),
 
         SettingItem(
           label: "拘束条件",
-          fieldFlex: 2,
           child: Row(
             children: [
               Expanded(
-                flex: 1,
-                child: SettingItem(
+                child: SettingItem.labelFit(
                   label: "X",
-                  fieldFlex: 1,
                   child: Checkbox(
                     value: node.getConst(0),
                     onChanged: (value){
@@ -194,10 +160,8 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                 ),
               ),
               Expanded(
-                flex: 1,
-                child: SettingItem(
+                child: SettingItem.labelFit(
                   label: "Y",
-                  fieldFlex: 1,
                   child: Checkbox(
                     value: node.getConst(1),
                     onChanged: (value){
@@ -209,10 +173,8 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                 ),
               ),
               Expanded(
-                flex: 1,
-                child: SettingItem(
+                child: SettingItem.labelFit(
                   label: "回転",
-                  fieldFlex: 1,
                   child: Checkbox(
                     value: node.getConst(2),
                     onChanged: (value){
@@ -224,10 +186,8 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                 ),
               ),
               Expanded(
-                flex: 1,
-                child: SettingItem(
+                child: SettingItem.labelFit(
                   label: "ひずみ",
-                  fieldFlex: 1,
                   child: Checkbox(
                     value: node.getConst(3),
                     onChanged: (value){
@@ -238,54 +198,17 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                   ),
                 ),
               ),
-              // _textBox("X"),
-              // Checkbox(
-              //   value: node.getConst(0),
-              //   onChanged: (value){
-              //     setState(() {
-              //       node.changeConst(0, value!);
-              //     });
-              //   },
-              // ),
-              // _textBox("Y"),
-              // Checkbox(
-              //   value: node.getConst(1), 
-              //   onChanged: (value){
-              //     setState(() {
-              //       node.changeConst(1, value!);
-              //     });
-              //   },
-              // ),
-              // _textBox("回転"),
-              // Checkbox(
-              //   value: node.getConst(2), 
-              //   onChanged: (value){
-              //     setState(() {
-              //       node.changeConst(2, value!);
-              //     });
-              //   },
-              // ),
-              // _textBox("ヒンジ"),
-              // Checkbox(
-              //   value: node.getConst(3), 
-              //   onChanged: (value){
-              //     setState(() {
-              //       node.changeConst(3, value!);
-              //     });
-              //   },
-              // ),
             ],
           ),
         ),
 
         SettingItem(
           label: "集中荷重",
-          fieldFlex: 2,
-          child: _textFieldsSettingItemField([
-            Row(
-              children: [
-                _textBox("X"),
-                Expanded(
+          child: Row(
+            children: [
+              Expanded(
+                child: SettingItem.labelNotFit(
+                  label: "X",
                   child: BaseTextField(
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
@@ -297,16 +220,12 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                     text: node.getLoad(0) != 0 ? "${node.getLoad(0)}" : "",
                   ),
                 ),
-              ],
-            ),
+              ),
 
-            
-            Row(
-              children: [
-                _textBox("Y"),
-                Expanded(
+              Expanded(
+                child: SettingItem.labelNotFit(
+                  label: "Y",
                   child: BaseTextField(
-                    width: 100,
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.changeLoad(1, double.parse(text));
@@ -317,16 +236,14 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                     text: node.getLoad(1) != 0 ? "${node.getLoad(1)}" : "",
                   ),
                 ),
-              ],
-            ),
-          ],),
+              ),
+            ],
+          ),
         ),
  
         SettingItem(
           label: "モーメント荷重",
-          fieldFlex: 2,
           child: BaseTextField(
-            width: 100,
             onChanged: (String text) {
               if (double.tryParse(text) != null) {
                 node.changeLoad(2, double.parse(text));
@@ -385,42 +302,79 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
 
         SettingItem(
           label: "節点番号",
-          fieldFlex: 1,
-          child: _textFieldsSettingItemField([
-            BaseTextField(
-              onChanged: (String text) {
-                if (int.tryParse(text) != null) {
-                  int value = int.parse(text);
-                  if(0 <= value - 1 && value - 1 < _controller.data.nodeCount){
-                    elem.changeNode(0, _controller.data.getNode(value - 1));
-                  } else {
-                    elem.changeNode(0, null);
-                  }
-                }
-              }, 
-              text: elem.getNode(0) != null ? "${elem.getNode(0)!.number + 1}" : "",
-            ),
-            BaseTextField(
-              onChanged: (String text) {
-                if (int.tryParse(text) != null) {
-                  int value = int.parse(text);
-                  if(0 <= value - 1 && value - 1 < _controller.data.nodeCount){
-                    elem.changeNode(1, _controller.data.getNode(value - 1));
-                  } else {
-                    elem.changeNode(1, null);
-                  }
-                }
-              }, 
-              text: elem.getNode(1) != null ? "${elem.getNode(1)!.number + 1}" : "",
-            ),
-          ],),
+          // child: _textFieldsSettingItemField([
+          //   BaseTextField(
+          //     onChanged: (String text) {
+          //       if (int.tryParse(text) != null) {
+          //         int value = int.parse(text);
+          //         if(0 <= value - 1 && value - 1 < _controller.data.nodeCount){
+          //           elem.changeNode(0, _controller.data.getNode(value - 1));
+          //         } else {
+          //           elem.changeNode(0, null);
+          //         }
+          //       }
+          //     }, 
+          //     text: elem.getNode(0) != null ? "${elem.getNode(0)!.number + 1}" : "",
+          //   ),
+          //   BaseTextField(
+          //     onChanged: (String text) {
+          //       if (int.tryParse(text) != null) {
+          //         int value = int.parse(text);
+          //         if(0 <= value - 1 && value - 1 < _controller.data.nodeCount){
+          //           elem.changeNode(1, _controller.data.getNode(value - 1));
+          //         } else {
+          //           elem.changeNode(1, null);
+          //         }
+          //       }
+          //     }, 
+          //     text: elem.getNode(1) != null ? "${elem.getNode(1)!.number + 1}" : "",
+          //   ),
+          // ],),
+          child: Row(
+            children: [
+              Expanded(
+                child: SettingItem.labelNotFit(
+                  label: "a",
+                  child:  BaseTextField(
+                    onChanged: (String text) {
+                      if (int.tryParse(text) != null) {
+                        int value = int.parse(text);
+                        if(0 <= value - 1 && value - 1 < _controller.data.nodeCount){
+                          elem.changeNode(0, _controller.data.getNode(value - 1));
+                        } else {
+                          elem.changeNode(0, null);
+                        }
+                      }
+                    }, 
+                    text: elem.getNode(0) != null ? "${elem.getNode(0)!.number + 1}" : "",
+                  ),
+                ),
+              ),
+              Expanded(
+                child: SettingItem.labelNotFit(
+                  label: "b",
+                  child: BaseTextField(
+                    onChanged: (String text) {
+                      if (int.tryParse(text) != null) {
+                        int value = int.parse(text);
+                        if(0 <= value - 1 && value - 1 < _controller.data.nodeCount){
+                          elem.changeNode(1, _controller.data.getNode(value - 1));
+                        } else {
+                          elem.changeNode(1, null);
+                        }
+                      }
+                    }, 
+                    text: elem.getNode(1) != null ? "${elem.getNode(1)!.number + 1}" : "",
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
 
         SettingItem(
           label: "ヤング率",
-          fieldFlex: 1,
           child: BaseTextField(
-            width: 200,
             onChanged: (String text) {
               if (double.tryParse(text) != null) {
                 elem.changeLigid(0, double.parse(text));
@@ -434,9 +388,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
 
         SettingItem(
           label: "断面二次モーメント",
-          fieldFlex: 1,
           child: BaseTextField(
-            width: 200,
             onChanged: (String text) {
               if (double.tryParse(text) != null) {
                 elem.changeLigid(1, double.parse(text));
@@ -450,9 +402,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
 
         SettingItem(
           label: "断面積",
-          fieldFlex: 1,
           child: BaseTextField(
-            width: 200,
             onChanged: (String text) {
               if (double.tryParse(text) != null) {
                 elem.changeLigid(2, double.parse(text));
@@ -466,9 +416,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
 
         SettingItem(
           label: "分布荷重",
-          fieldFlex: 1,
           child: BaseTextField(
-            width: 200,
             onChanged: (String text) {
               if (double.tryParse(text) != null) {
                 elem.changeLoad(double.parse(text));

@@ -45,34 +45,6 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
     );
   }
 
-  Widget _textFieldsSettingItemField(List<Widget> children) {
-    return Row(
-      children: [
-        for (final child in children)...{
-          Expanded(
-            flex: 1,
-            child: child,
-          ),
-        },
-      ],
-    );
-  }
-
-  Widget _textBox(String text) {
-    return Container(
-      padding: const EdgeInsets.only(
-        left: MyDimens.baseSpacing,
-        right: MyDimens.baseSpacing,
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: MyDimens.baseFontSize,
-        ),
-      ),
-    );
-  }
-
 
   @override
   void initState() {
@@ -134,11 +106,11 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
         
         SettingItem(
           label: "節点座標",
-          child: _textFieldsSettingItemField([
-            Row(
-              children: [
-                _textBox("水平"),
-                Expanded(
+          child: Row(
+            children: [
+              Expanded(
+                child: SettingItem.labelNotFit(
+                  label: "X",
                   child: BaseTextField(
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
@@ -150,15 +122,12 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                     text: '${node.pos.dx}',
                   ),
                 ),
-              ],
-            ),
+              ),
 
-            Row(
-              children: [
-                _textBox("鉛直"),
-                Expanded(
-                  child: 
-                  BaseTextField(
+              Expanded(
+                child: SettingItem.labelNotFit(
+                  label: "Y",
+                  child: BaseTextField(
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.pos = Offset(node.pos.dx, double.parse(text));
@@ -169,32 +138,41 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                     text: '${node.pos.dy}',
                   ),
                 ),
-              ]
-            )
-          ]),
+              ),
+            ],
+          ),
         ),
 
         SettingItem(
           label: "拘束条件",
           child: Row(
             children: [
-              _textBox("水平"),
-              Checkbox(
-                value: node.constXY[0], 
-                onChanged: (value){
-                  setState(() {
-                    node.constXY[0] = value!;
-                  });
-                },
+              Expanded(
+                child: SettingItem.labelFit(
+                  label: "X",
+                  child: Checkbox(
+                    value: node.constXY[0], 
+                    onChanged: (value){
+                      setState(() {
+                        node.constXY[0] = value!;
+                      });
+                    },
+                  ),
+                ),
               ),
-              _textBox("鉛直"),
-              Checkbox(
-                value: node.constXY[1], 
-                onChanged: (value){
-                  setState(() {
-                    node.constXY[1] = value!;
-                  });
-                },
+
+              Expanded(
+                child: SettingItem.labelFit(
+                  label: "Y",
+                  child: Checkbox(
+                    value: node.constXY[1], 
+                    onChanged: (value){
+                      setState(() {
+                        node.constXY[1] = value!;
+                      });
+                    },
+                  ),
+                ),
               ),
             ],
           ),
@@ -202,11 +180,11 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
       
         SettingItem(
           label: "集中荷重",
-          child: _textFieldsSettingItemField([
-            Row(
-              children: [
-                _textBox("水平"),
-                Expanded(
+          child: Row(
+            children: [
+              Expanded(
+                child: SettingItem.labelNotFit(
+                  label: "X",
                   child: BaseTextField(
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
@@ -218,14 +196,11 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                     text: node.loadXY[0] != 0 ? "${node.loadXY[0]}" : "",
                   ),
                 ),
-              ],
-            ),
+              ),
 
-            
-            Row(
-              children: [
-                _textBox("鉛直"),
-                Expanded(
+              Expanded(
+                child: SettingItem.labelNotFit(
+                  label: "Y",
                   child: BaseTextField(
                     width: 100,
                     onChanged: (String text) {
@@ -238,9 +213,9 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                     text: node.loadXY[1] != 0 ? "${node.loadXY[1]}" : "",
                   ),
                 ),
-              ],
-            ),
-          ],),
+              ),
+            ],
+          ),
         ),
       ]);
     }
@@ -291,40 +266,52 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
 
         SettingItem(
           label: "節点番号",
-          child: _textFieldsSettingItemField([
-            BaseTextField(
-              onChanged: (String text) {
-                if (int.tryParse(text) != null) {
-                  int value = int.parse(text);
-                  if(0 <= value-1 && value-1 < _controller.nodeList.length){
-                    elem.nodeList[0] = _controller.nodeList[value-1];
-                  } else {
-                    elem.nodeList[0] = null;
-                  }
-                }
-              }, 
-              text: elem.nodeList[0] != null ? "${elem.nodeList[0]!.number+1}" : "",
-            ),
-            BaseTextField(
-              onChanged: (String text) {
-                if (int.tryParse(text) != null) {
-                  int value = int.parse(text);
-                  if(0 <= value-1 && value-1 < _controller.nodeList.length){
-                    elem.nodeList[1] = _controller.nodeList[value-1];
-                  } else {
-                    elem.nodeList[1] = null;
-                  }
-                }
-              }, 
-              text: elem.nodeList[1] != null ? "${elem.nodeList[1]!.number+1}" : "",
-            ),
-          ],),
+          child: Row(
+            children: [
+              Expanded(
+                child: SettingItem.labelNotFit(
+                  label: "a",
+                  child: BaseTextField(
+                    onChanged: (String text) {
+                      if (int.tryParse(text) != null) {
+                        int value = int.parse(text);
+                        if(0 <= value-1 && value-1 < _controller.nodeList.length){
+                          elem.nodeList[0] = _controller.nodeList[value-1];
+                        } else {
+                          elem.nodeList[0] = null;
+                        }
+                      }
+                    }, 
+                    text: elem.nodeList[0] != null ? "${elem.nodeList[0]!.number+1}" : "",
+                  ),
+                )
+              ),
+
+              Expanded(
+                child: SettingItem.labelNotFit(
+                  label: "b",
+                  child: BaseTextField(
+                    onChanged: (String text) {
+                      if (int.tryParse(text) != null) {
+                        int value = int.parse(text);
+                        if(0 <= value-1 && value-1 < _controller.nodeList.length){
+                          elem.nodeList[1] = _controller.nodeList[value-1];
+                        } else {
+                          elem.nodeList[1] = null;
+                        }
+                      }
+                    }, 
+                    text: elem.nodeList[1] != null ? "${elem.nodeList[1]!.number+1}" : "",
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
 
         SettingItem(
           label: "ヤング率",
           child: BaseTextField(
-            width: 200,
             onChanged: (String text) {
               if (double.tryParse(text) != null) {
                 elem.e = double.parse(text);
@@ -339,7 +326,6 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
         SettingItem(
           label: "断面積",
           child: BaseTextField(
-            width: 200,
             onChanged: (String text) {
               if (double.tryParse(text) != null) {
                 elem.v = double.parse(text);
