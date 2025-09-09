@@ -61,18 +61,18 @@ class CommonDrawer extends StatelessWidget {
           },
         ),
 
-        ListTile(
-          title: const Text("有限要素解析"),
-          onTap: () {
-            String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
-            String targetRoute = '/fem';
+        // ListTile(
+        //   title: const Text("有限要素解析"),
+        //   onTap: () {
+        //     String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
+        //     String targetRoute = '/fem';
 
-            Navigator.pop(context);
-            if (currentRoute != targetRoute) {
-              Navigator.pushNamed(context, targetRoute);
-            }
-          },
-        ),
+        //     Navigator.pop(context);
+        //     if (currentRoute != targetRoute) {
+        //       Navigator.pushNamed(context, targetRoute);
+        //     }
+        //   },
+        // ),
 
         const BaseDivider(),
 
