@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:kozo_ibaraki/components/my_widgets.dart';
-import 'package:kozo_ibaraki/views/common/common_drawer.dart';
+
+import '../../components/component.dart';
+import '../common/common_drawer.dart';
+import 'ui/privacy_bar.dart';
 
 Future<String> _loadHtmlFromAssets() async {
   return await rootBundle.loadString('assets/privacy.html');
@@ -20,20 +22,8 @@ class _PrivacyPageState extends State<PrivacyPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MyScaffold(
-      scaffoldKey: scaffoldKey,
-      header: MyHeader(
-        left: [
-          MyIconButton(
-            icon: Icons.menu, 
-            message: "メニュー", 
-            onPressed: (){
-              scaffoldKey.currentState!.openDrawer();
-            },
-          ),
-          const Text("kozo", style: TextStyle(fontSize: 24),),
-        ],
-      ),
+    return Scaffold(
+      key: scaffoldKey,
 
       drawer: CommonDrawer(
         onPressedHelpButton: () {
@@ -41,31 +31,46 @@ class _PrivacyPageState extends State<PrivacyPage> {
         },
       ),
 
-      body: FutureBuilder<String>(
-        future: _loadHtmlFromAssets(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              return SingleChildScrollView( // スクロールが必要な場合に備えて
-                child: SizedBox(
-                  width: double.infinity,
-                  child:Align(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: 1000,
-                      ),
-                      child: Html(data: snapshot.data!),
-                    ),
-                  )
-                )
-              );
-            } else {
-              return const Center(child: Text('Error loading HTML'));
-            }
-          } else {
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
+      body: SafeArea(
+        child: ClipRect(
+          child: Column(
+            children: [
+              PrivacyBar(scaffoldKey: scaffoldKey),
+
+              const BaseDivider(),
+
+              Expanded(
+                child: 
+              FutureBuilder<String>(
+                future: _loadHtmlFromAssets(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasData) {
+                      return SingleChildScrollView( // スクロールが必要な場合に備えて
+                        child: SizedBox(
+                          width: double.infinity,
+                          child:Align(
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(
+                                maxWidth: 1000,
+                              ),
+                              child: Html(data: snapshot.data!),
+                            ),
+                          )
+                        )
+                      );
+                    } else {
+                      return const Center(child: Text('Error loading HTML'));
+                    }
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
