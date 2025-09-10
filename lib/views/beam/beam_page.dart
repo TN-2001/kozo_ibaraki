@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/components/my_decorations.dart';
-import 'package:kozo_ibaraki/components/my_widgets.dart';
-import 'package:kozo_ibaraki/constants/colors.dart' as myc;
-import 'package:kozo_ibaraki/views/common/common_drawer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../components/component.dart';
 import '../../utils/status_bar.dart';
+import '../common/common_drawer.dart';
 import 'canvas/beam_canvas.dart';
 import 'models/beam_data.dart';
 import 'ui/beam_bar.dart';
+import 'ui/beam_canvas_ui.dart';
+import 'ui/beam_setting_window.dart';
 
 
 class BeamPage extends StatefulWidget {
@@ -56,7 +55,7 @@ class _BeamPageState extends State<BeamPage> {
     if(size.height > size.width && isSumaho == false) {
       setState(() {
         isSumaho = true;
-        if(controller.getResultIndex > 1){
+        if(controller.resultIndex > 1){
           controller.changeResultIndex(0);
         }
       });
@@ -116,30 +115,11 @@ class _BeamPageState extends State<BeamPage> {
               Expanded(
                 child: Stack(
                   children: [
-                    BeamCanvas(controller: controller, devTypeNum: controller.getResultIndex, isSumaho: isSumaho),
+                    BeamCanvas(controller: controller, devTypeNum: controller.resultIndex, isSumaho: isSumaho),
 
-                    if(!controller.isCalculation)...{
-                      if(controller.getTypeIndex == 0)...{
-                        if(controller.getToolIndex == 0)...{
-                          // 新規ノード
-                          nodeSetting(true, size.width),
-                        }
-                        else if(controller.selectNodeNumber >= 0)...{
-                          // 既存ノード
-                          nodeSetting(false, size.width),
-                        }
-                      }
-                      else if(controller.getTypeIndex == 1)...{
-                        if(controller.getToolIndex == 0)...{
-                          // 新規要素
-                          elemSetting(true, size.width),
-                        }
-                        else if(controller.selectElemNumber >= 0)...{
-                          // 既存要素
-                          elemSetting(false, size.width),
-                        }
-                      }
-                    },
+                    const BeamCanvasUi(),
+
+                    BeamSettingWindow(controller: controller),
                   ]
                 ),
               ),
@@ -149,270 +129,4 @@ class _BeamPageState extends State<BeamPage> {
       ),
     );
   }
-
-  Widget settingPC(List<MyProperty> propertyList, String title, String buttonName, Function() onButtonPressed, double width) {
-    return MyAlign(
-      alignment: Alignment.bottomCenter,
-      isIntrinsicHeight: true,
-      isIntrinsicWidth: true,
-      child: Container(
-        margin: const EdgeInsets.all(10),
-        padding: const EdgeInsets.all(5),
-        decoration: myBoxDecoration,
-        child: Column(children: [
-          MyProperty(
-            name: title,
-            width: (width > 505) ? 475 : width-30,
-            buttonName: buttonName,
-            onButtonPressed: onButtonPressed,
-          ),
-          const SizedBox(height: 5,),
-          const Divider(height: 0, color: myc.MyColors.baseDivider,),
-          const SizedBox(height: 5,),
-          for(int i = 0; i < propertyList.length; i++)...{
-            propertyList[i],
-            if(i < propertyList.length-1)...{
-              const SizedBox(height: 2.5,),
-            }
-          },
-        ],),
-      )
-      
-    );
-  }
-
-  Widget nodeSetting(bool isAdd, double width) {
-    double propWidth = (width > 505) ? 100 : (width-30-75-4)/4;
-    double labelWidth = 75;
-
-    List<MyProperty> propertyList(Node node) {
-      MyProperty prop2_1(Node node) {
-        return MyProperty(
-          name: "水平",
-          labelAlignment: Alignment.centerRight,
-          width: propWidth > 70 ? 70 : propWidth,
-          boolValue: node.constXYR[0],
-          onChangedBool: (value) {
-            setState(() {
-              node.constXYR[0] = value;
-            });
-          },
-        );
-      }
-      MyProperty prop2_2(Node node) {
-        return MyProperty(
-          name: "鉛直",
-          labelAlignment: Alignment.centerRight,
-          width: propWidth > 70 ? 70 : propWidth,
-          boolValue: node.constXYR[1],
-          onChangedBool: (value) {
-            setState(() {
-              node.constXYR[1] = value;
-            });
-          },
-        );
-      }
-      MyProperty prop2_3(Node node) {
-        return MyProperty(
-          name: "回転",
-          labelAlignment: Alignment.centerRight,
-          width: propWidth > 70 ? 70 : propWidth,
-          boolValue: node.constXYR[2],
-          onChangedBool: (value) {
-            setState(() {
-              node.constXYR[2] = value;
-            });
-          },
-        );
-      }
-      MyProperty prop2_4(Node node) {
-        return MyProperty(
-          name: "ヒンジ",
-          labelAlignment: Alignment.centerRight,
-          width: propWidth > 70 ? 70 : propWidth,
-          boolValue: node.constXYR[3],
-          onChangedBool: (value) {
-            setState(() {
-              node.constXYR[3] = value;
-            });
-          },
-        );
-      }
-
-      return [
-        MyProperty(
-          name: "節点座標（1次元）",
-          labelWidth: labelWidth+propWidth*2,
-          filledWidth: propWidth*2,
-          doubleValue: node.pos.dx,
-          onChangedDouble: (value) {
-            node.pos = Offset(value, node.pos.dy);
-          },
-        ),
-        MyProperty(
-          name: "拘束条件",
-          width: labelWidth+propWidth*4,
-          children: [
-            prop2_1(node),
-            prop2_2(node),
-            prop2_3(node),
-            prop2_4(node),
-          ],
-        ),
-        // MyProperty(
-        //   name: "集中荷重",
-        //   labelWidth: labelWidth,
-        //   children: [
-        //     prop3_1(node),
-        //     prop3_2(node),
-        //   ],
-        // ),
-        MyProperty(
-          name: "集中荷重（鉛直方向）",
-          labelWidth: labelWidth+propWidth*2,
-          filledWidth: propWidth*2,
-          doubleValue: (node.loadXY[1] != 0.0) ? node.loadXY[1] : null,
-          onChangedDouble: (value) {
-            node.loadXY[1] = value;
-          },
-        ),
-        MyProperty(
-          name: "モーメント荷重",
-          labelWidth: labelWidth+propWidth*2,
-          filledWidth: propWidth*2,
-          doubleValue: (node.loadXY[2] != 0.0) ? node.loadXY[2] : null,
-          onChangedDouble: (value) {
-            node.loadXY[2] = value;
-          },
-        ),
-      ];
-    }
-
-    if(isAdd){
-      // 追加時
-      return settingPC(
-        propertyList(controller.node!), 
-        "No. ${controller.node!.number+1}", 
-        "追加", 
-        (){
-          setState(() {
-            controller.addNode();
-            controller.initSelect();
-          });
-        },
-        width
-      );
-    }
-    else{
-      // タッチ時
-      return settingPC(
-        propertyList(controller.nodeList[controller.selectNodeNumber]), 
-        "No. ${controller.nodeList[controller.selectNodeNumber].number+1}", 
-        "削除", 
-        (){
-          setState(() {
-            controller.removeNode(controller.selectNodeNumber);
-            controller.initSelect();
-          });
-        },
-        width
-      );
-    }
-  }
-
-  Widget elemSetting(bool isAdd, double width) {
-    double propWidth = (width > 505) ? 100 : (width-30-75-4)/4;
-    List<MyProperty> propertyList(Elem elem) {
-      currentElem = elem;
-      return [
-        MyProperty(
-          name: "結合情報（節点番号）",
-          labelWidth: 75+propWidth*2,
-          children: [
-            MyProperty(
-              width: propWidth,
-              filledWidth: propWidth,
-              intValue: (elem.nodeList[0] != null) ? (elem.nodeList[0]!.number+1) : null,
-              onChangedInt: (value) {
-                if(0 <= value-1  && value-1 < controller.nodeList.length){
-                  elem.nodeList[0] = controller.nodeList[value-1];
-                }
-              },
-            ),
-            MyProperty(
-              width: propWidth,
-              filledWidth: propWidth,
-              intValue: (elem.nodeList[1] != null) ? (elem.nodeList[1]!.number+1) : null,
-              onChangedInt: (value) {
-                if(0 <= value-1 && value-1 < controller.nodeList.length){
-                  elem.nodeList[1] = controller.nodeList[value-1];
-                }
-              },
-            )
-          ],
-        ),
-        MyProperty(
-          name: "ヤング率",
-          labelWidth: 75+propWidth*2,
-          filledWidth: propWidth*2,
-          doubleValue: elem.e,
-          onChangedDouble: (value) {
-            elem.e = value;
-          },
-        ),
-        MyProperty(
-          name: "断面二次モーメント",
-          labelWidth: 75+propWidth*2,
-          filledWidth: propWidth*2,
-          doubleValue: elem.v,
-          onChangedDouble: (value) {
-            elem.v = value;
-          },
-        ),
-        MyProperty(
-          name: "等分布荷重（鉛直方向）",
-          labelWidth: 75+propWidth*2,
-          filledWidth: propWidth*2,
-          doubleValue: (elem.load != 0.0) ? elem.load : null,
-          onChangedDouble: (value) {
-            elem.load = value;
-          },
-        ),
-      ];
-    }
-
-    if(isAdd){
-      // 追加時
-      return settingPC(
-        propertyList(controller.elem!), 
-        "No. ${controller.elem!.number+1}", 
-        "追加", 
-        (){
-          setState(() {
-            controller.addElem();
-            controller.elem!.e = 1;
-            controller.elem!.v = 1;
-            controller.initSelect();
-          });
-        },
-        width
-      );
-    }
-    else{
-      // タッチ時
-      return settingPC(
-        propertyList(controller.elemList[controller.selectElemNumber]), 
-        "No. ${controller.elemList[controller.selectElemNumber].number+1}",
-        "削除", 
-        (){
-          setState(() {
-            controller.removeElem(controller.selectElemNumber);
-            controller.initSelect();
-          });
-        },
-        width
-      );
-    }
-  }
-
 }

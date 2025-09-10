@@ -20,11 +20,11 @@ class BeamCanvas extends StatelessWidget {
       child: GestureDetector(
         onTapDown: (details) {
           if(!controller.isCalculation){
-            if(controller.getToolIndex == 1){
-              if(controller.getTypeIndex == 0){
+            if(controller.toolIndex == 1){
+              if(controller.typeIndex == 0){
                 controller.selectNode(details.localPosition);
               }
-              else if(controller.getTypeIndex == 1){
+              else if(controller.typeIndex == 1){
                 controller.selectElem(details.localPosition);
               }
             }

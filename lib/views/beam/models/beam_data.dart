@@ -21,9 +21,9 @@ class BeamData extends ChangeNotifier {
     ゲッター
   */
   BeamState get getState => _state; // 現在の状態を取得
-  int get getTypeIndex => _typeIndex; // 選択されているタイプのインデックスを取得
-  int get getToolIndex => _toolIndex; // 選択されているツールのインデックスを取得
-  int get getResultIndex => _resultIndex; // 選択されている結果のインデックスを取得
+  int get typeIndex => _typeIndex; // 選択されているタイプのインデックスを取得
+  int get toolIndex => _toolIndex; // 選択されているツールのインデックスを取得
+  int get resultIndex => _resultIndex; // 選択されている結果のインデックスを取得
   
   bool isCalculation = false; // 解析したかどうか
 
