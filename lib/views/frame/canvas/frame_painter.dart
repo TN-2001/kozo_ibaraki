@@ -373,16 +373,16 @@ class FramePainter extends CustomPainter {
         final Offset pos1 = camera.worldToScreen(elem.getNode(0)!.pos);
         final Offset pos2 = camera.worldToScreen(elem.getNode(1)!.pos);
 
-        Offset start;
-        Offset end;
+        Offset start = pos1;
+        Offset end = pos2;
 
-        if (pos1.dx < pos2.dx || pos1.dy < pos2.dy) {
-          start = pos1;
-          end = pos2;
-        } else {
-          start = pos2;
-          end = pos1;
-        }
+        // if (pos1.dx < pos2.dx || pos1.dy < pos2.dy) {
+        //   start = pos1;
+        //   end = pos2;
+        // } else {
+        //   start = pos2;
+        //   end = pos1;
+        // }
 
         if (elem.load > 0) {
           MyPainter.drawDistributionArrows(canvas, start, end, headSize: headSize, lineWidth: lineWidth, lineLength: lineLength, color: arrowColor);
