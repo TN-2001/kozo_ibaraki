@@ -149,7 +149,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
               Expanded(
                 child: SettingItem.labelFit(
                   label: "X",
-                  child: Checkbox(
+                  child: BaseCheckbox(
                     value: node.getConst(0),
                     onChanged: (value){
                       setState(() {
@@ -162,7 +162,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
               Expanded(
                 child: SettingItem.labelFit(
                   label: "Y",
-                  child: Checkbox(
+                  child: BaseCheckbox(
                     value: node.getConst(1),
                     onChanged: (value){
                       setState(() {
@@ -175,7 +175,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
               Expanded(
                 child: SettingItem.labelFit(
                   label: "回転",
-                  child: Checkbox(
+                  child: BaseCheckbox(
                     value: node.getConst(2),
                     onChanged: (value){
                       setState(() {
@@ -188,7 +188,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
               Expanded(
                 child: SettingItem.labelFit(
                   label: "ひずみ",
-                  child: Checkbox(
+                  child: BaseCheckbox(
                     value: node.getConst(3),
                     onChanged: (value){
                       setState(() {

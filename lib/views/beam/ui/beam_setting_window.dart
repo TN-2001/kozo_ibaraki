@@ -124,7 +124,7 @@ class _BeamSettingWindowState extends State<BeamSettingWindow> {
               Expanded(
                 child: SettingItem.labelFit(
                   label: "X",
-                  child: Checkbox(
+                  child: BaseCheckbox(
                     value: node.constXYR[0], 
                     onChanged: (value){
                       setState(() {
@@ -138,7 +138,7 @@ class _BeamSettingWindowState extends State<BeamSettingWindow> {
               Expanded(
                 child: SettingItem.labelFit(
                   label: "Y",
-                  child: Checkbox(
+                  child: BaseCheckbox(
                     value: node.constXYR[1], 
                     onChanged: (value){
                       setState(() {
@@ -152,7 +152,7 @@ class _BeamSettingWindowState extends State<BeamSettingWindow> {
               Expanded(
                 child: SettingItem.labelFit(
                   label: "回転",
-                  child: Checkbox(
+                  child: BaseCheckbox(
                     value: node.constXYR[2], 
                     onChanged: (value){
                       setState(() {
@@ -166,7 +166,7 @@ class _BeamSettingWindowState extends State<BeamSettingWindow> {
               Expanded(
                 child: SettingItem.labelFit(
                   label: "ヒンジ",
-                  child: Checkbox(
+                  child: BaseCheckbox(
                     value: node.constXYR[3], 
                     onChanged: (value){
                       setState(() {

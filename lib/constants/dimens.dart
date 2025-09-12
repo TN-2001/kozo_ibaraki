@@ -9,6 +9,7 @@ class MyDimens {
   static const double baseSpacing = 4.0;
   static const double baseButtonBorderRadius = 4.0;
   static const double baseTextButtonHeight = 32.0;
+  static const double baseCheckboxSize = 24.0;
 
   static const double toolBarWidth = 52.0;
   static const double toolBarHeight = 52.0;

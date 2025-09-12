@@ -3,6 +3,7 @@ export 'base/base_drawer.dart';
 export 'base/base_text.dart';
 export 'base/base_text_button.dart';
 export 'base/base_text_field.dart';
+export 'base/base_checkbox.dart';
 
 export 'tool/tool_bar.dart';
 export 'tool/tool_bar_divider.dart';

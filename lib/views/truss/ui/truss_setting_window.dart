@@ -150,7 +150,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
               Expanded(
                 child: SettingItem.labelFit(
                   label: "X",
-                  child: Checkbox(
+                  child: BaseCheckbox(
                     value: node.constXY[0], 
                     onChanged: (value){
                       setState(() {
@@ -164,7 +164,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
               Expanded(
                 child: SettingItem.labelFit(
                   label: "Y",
-                  child: Checkbox(
+                  child: BaseCheckbox(
                     value: node.constXY[1], 
                     onChanged: (value){
                       setState(() {
