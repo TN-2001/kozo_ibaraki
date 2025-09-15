@@ -75,12 +75,12 @@ class FramePainter extends CustomPainter {
     final double worldHeight = data.rect.height;
 
     double scale = 1.0;
-    if (screenWidth / worldWidth < screenHeight / worldHeight) {
+    if (screenWidth / (worldWidth * 1.5) < screenHeight / (worldHeight * 2)) {
       // 横幅に合わせる
-      scale = screenWidth / worldWidth / 2;
+      scale = screenWidth / (worldWidth * 1.5);
     } else {
       // 高さに合わせる
-      scale = screenHeight / worldHeight / 2;
+      scale = screenHeight / (worldHeight * 2);
     }
 
     // カメラの初期化
@@ -210,12 +210,12 @@ class FramePainter extends CustomPainter {
 
       if (node.getConst(0) && node.getConst(1) && node.getConst(2)) {
         Offset newPos = camera.worldToScreen(pos);
-        double newSize = data.nodeRadius * 8 * camera.scale;
+        double newSize = data.nodeRadius * 15 * camera.scale;
         MyPainter.drawNodeWallConst(canvas, newPos, size: newSize, direction: direction);
       }
       else if (node.getConst(1)) {
         Offset newPos = Offset.zero;
-        double newSize = data.nodeRadius * 2 * camera.scale;
+        double newSize = data.nodeRadius * 3 * camera.scale;
         if (direction == Direction.up) {
           newPos = camera.worldToScreen(Offset(pos.dx, pos.dy - data.nodeRadius));
         } else if (direction == Direction.down) {
@@ -273,17 +273,15 @@ class FramePainter extends CustomPainter {
 
       if (node.getLoad(1) != 0) {
         if (node.getLoad(1) > 0) {
-          MyPainter.arrow(
-            camera.worldToScreen(Offset(pos.dx, pos.dy+data.nodeRadius)), 
-            camera.worldToScreen(Offset(pos.dx, pos.dy+data.nodeRadius*6)), 
-            data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 0, 63, 95), canvas
-          );
+          final Offset end = camera.worldToScreen(Offset(pos.dx, pos.dy - data.nodeRadius));
+          final Offset start = Offset(end.dx, end.dy + lineLength);
+
+          MyPainter.drawArrow2(canvas, start, end, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         } else {
-          MyPainter.arrow(
-            camera.worldToScreen(Offset(pos.dx, pos.dy-data.nodeRadius)), 
-            camera.worldToScreen(Offset(pos.dx, pos.dy-data.nodeRadius*6)), 
-            data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 0, 63, 95), canvas
-          );
+          final Offset end = camera.worldToScreen(Offset(pos.dx, pos.dy + data.nodeRadius));
+          final Offset start = Offset(end.dx, end.dy - lineLength);
+
+          MyPainter.drawArrow2(canvas, start, end, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         }
       }
 
@@ -357,7 +355,7 @@ class FramePainter extends CustomPainter {
   }
 
   // 要素荷重
-  void _drawElemPower(Canvas canvas, {bool isAfter = false}) {
+  void _drawElemPower(Canvas canvas) {
     if (data.elemCount == 0) {
       return;
     }
