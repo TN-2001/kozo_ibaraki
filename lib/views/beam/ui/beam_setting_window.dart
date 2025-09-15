@@ -151,7 +151,7 @@ class _BeamSettingWindowState extends State<BeamSettingWindow> {
 
               Expanded(
                 child: SettingItem.labelFit(
-                  label: "回転",
+                  label: "θ",
                   child: BaseCheckbox(
                     value: node.constXYR[2], 
                     onChanged: (value){

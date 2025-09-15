@@ -174,7 +174,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
               ),
               Expanded(
                 child: SettingItem.labelFit(
-                  label: "回転",
+                  label: "θ",
                   child: BaseCheckbox(
                     value: node.getConst(2),
                     onChanged: (value){

@@ -193,15 +193,16 @@ class FrameCanvasPainter extends CustomPainter {
     );
 
     MyPainter.drawCircleArrow(
-      canvas, startPos, lineLength,
+      canvas, startPos, lineLength / 3,
       headSize: headSize, lineWidth: lineWidth, 
-      startAngle: - pi / 2 + pi * 0.1, 
-      sweepAngle: pi / 2 - pi * 0.15, 
+      startAngle: - pi, 
+      sweepAngle: pi * 1.5, 
       isCounterclockwise: true,
     );
 
     MyPainter.text(canvas, topPos, "Y", 16, Colors.black, false, 1000, alignment: Alignment.bottomCenter);
     MyPainter.text(canvas, Offset(rightPos.dx + 5, rightPos.dy), "X", 16, Colors.black, false, 1000, alignment: Alignment.centerLeft);
+    MyPainter.text(canvas, (topPos + rightPos) / 2, "θ", 16, Colors.black, false, 1000, alignment: Alignment.center);
   }
 
   @override
