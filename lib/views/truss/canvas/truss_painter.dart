@@ -18,12 +18,12 @@ class TrussPainter extends CustomPainter {
     final double worldHeight = data.rect.height;
 
     double scale = 1.0;
-    if (screenWidth / worldWidth < screenHeight / worldHeight) {
+    if (screenWidth / (worldWidth * 1.5) < screenHeight / (worldHeight * 2)) {
       // 横幅に合わせる
-      scale = screenWidth / worldWidth / 2;
+      scale = screenWidth / (worldWidth * 1.5);
     } else {
       // 高さに合わせる
-      scale = screenHeight / worldHeight / 2;
+      scale = screenHeight / (worldHeight * 2);
     }
 
     // カメラの初期化
@@ -193,6 +193,8 @@ class TrussPainter extends CustomPainter {
       return;
     }
 
+    final double lineLength = data.nodeRadius * 4;
+
     Paint paint = Paint()
       ..color = const Color.fromARGB(255, 0, 0, 0)
       ..style = PaintingStyle.stroke
@@ -207,15 +209,15 @@ class TrussPainter extends CustomPainter {
         if(pos.dx > data.rect.center.dx){
           canvas.drawCircle(camera.worldToScreen(Offset(pos.dx+data.nodeRadius*1.7, pos.dy)), data.nodeRadius * camera.scale * 0.75, paint);
           canvas.drawLine(
-            camera.worldToScreen(Offset(pos.dx+data.nodeRadius * 2.5, pos.dy-data.nodeRadius * 1.5)), 
-            camera.worldToScreen(Offset(pos.dx+data.nodeRadius * 2.5, pos.dy+data.nodeRadius * 1.5)), 
+            camera.worldToScreen(Offset(pos.dx+data.nodeRadius * 2.5, pos.dy-lineLength/2)), 
+            camera.worldToScreen(Offset(pos.dx+data.nodeRadius * 2.5, pos.dy+lineLength/2)), 
             paint
           );
         }else{
           canvas.drawCircle(camera.worldToScreen(Offset(pos.dx-data.nodeRadius*1.75, pos.dy)), data.nodeRadius * camera.scale * 0.75, paint);
           canvas.drawLine(
-            camera.worldToScreen(Offset(pos.dx-data.nodeRadius * 2.5, pos.dy-data.nodeRadius * 1.5)), 
-            camera.worldToScreen(Offset(pos.dx-data.nodeRadius * 2.5, pos.dy+data.nodeRadius * 1.5)), 
+            camera.worldToScreen(Offset(pos.dx-data.nodeRadius * 2.5, pos.dy-lineLength/2)), 
+            camera.worldToScreen(Offset(pos.dx-data.nodeRadius * 2.5, pos.dy+lineLength/2)), 
             paint
           );
         }
@@ -224,15 +226,15 @@ class TrussPainter extends CustomPainter {
         if(pos.dy > data.rect.center.dy){
           canvas.drawCircle(camera.worldToScreen(Offset(pos.dx, pos.dy+data.nodeRadius*1.75)), data.nodeRadius * camera.scale * 0.75, paint);
           canvas.drawLine(
-            camera.worldToScreen(Offset(pos.dx-data.nodeRadius * 1.5, pos.dy+data.nodeRadius * 2.5)), 
-            camera.worldToScreen(Offset(pos.dx+data.nodeRadius * 1.5, pos.dy+data.nodeRadius * 2.5)), 
+            camera.worldToScreen(Offset(pos.dx-lineLength/2, pos.dy+data.nodeRadius * 2.5)), 
+            camera.worldToScreen(Offset(pos.dx+lineLength/2, pos.dy+data.nodeRadius * 2.5)), 
             paint
           );
         }else{
           canvas.drawCircle(camera.worldToScreen(Offset(pos.dx, pos.dy-data.nodeRadius*1.75)), data.nodeRadius * camera.scale * 0.75, paint);
           canvas.drawLine(
-            camera.worldToScreen(Offset(pos.dx-data.nodeRadius * 1.5, pos.dy-data.nodeRadius * 2.5)), 
-            camera.worldToScreen(Offset(pos.dx+data.nodeRadius * 1.5, pos.dy-data.nodeRadius * 2.5)), 
+            camera.worldToScreen(Offset(pos.dx-lineLength/2, pos.dy-data.nodeRadius * 2.5)), 
+            camera.worldToScreen(Offset(pos.dx+lineLength/2, pos.dy-data.nodeRadius * 2.5)), 
             paint
           );
         }
