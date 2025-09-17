@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/views/beam/beam_page.dart';
-import 'package:kozo_ibaraki/views/bridgegame/bridgegame_page.dart';
-import 'package:kozo_ibaraki/views/bridgegame_free/bridgegame_free_page.dart';
-import 'package:kozo_ibaraki/views/fem/fem_page.dart';
-import 'package:kozo_ibaraki/views/frame/frame_page.dart';
-import 'package:kozo_ibaraki/views/privacy/privacy_page.dart';
-import 'package:kozo_ibaraki/views/truss/truss_page.dart';
-import 'configs/configure_nonweb.dart' if (dart.library.html) 'configs/configure_web.dart';
+import 'package:kozo_ibaraki/app/pages/beam/beam_page.dart';
+import 'package:kozo_ibaraki/app/pages/bridgegame/bridgegame_page.dart';
+import 'package:kozo_ibaraki/app/pages/bridgegame_free/bridgegame_free_page.dart';
+import 'package:kozo_ibaraki/app/pages/fem/fem_page.dart';
+import 'package:kozo_ibaraki/app/pages/frame/frame_page.dart';
+import 'package:kozo_ibaraki/app/pages/privacy/privacy_page.dart';
+import 'package:kozo_ibaraki/app/pages/truss/truss_page.dart';
+import 'core/configs/configure_nonweb.dart' if (dart.library.html) 'configs/configure_web.dart';
 
 void main() {
   // FlutterフレームワークとFlutterエンジンを結びつける
