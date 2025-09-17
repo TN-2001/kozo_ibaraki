@@ -89,18 +89,18 @@ class CommonDrawer extends StatelessWidget {
           },
         ),
 
-        ListTile(
-          title: const Text("橋づくりゲーム（難しい）"),
-          onTap: () {
-            String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
-            String targetRoute = '/bridgegamefree';
+        // ListTile(
+        //   title: const Text("橋づくりゲーム（難しい）"),
+        //   onTap: () {
+        //     String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
+        //     String targetRoute = '/bridgegamefree';
 
-            Navigator.pop(context);
-            if (currentRoute != targetRoute) {
-              Navigator.pushNamed(context, targetRoute);
-            }
-          },
-        ),
+        //     Navigator.pop(context);
+        //     if (currentRoute != targetRoute) {
+        //       Navigator.pushNamed(context, targetRoute);
+        //     }
+        //   },
+        // ),
 
         const BaseDivider(),
 
