@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/app/.common/common_drawer.dart';
+import 'package:kozo_ibaraki/app/components/common_drawer.dart';
 import 'package:kozo_ibaraki/app/pages/beam/canvas/beam_canvas.dart';
 import 'package:kozo_ibaraki/app/pages/beam/models/beam_data.dart';
 import 'package:kozo_ibaraki/app/pages/beam/ui/beam_bar.dart';

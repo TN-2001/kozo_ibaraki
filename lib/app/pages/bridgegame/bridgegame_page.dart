@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/app/.common/common_drawer.dart';
+import 'package:kozo_ibaraki/app/components/common_drawer.dart';
 import 'package:kozo_ibaraki/app/pages/bridgegame/canvas/bridgegame_canvas.dart';
 import 'package:kozo_ibaraki/app/pages/bridgegame/models/bridgegame_controller.dart';
 import 'package:kozo_ibaraki/app/pages/bridgegame/ui/bridgegame_bar.dart';

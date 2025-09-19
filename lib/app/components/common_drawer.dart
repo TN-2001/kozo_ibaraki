@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../components/component.dart';
+import 'package:kozo_ibaraki/core/components/component.dart';
 
 class CommonDrawer extends StatelessWidget {
   const CommonDrawer({super.key, required this.onPressedHelpButton});
