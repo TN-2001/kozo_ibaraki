@@ -7,7 +7,8 @@ import 'package:kozo_ibaraki/app/pages/fem/fem_page.dart';
 import 'package:kozo_ibaraki/app/pages/frame/frame_page.dart';
 import 'package:kozo_ibaraki/app/pages/privacy/privacy_page.dart';
 import 'package:kozo_ibaraki/app/pages/truss/truss_page.dart';
-import 'package:kozo_ibaraki/core/configs/configure_nonweb.dart' if (dart.library.html) 'configs/configure_web.dart';
+import 'package:kozo_ibaraki/core/configs/configure_nonweb.dart' 
+  if (dart.library.html) 'package:kozo_ibaraki/core/configs/configure_web.dart';
 
 void run() {
   // FlutterフレームワークとFlutterエンジンを結びつける

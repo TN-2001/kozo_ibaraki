@@ -404,6 +404,8 @@ class FramePainter extends CustomPainter {
       Offset pos2 = elem.getNode(1)!.afterPos;
       if (!isNormalColor) {
         paint.color = MyPainter.getColor((elem.getResult(controller.resultIndex) - controller.resultMin) / (controller.resultMax - controller.resultMin) * 100);
+        if (i == 32)
+          MyPainter.drawText(canvas, camera.worldToScreen(pos1), elem.getResult(controller.resultIndex).toString(), alignment: Alignment.bottomLeft);
       }
       canvas.drawLine(camera.worldToScreen(pos1), camera.worldToScreen(pos2), paint);
     }

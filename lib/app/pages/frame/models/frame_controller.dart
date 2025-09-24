@@ -165,8 +165,8 @@ class FrameController extends ChangeNotifier {
 
     for (int i = 0; i < nelx; i++) {
       Elem elem = data.getElem(i);
-      ijk0[i][0] = min(elem.getNode(0)!.number, elem.getNode(1)!.number);
-      ijk0[i][1] = max(elem.getNode(0)!.number, elem.getNode(1)!.number);
+      ijk0[i][0] = elem.getNode(0)!.number;
+      ijk0[i][1] = elem.getNode(1)!.number;
       prp0[i][0] = elem.getRigid(0);
       prp0[i][1] = elem.getRigid(1);
       prp0[i][2] = elem.getRigid(2);

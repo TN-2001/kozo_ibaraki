@@ -226,6 +226,10 @@ class MyPainter {
     textPainter.paint(canvas, alignOffset(offset, textPainter, alignment));
   }
 
+  static void drawText(Canvas canvas, Offset pos, String text, {Alignment alignment = Alignment.topLeft}) {
+    MyPainter.text(canvas, pos, text, 16, Colors.black, true, 1000, alignment: alignment);
+  }
+
   // 正三角形
   static void triangleEquilateral(Offset offset, double height, double angle, Paint paint, Canvas canvas) {
     double lineLength = height / cos(pi/6);
