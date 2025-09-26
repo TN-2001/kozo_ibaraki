@@ -62,6 +62,16 @@ class FramePainter extends CustomPainter {
           MyPainter.text(canvas, camera.worldToScreen(node.afterPos), text, 16, Colors.black, true, size.width);
         }
       } else if (controller.resultIndex == 4) {
+        // たわみ角
+        for(int i = 0; i < data.nodeCount; i++){
+          Node node = data.getResultNode(i);
+          String text = "";
+          text = "θ：${MyPainter.doubleToString(node.getResult(3), 3)}";
+          if (node.getResult(3) != 0) {
+          }
+          MyPainter.text(canvas, camera.worldToScreen(node.afterPos), text, 16, Colors.black, true, size.width);
+        }
+      } else if (controller.resultIndex == 5) {
         _drawReactionForce(canvas); // 反力
       }
     }
@@ -404,12 +414,14 @@ class FramePainter extends CustomPainter {
       Offset pos2 = elem.getNode(1)!.afterPos;
       if (!isNormalColor) {
         paint.color = MyPainter.getColor((elem.getResult(controller.resultIndex) - controller.resultMin) / (controller.resultMax - controller.resultMin) * 100);
-        if (i == 32)
-          MyPainter.drawText(canvas, camera.worldToScreen(pos1), elem.getResult(controller.resultIndex).toString(), alignment: Alignment.bottomLeft);
       }
       canvas.drawLine(camera.worldToScreen(pos1), camera.worldToScreen(pos2), paint);
+      // if (!isNormalColor && (i == 0 || i == 56)) {
+      //   MyPainter.drawText(canvas, camera.worldToScreen(pos1), elem.getResult(controller.resultIndex).toString(), alignment: Alignment.bottomLeft);
+      // }
     }
   }
+
 
   // 反力
   void _drawReactionForce(Canvas canvas) {

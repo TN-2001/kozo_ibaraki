@@ -213,11 +213,12 @@ class FrameController extends ChangeNotifier {
       for (int jn = 0; jn < node; jn++) {
         double ui = disp[mhng[ie][jn][0]];
         double vi = disp[mhng[ie][jn][1]];
-        // double qi = disp[mhng[ie][jn][2]];
+        double qi = disp[mhng[ie][jn][2]];
 
         Node node = data.getResultNode(ijke[ie][jn]);
         node.changeBecPos(Offset(ui, vi));
         node.changeAfterPos(node.pos + node.becPos / 100);
+        node.changeResult(3, qi);
         elem.changeNode(jn, node);
 
         maxBecPos = max(maxBecPos, ui.abs());

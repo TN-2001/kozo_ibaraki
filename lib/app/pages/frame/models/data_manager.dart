@@ -152,7 +152,7 @@ class Node extends ChangeNotifier{
   final List<double> _load = [0.0, 0.0, 0.0]; // 荷重条件 0:水平、1：鉛直、2：曲げモーメント
   Offset _becPos = Offset.zero;
   Offset _afterPos = Offset.zero;
-  final List<double> _result = [0.0, 0.0, 0.0]; // 0:水平方向の反力、1:垂直方向の反力、2:モーメン
+  final List<double> _result = [0.0, 0.0, 0.0, 0.0]; // 0:水平方向の反力、1:垂直方向の反力、2:モーメン、3:たわみ角
 
   // ゲッター
   int get number => _number;
