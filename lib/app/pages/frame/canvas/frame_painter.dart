@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/pages/frame/models/frame_controller.dart';
 import 'package:kozo_ibaraki/core/utils/camera.dart';
@@ -27,13 +29,25 @@ class FramePainter extends CustomPainter {
     }
     else {
       if (controller.resultIndex <= 2) {
-        _drawResultElem(canvas, isNormalColor: false);
+        if (controller.resultIndex == 2) {
+          _drawMoment(canvas);
+          _drawResultElem(canvas, isNormalColor: true, isAfterPos: false);
+        } else {
+          _drawResultElem(canvas, isNormalColor: false, isAfterPos: false);
+        }
+        _drawConst(canvas, isAfter: false); // 節点拘束拘束
+        _drawPower(canvas, isAfter: false); // 節点荷重
+        _drawNode(canvas, isAfter: false); // 節点
+
+        if (controller.resultIndex == 2) {
+          _drawMomentText(canvas);
+        }
       } else {
-        _drawResultElem(canvas, isNormalColor: true);
+        _drawResultElem(canvas, isNormalColor: true, isAfterPos: true);
+        _drawConst(canvas, isAfter: true); // 節点拘束拘束
+        _drawPower(canvas, isAfter: true); // 節点荷重
+        _drawNode(canvas, isAfter: true); // 節点
       }
-      _drawConst(canvas, isAfter: true); // 節点拘束拘束
-      _drawPower(canvas, isAfter: true); // 節点荷重
-      _drawNode(canvas, isAfter: true); // 節点
 
       if (controller.resultIndex <= 2) {
         // 要素の結果
@@ -59,19 +73,17 @@ class FramePainter extends CustomPainter {
             }
             text += "y：${MyPainter.doubleToString(node.becPos.dy, 3)}";
           }
-          MyPainter.text(canvas, camera.worldToScreen(node.afterPos), text, 16, Colors.black, true, size.width);
-        }
-      } else if (controller.resultIndex == 4) {
-        // たわみ角
-        for(int i = 0; i < data.nodeCount; i++){
-          Node node = data.getResultNode(i);
-          String text = "";
-          text = "θ：${MyPainter.doubleToString(node.getResult(3), 3)}";
-          if (node.getResult(3) != 0) {
+          // たわみ角
+          Node resultNode = data.getResultNode(i);
+          if (resultNode.getResult(3) != 0) {
+            if (text.isNotEmpty) {
+              text += "\n";
+            }
+            text += "θ：${MyPainter.doubleToString(resultNode.getResult(3), 3)}";
           }
           MyPainter.text(canvas, camera.worldToScreen(node.afterPos), text, 16, Colors.black, true, size.width);
         }
-      } else if (controller.resultIndex == 5) {
+      } else if (controller.resultIndex == 4) {
         _drawReactionForce(canvas); // 反力
       }
     }
@@ -402,7 +414,7 @@ class FramePainter extends CustomPainter {
   }
 
   // 結果の要素
-  void _drawResultElem(Canvas canvas, {bool isNormalColor = false}) {
+  void _drawResultElem(Canvas canvas, {bool isNormalColor = false, bool isAfterPos = true}) {
     Paint paint = Paint()
       ..color = const Color.fromARGB(255, 99, 99, 99)
       ..style = PaintingStyle.stroke
@@ -410,8 +422,17 @@ class FramePainter extends CustomPainter {
 
     for (int i = 0; i < data.resultElemCount; i++) {
       Elem elem = data.getResultElem(i);
-      Offset pos1 = elem.getNode(0)!.afterPos;
-      Offset pos2 = elem.getNode(1)!.afterPos;
+      Offset pos1;
+      Offset pos2;
+      if (isAfterPos) {
+        pos1 = elem.getNode(0)!.afterPos;
+        pos2 = elem.getNode(1)!.afterPos;
+      } else {
+        pos1 = elem.getNode(0)!.pos;
+        pos2 = elem.getNode(1)!.pos;
+        
+      }
+    
       if (!isNormalColor) {
         paint.color = MyPainter.getColor((elem.getResult(controller.resultIndex) - controller.resultMin) / (controller.resultMax - controller.resultMin) * 100);
       }
@@ -422,6 +443,76 @@ class FramePainter extends CustomPainter {
     }
   }
 
+  // 曲げモーメント
+  void _drawMoment(Canvas canvas) {
+    Paint paint = Paint()
+      ..color = const Color.fromARGB(255, 222, 171, 167)
+      ..style = PaintingStyle.fill;
+
+    double resultMax = max(controller.resultMax.abs(), controller.resultMin.abs());
+
+    for (int i = 0; i < data.resultElemCount; i++) {
+      Elem elem = data.getResultElem(i);
+      Offset pos1 = elem.getNode(0)!.pos;
+      Offset pos2 = elem.getNode(1)!.pos;
+      double he = sqrt(pow(pos1.dx - pos2.dx, 2) + pow(pos1.dy - pos2.dy, 2));
+      double ox = -(pos2.dy - pos1.dy) / he;
+      double oy = (pos2.dx - pos1.dx) / he;
+
+      Offset wpos1 = camera.worldToScreen(pos1);
+      Offset wpos2 = camera.worldToScreen(pos2);
+      double bx1 = - elem.getResult(3) * ox / resultMax * camera.scale * 0.2;
+      double by1 = elem.getResult(3) * oy / resultMax * camera.scale * 0.2;
+      double bx2 = - elem.getResult(4) * ox / resultMax * camera.scale * 0.2;
+      double by2 = elem.getResult(4) * oy / resultMax * camera.scale * 0.2;
+
+      final Path path = Path();
+      path.moveTo(wpos1.dx, wpos1.dy);
+      path.lineTo(wpos2.dx, wpos2.dy);
+      path.lineTo(wpos2.dx + bx2, wpos2.dy + by2);
+      path.lineTo(wpos1.dx + bx1, wpos1.dy + by1);
+      path.close();
+      canvas.drawPath(path, paint);
+      canvas.drawLine(Offset(wpos2.dx + bx2, wpos2.dy + by2), Offset(wpos1.dx + bx1, wpos1.dy + by1), Paint());
+    }
+  }
+
+  // 曲げモーメントのテキスト
+  void _drawMomentText(Canvas canvas) {
+    for (int i = 0; i < data.nodeCount; i++) {
+      Node node = data.getResultNode(i);
+      double value = 0;
+      for (int j = 0; j < data.resultElemCount; j++) {
+        Elem elem = data.getResultElem(j);
+        if (elem.getNode(0)!.number == node.number || elem.getNode(1)!.number == node.number) {
+          value = max(elem.getResult(3).abs(), elem.getResult(4).abs());
+          break;
+        }
+      }
+      MyPainter.text(
+        canvas, camera.worldToScreen(node.pos),
+        MyPainter.doubleToString(value, 3), 
+        14, Colors.black, true, 1000, alignment: Alignment.center);
+    }
+
+    double resultMax = data.getResultElem(0).getResult(3).abs();
+    int nodeNumber = data.getResultElem(0).getNode(0)!.number;
+    for (int i = 0; i < data.resultElemCount; i++) {
+      if (data.getResultElem(i).getResult(3).abs() > resultMax) {
+        resultMax = data.getResultElem(i).getResult(3).abs();
+        nodeNumber = data.getResultElem(i).getNode(0)!.number;
+      }
+      if (data.getResultElem(i).getResult(4).abs() > resultMax) {
+        resultMax = data.getResultElem(i).getResult(4).abs();
+        nodeNumber = data.getResultElem(i).getNode(1)!.number;
+      }
+    }
+
+    MyPainter.text(
+      canvas, camera.worldToScreen(data.getResultNode(nodeNumber).pos),
+      MyPainter.doubleToString(resultMax, 3), 
+      14, Colors.black, true, 1000, alignment: Alignment.center);
+  }
 
   // 反力
   void _drawReactionForce(Canvas canvas) {
@@ -434,10 +525,10 @@ class FramePainter extends CustomPainter {
       final Node node = data.getNode(i);
       final Direction direction = nodeDirectionList[i];
 
-      // 水平方向の反力（基本的に左側に表示）
+      // 水平方向の反力
       if (node.getResult(0) != 0) {
         String text = MyPainter.doubleToString(node.getResult(0).abs(), 3);
-        if (direction == Direction.left) {
+        if (direction == Direction.left || node.pos.dx > data.rect.center.dx) {
           Offset left = camera.worldToScreen(Offset(node.afterPos.dx + data.nodeRadius * 3, node.afterPos.dy));
           Offset right = Offset(left.dx + lineLength, left.dy);
 
@@ -462,10 +553,10 @@ class FramePainter extends CustomPainter {
         }
       }
 
-      // 鉛直方向の反力（基本的に下側に表示）
+      // 鉛直方向の反力
       if (node.getResult(1) != 0) {
         String text = MyPainter.doubleToString(node.getResult(1).abs(), 3);
-        if (direction == Direction.down) {
+        if(direction == Direction.down || node.pos.dy > data.rect.center.dy) {
           Offset bottom = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy + data.nodeRadius * 3));
           Offset top = Offset(bottom.dx, bottom.dy - lineLength);
 

@@ -163,7 +163,7 @@ Map<String, Object> frame2d(Map<String, Object> input) {
     // Initialize element matrices
     vske = List.generate(nelx2, (_) => 
       List.generate(6, (_) => List<double>.filled(6, 0.0)));
-    fint = List.generate(nelx2, (_) => List<double>.filled(3, 0.0));
+    fint = List.generate(nelx2, (_) => List<double>.filled(5, 0.0));
     mhng = List.generate(nelx2, (_) => 
       List.generate(node, (_) => List<int>.filled(ndof, 0)));
   }
@@ -461,6 +461,8 @@ Map<String, Object> frame2d(Map<String, Object> input) {
       fint[ie][0] = pe;
       fint[ie][1] = -se;
       fint[ie][2] = (b1 + b2) / 2.0;
+      fint[ie][3] = b1;
+      fint[ie][4] = b2;
     }
     
     // Calculate reaction forces

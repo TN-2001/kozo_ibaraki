@@ -244,6 +244,14 @@ class FrameController extends ChangeNotifier {
       elem.changeResult(0, fint[ie][0]);
       elem.changeResult(1, fint[ie][1]);
       elem.changeResult(2, fint[ie][2]);
+
+      // Offset pos1 = elem.getNode(0)!.pos;
+      // Offset pos2 = elem.getNode(1)!.pos;
+      // double he = sqrt(pow(pos1.dx - pos2.dx, 2) + pow(pos1.dy - pos2.dy, 2));
+      // double ox = -(pos2.dy - pos1.dy) / he;
+      // double oy = (pos2.dx - pos1.dx) / he;
+      elem.changeResult(3, fint[ie][3]);
+      elem.changeResult(4, fint[ie][4]);
     }
     
     // 反力

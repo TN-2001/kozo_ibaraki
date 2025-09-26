@@ -210,7 +210,7 @@ class Elem extends ChangeNotifier{
   final List<Node?> _nodeList = [null, null];
   final List<double> _rigid = [1.0, 1.0, 1.0]; // 0:ヤング率、1：断面二次モーメント、2:断面積
   double _load = 0.0; // 荷重
-  final List<double> _result = [0.0, 0.0, 0.0]; // 0:軸力、1:せん断力、2:曲げモーメント
+  final List<double> _result = [0.0, 0.0, 0.0, 0.0, 0.0]; // 0:軸力、1:せん断力、2:曲げモーメント、3:曲げモーメントa, 4: 曲げモーメントb
 
   // ゲッター
   int get number => _number;

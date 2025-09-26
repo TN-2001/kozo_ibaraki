@@ -153,7 +153,7 @@ class _FrameCanvasUiState extends State<FrameCanvasUi> {
               child: CustomPaint(painter: FrameCanvasPainter()),
             ),
 
-            if (_controller.isCalculated && _controller.resultIndex <= 2)...{
+            if (_controller.isCalculated && _controller.resultIndex <= 1)...{
               if (orientation == Orientation.landscape)...{
                 landscapeColorContour(),
               }

@@ -174,7 +174,7 @@ class _FrameBarState extends State<FrameBar> {
           ToolDropdownButton(
             selectedIndex: _selectedResultIndex, 
             onPressed: _onPressedResultDropdown, 
-            items: const ["軸力", "せん断力", "曲げモーメント", "変位", "たわみ角", "反力"],
+            items: const ["軸力", "せん断力", "曲げモーメント", "変位", "反力"],
           ),
 
           const ToolBarDivider(isVertivcal: true,),
