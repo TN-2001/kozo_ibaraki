@@ -15,7 +15,6 @@ class FrameSettingWindow extends StatefulWidget {
 class _FrameSettingWindowState extends State<FrameSettingWindow> {
   late FrameController _controller;
   static const double _windowMaxWidth = 500;
-  static const double _windowMaxHeight = 154;
 
   bool isCheck = false;
 
@@ -27,9 +26,8 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
       margin: const EdgeInsets.all(MyDimens.baseSpacing * 2),
       child: Align(
         alignment: Alignment.bottomCenter,
-        child: SettingWindow.scrolle(
+        child: SettingWindow(
           maxWidth: _windowMaxWidth,
-          maxHeight: _windowMaxHeight,
           children: children,
         )
       )

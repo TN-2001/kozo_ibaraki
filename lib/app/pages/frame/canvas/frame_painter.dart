@@ -13,6 +13,7 @@ class FramePainter extends CustomPainter {
   final Camera camera;
   DataManager get data => controller.data; 
   List<Direction> nodeDirectionList = []; // 要素による節点の向き
+  List<double> nodeAngleList = [];
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -97,9 +98,9 @@ class FramePainter extends CustomPainter {
     final double worldHeight = data.rect.height;
 
     double scale = 1.0;
-    if (screenWidth / (worldWidth * 1.5) < screenHeight / (worldHeight * 2)) {
+    if (screenWidth / (worldWidth * 2.0) < screenHeight / (worldHeight * 2)) {
       // 横幅に合わせる
-      scale = screenWidth / (worldWidth * 1.5);
+      scale = screenWidth / (worldWidth * 2.0);
     } else {
       // 高さに合わせる
       scale = screenHeight / (worldHeight * 2);
@@ -115,7 +116,9 @@ class FramePainter extends CustomPainter {
 
   // 節点方向の初期化
   void _initNodeDirection() {
+    nodeAngleList = List.generate(data.nodeCount, (_) => 0.0);
     nodeDirectionList = List.generate(data.nodeCount, (_) => Direction.up);
+
 
     for (int i = 0; i < data.nodeCount; i++) {
       Node node = data.getNode(i);
@@ -149,6 +152,47 @@ class FramePainter extends CustomPainter {
           }
         }
       }
+    }
+
+    for (int i = 0; i < data.nodeCount; i++) {
+      Node node = data.getNode(i);
+      Offset pos = node.pos;
+      List<Offset> targetPosList = [];
+      for (int j = 0; j < data.elemCount; j++) {
+        Node? node1 = data.getElem(j).getNode(0);
+        Node? node2 = data.getElem(j).getNode(1);
+        if (node1 != null && node2 != null) {
+          if (node1.number == node.number || node2.number == node.number) {
+            if (node1.number != node.number) {
+              targetPosList.add(node1.pos);
+            } else {
+              targetPosList.add(node2.pos);
+            }
+          }
+        }
+      }
+
+      // ベクトルの合計
+      double vx = 0.0;
+      double vy = 0.0;
+      for (Offset targetPos in targetPosList) {
+        vx += (targetPos.dx - pos.dx);
+        vy += (targetPos.dy - pos.dy);
+      }
+
+      if (vx != 0.0 || vy != 0.0) {
+        // 平均ベクトル
+        vx /= targetPosList.length;
+        vy /= targetPosList.length;
+        // 反対方向
+        vx = -vx;
+        vy = -vy;
+      } else {
+        vx =  0.0;
+        vy = -1.0;
+      }
+      // atan2で角度（ラジアン）
+      nodeAngleList[i] = atan2(vx, vy);
     }
   }
 
@@ -219,6 +263,8 @@ class FramePainter extends CustomPainter {
       return;
     }
 
+    Offset center = data.rect.center;
+
     for (int i = 0; i < data.nodeCount; i++) {
       Node node = data.getNode(i);
       Offset pos;
@@ -228,30 +274,63 @@ class FramePainter extends CustomPainter {
         pos = node.afterPos;
       }
 
-      Direction direction = nodeDirectionList[i];
-
       if (node.getConst(0) && node.getConst(1) && node.getConst(2)) {
-        Offset newPos = camera.worldToScreen(pos);
-        double newSize = data.nodeRadius * 15 * camera.scale;
-        MyPainter.drawNodeWallConst(canvas, newPos, size: newSize, direction: direction);
+        MyPainter.drawWallConst(
+          canvas, 
+          camera.worldToScreen(pos),
+          size: data.nodeRadius * 15 * camera.scale,
+          angle: nodeAngleList[i] - pi,
+        );
       }
-      else if (node.getConst(1)) {
-        Offset newPos = Offset.zero;
-        double newSize = data.nodeRadius * 3 * camera.scale;
-        if (direction == Direction.up) {
-          newPos = camera.worldToScreen(Offset(pos.dx, pos.dy - data.nodeRadius));
-        } else if (direction == Direction.down) {
-          newPos = camera.worldToScreen(Offset(pos.dx, pos.dy + data.nodeRadius));
-        } else if (direction == Direction.left) {
-          newPos = camera.worldToScreen(Offset(pos.dx - data.nodeRadius, pos.dy));
-        } else if (direction == Direction.right) {
-          newPos = camera.worldToScreen(Offset(pos.dx + data.nodeRadius, pos.dy));
-        }
-
-        if (!node.getConst(0)) {
-          MyPainter.drawNodeTriangleConst(canvas, newPos, size: newSize, direction: direction, isLine: true);
+      else if (node.getConst(0) && node.getConst(1)) {
+        MyPainter.drawTriangleConst(
+          canvas, 
+          camera.worldToScreen(pos), 
+          size: data.nodeRadius * 3 * camera.scale, 
+          padding: data.nodeRadius * camera.scale, 
+          angle: nodeAngleList[i] - pi, 
+          isLine: false
+        );
+      }
+      else if (node.getConst(0)) {
+        if (node.pos.dx < center.dx) {
+          MyPainter.drawTriangleConst(
+            canvas, 
+            camera.worldToScreen(pos), 
+            size: data.nodeRadius * 3 * camera.scale, 
+            padding: data.nodeRadius * camera.scale, 
+            angle: pi * 0.5, 
+            isLine: true
+          );
         } else {
-          MyPainter.drawNodeTriangleConst(canvas, newPos, size: newSize, direction: direction, isLine: false);
+          MyPainter.drawTriangleConst(
+            canvas, 
+            camera.worldToScreen(pos), 
+            size: data.nodeRadius * 3 * camera.scale, 
+            padding: data.nodeRadius * camera.scale, 
+            angle: pi * 1.5, 
+            isLine: true
+          );
+        }
+      } else if (node.getConst(1)) {
+        if (node.pos.dy <= center.dy) {
+          MyPainter.drawTriangleConst(
+            canvas, 
+            camera.worldToScreen(pos), 
+            size: data.nodeRadius * 3 * camera.scale, 
+            padding: data.nodeRadius * camera.scale, 
+            angle: 0, 
+            isLine: true
+          );
+        } else {
+          MyPainter.drawTriangleConst(
+            canvas, 
+            camera.worldToScreen(pos), 
+            size: data.nodeRadius * 3 * camera.scale, 
+            padding: data.nodeRadius * camera.scale, 
+            angle: pi, 
+            isLine: true
+          );
         }
       }
     }
@@ -277,7 +356,6 @@ class FramePainter extends CustomPainter {
       } else {
         pos = node.afterPos;
       }
-      Direction direction = nodeDirectionList[i];
 
       if (node.getLoad(0) != 0) {
         if (node.getLoad(0) < 0) {
@@ -309,42 +387,21 @@ class FramePainter extends CustomPainter {
 
       if (node.getLoad(2) != 0) {
         pos = camera.worldToScreen(pos);
-        double posDistance = data.nodeRadius * 6 * camera.scale;
-        if (direction == Direction.up) {
-          pos = Offset(pos.dx, pos.dy + posDistance);
-        } else if (direction == Direction.down) {
-          pos = Offset(pos.dx, pos.dy - posDistance);
-        } else if (direction == Direction.left) {
-          pos = Offset(pos.dx + posDistance, pos.dy);
-        } else if (direction == Direction.right) {
-          pos = Offset(pos.dx - posDistance, pos.dy);
-        }
-        
         double radius = data.nodeRadius * 5 * camera.scale;
         bool isCounterclockwise = false;
         if (node.getLoad(2) > 0) {
           isCounterclockwise = true;
         }
-        MyPainter.drawCircleArrow(
-          canvas, pos, radius, 
-          headSize: data.nodeRadius * 3 * camera.scale,
-          lineWidth: data.nodeRadius * camera.scale,
+        MyPainter.drawCircleArrow2(
+          canvas, 
+          pos, 
+          radius, 
+          headSize: headSize,
+          lineWidth: lineWidth,
           color: arrowColor,
-          direction: direction,
+          startAngle: nodeAngleList[i] - pi + pi * 0.25,
           isCounterclockwise: isCounterclockwise,
         );
-
-        // String text = MyPainter.doubleToString(node.getLoad(2).abs(), 3);
-
-        // if (direction == Direction.left) {
-        //   MyPainter.text(canvas, Offset(pos.dx + radius, pos.dy + radius), text, 16, Colors.black, true, 1000, alignment: Alignment.topCenter);
-        // } else if (direction == Direction.right) {
-        //   MyPainter.text(canvas, Offset(pos.dx - radius, pos.dy + radius), text, 16, Colors.black, true, 1000, alignment: Alignment.topCenter);
-        // } else if (direction == Direction.up) {
-        //   MyPainter.text(canvas, Offset(pos.dx - radius, pos.dy + radius), text, 16, Colors.black, true, 1000, alignment: Alignment.centerRight);
-        // } else if (direction == Direction.down) {
-        //   MyPainter.text(canvas, Offset(pos.dx - radius, pos.dy - radius), text, 16, Colors.black, true, 1000, alignment: Alignment.centerRight);
-        // }
       }
     }
   }
@@ -585,15 +642,16 @@ class FramePainter extends CustomPainter {
       if (node.getResult(2) != 0) {
         String text = MyPainter.doubleToString(node.getResult(2).abs(), 3);
 
+        Offset vector = Offset(sin(nodeAngleList[i]), cos(nodeAngleList[i]));
         Offset pos = camera.worldToScreen(node.afterPos);
         double posDistance = data.nodeRadius * 2 * camera.scale;
-        if (direction == Direction.up) {
+        if (vector.dy.abs() + 0.001 >= vector.dx.abs() && vector.dy <= 0) {
           pos = Offset(pos.dx, pos.dy + posDistance);
-        } else if (direction == Direction.down) {
+        } else if (vector.dy.abs() + 0.001 >= vector.dx.abs() && vector.dy > 0) {
           pos = Offset(pos.dx, pos.dy - posDistance);
-        } else if (direction == Direction.left) {
+        } else if (vector.dx >= 0) {
           pos = Offset(pos.dx + posDistance, pos.dy);
-        } else if (direction == Direction.right) {
+        } else if (vector.dx < 0) {
           pos = Offset(pos.dx - posDistance, pos.dy);
         }
         
@@ -611,13 +669,13 @@ class FramePainter extends CustomPainter {
           isCounterclockwise: isCounterclockwise,
         );
 
-        if (direction == Direction.left) {
+        if (vector.dy.abs() >= vector.dx.abs() + 0.001 && vector.dy <= 0) {
           MyPainter.text(canvas, Offset(pos.dx + radius, pos.dy + radius), text, 16, Colors.black, true, 1000, alignment: Alignment.topCenter);
-        } else if (direction == Direction.right) {
+        } else if (vector.dy.abs() + 0.001 >= vector.dx.abs() && vector.dy > 0) {
           MyPainter.text(canvas, Offset(pos.dx - radius, pos.dy + radius), text, 16, Colors.black, true, 1000, alignment: Alignment.topCenter);
-        } else if (direction == Direction.up) {
+        } else if (vector.dx >= 0) {
           MyPainter.text(canvas, Offset(pos.dx - radius, pos.dy + radius), text, 16, Colors.black, true, 1000, alignment: Alignment.centerRight);
-        } else if (direction == Direction.down) {
+        } else if (vector.dx < 0) {
           MyPainter.text(canvas, Offset(pos.dx - radius, pos.dy - radius), text, 16, Colors.black, true, 1000, alignment: Alignment.centerRight);
         }
       }

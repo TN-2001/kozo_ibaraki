@@ -330,7 +330,13 @@ class MyPainter {
   }
 
   // 壁支点
-  static void drawNodeWallConst(Canvas canvas, Offset pos, {double size = 10, Direction direction = Direction.up}) {
+  static void drawWallConst(Canvas canvas, Offset pos, 
+    {double size = 10, double angle = 0.0}) {
+
+    canvas.save();
+    canvas.translate(pos.dx, pos.dy);
+    canvas.rotate(angle);
+    
     Color wallColor = Colors.grey;
     Color lineColor = Colors.black;
 
@@ -339,52 +345,27 @@ class MyPainter {
       ..color = lineColor
       ..strokeWidth = 2.0;
 
-    switch (direction) {
-      case Direction.up:
-        canvas.drawRect(
-            Rect.fromLTRB(pos.dx - size / 2, pos.dy, pos.dx + size / 2, pos.dy + size / 4),
-            wallPaint);
-        canvas.drawLine(
-            Offset(pos.dx - size / 2, pos.dy),
-            Offset(pos.dx + size / 2, pos.dy),
-            linePaint);
-        break;
+    canvas.drawRect(
+      Rect.fromLTRB(- size / 2, 0, size / 2, size / 4),
+      wallPaint
+    );
+    canvas.drawLine(
+      Offset(- size / 2, 0),
+      Offset(  size / 2, 0),
+      linePaint
+    );
 
-      case Direction.down:
-        canvas.drawRect(
-            Rect.fromLTRB(pos.dx - size / 2, pos.dy - size / 4, pos.dx + size / 2, pos.dy),
-            wallPaint);
-        canvas.drawLine(
-            Offset(pos.dx - size / 2, pos.dy),
-            Offset(pos.dx + size / 2, pos.dy),
-            linePaint);
-        break;
-
-      case Direction.left:
-        canvas.drawRect(
-            Rect.fromLTRB(pos.dx, pos.dy - size / 2, pos.dx + size / 4, pos.dy + size / 2),
-            wallPaint);
-        canvas.drawLine(
-            Offset(pos.dx, pos.dy - size / 2),
-            Offset(pos.dx, pos.dy + size / 2),
-            linePaint);
-        break;
-
-      case Direction.right:
-        canvas.drawRect(
-            Rect.fromLTRB(pos.dx - size / 4, pos.dy - size / 2, pos.dx, pos.dy + size / 2),
-            wallPaint);
-        canvas.drawLine(
-            Offset(pos.dx, pos.dy - size / 2),
-            Offset(pos.dx, pos.dy + size / 2),
-            linePaint);
-        break;
-    }
+    canvas.restore();
   }
 
   // 三角支点
-  static void drawNodeTriangleConst(Canvas canvas, Offset pos, 
-    {double size = 10, Direction direction = Direction.up, bool isLine = false}) {
+  static void drawTriangleConst(Canvas canvas, Offset pos, 
+    {double size = 10, double padding = 0, double angle = 0.0, bool isLine = false}) {
+
+    canvas.save();
+    canvas.translate(pos.dx, pos.dy);
+    canvas.rotate(angle);
+    canvas.translate(0, padding);
 
     final double triangleSize = size;
     final double lineSize = size * 2;
@@ -395,69 +376,22 @@ class MyPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.0;
 
-    Path path = Path();
-
-    switch (direction) {
-      case Direction.up:
-        path.moveTo(pos.dx, pos.dy);
-        path.lineTo(pos.dx - triangleSize / 2, pos.dy + triangleSize / 2 * sqrt(2));
-        path.lineTo(pos.dx + triangleSize / 2, pos.dy + triangleSize / 2 * sqrt(2));
-        break;
-
-      case Direction.down:
-        path.moveTo(pos.dx, pos.dy);
-        path.lineTo(pos.dx - triangleSize / 2, pos.dy - triangleSize / 2 * sqrt(2));
-        path.lineTo(pos.dx + triangleSize / 2, pos.dy - triangleSize / 2 * sqrt(2));
-        break;
-
-      case Direction.left:
-        path.moveTo(pos.dx, pos.dy);
-        path.lineTo(pos.dx + triangleSize / 2 * sqrt(2), pos.dy - triangleSize / 2);
-        path.lineTo(pos.dx + triangleSize / 2 * sqrt(2), pos.dy + triangleSize / 2);
-        break;
-
-      case Direction.right:
-        path.moveTo(pos.dx, pos.dy);
-        path.lineTo(pos.dx - triangleSize / 2 * sqrt(2), pos.dy - triangleSize / 2);
-        path.lineTo(pos.dx - triangleSize / 2 * sqrt(2), pos.dy + triangleSize / 2);
-        break;
-    }
-
-    path.close();
+    Path path = Path()
+      ..moveTo(0, 0)
+      ..lineTo(- triangleSize / 2, triangleSize / 2 * sqrt(2))
+      ..lineTo(  triangleSize / 2, triangleSize / 2 * sqrt(2))
+      ..close();
     canvas.drawPath(path, paint);
 
     if (isLine) {
-      switch (direction) {
-        case Direction.up:
-          canvas.drawLine(
-            Offset(pos.dx - lineSize / 2, pos.dy + triangleSize),
-            Offset(pos.dx + lineSize / 2, pos.dy + triangleSize),
-            paint,
-          );
-          break;
-        case Direction.down:
-          canvas.drawLine(
-            Offset(pos.dx - lineSize / 2, pos.dy - triangleSize),
-            Offset(pos.dx + lineSize / 2, pos.dy - triangleSize),
-            paint,
-          );
-          break;
-        case Direction.left:
-          canvas.drawLine(
-            Offset(pos.dx - triangleSize, pos.dy - lineSize / 2),
-            Offset(pos.dx - triangleSize, pos.dy + lineSize / 2),
-            paint,
-          );
-          break;
-        case Direction.right:
-          canvas.drawLine(
-            Offset(pos.dx + triangleSize, pos.dy - lineSize / 2),
-            Offset(pos.dx + triangleSize, pos.dy + lineSize / 2),
-            paint,
-          );
-          break;
-      }
+      canvas.drawLine(
+        Offset(- lineSize / 2, triangleSize),
+        Offset(  lineSize / 2, triangleSize),
+        paint,
+      );
     }
+    
+    canvas.restore();
   }
 
   // 矢印
@@ -590,6 +524,88 @@ class MyPainter {
         ..lineTo(
           start.dx + headSize / 2 * cos(newStartAngle + pi / 3 + pi / 2),
           start.dy + headSize / 2 * sin(newStartAngle + pi / 3 + pi / 2),
+        )
+        ..close();
+    }
+
+    final Paint headPaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.fill;
+
+    canvas.drawPath(path, headPaint);
+  }
+  static void drawCircleArrow2(
+    Canvas canvas, 
+    Offset centerPos, 
+    double radius, {
+    double headSize = 20, 
+    double? lineWidth, 
+    Color color = const Color.fromARGB(255, 0, 0, 0),
+    double sweepAngle = pi / 2,
+    double startAngle = 0.0,
+    bool isCounterclockwise = false,
+  }) {
+
+    final paint = Paint()
+    ..color = color
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = lineWidth ?? headSize / 2.5;
+
+    // 円弧描画
+    canvas.drawArc(
+      Rect.fromCircle(center: centerPos, radius: radius),
+      startAngle,
+      sweepAngle,
+      false,
+      paint,
+    );
+
+
+    // 矢印ヘッド（三角形）
+    Path path;
+    if (!isCounterclockwise) {
+      // 終端角度
+      final double endAngle = startAngle + sweepAngle;
+
+      // 終端座標
+      final Offset end = Offset(
+        centerPos.dx + radius * cos(endAngle),
+        centerPos.dy + radius * sin(endAngle),
+      );
+
+      path = Path()
+        ..moveTo(
+          end.dx + headSize / 2 * cos(endAngle + pi / 2),
+          end.dy + headSize / 2 * sin(endAngle + pi / 2),
+        )
+        ..lineTo(
+          end.dx - headSize / 2 * cos(endAngle - pi / 3 + pi / 2),
+          end.dy - headSize / 2 * sin(endAngle - pi / 3 + pi / 2),
+        )
+        ..lineTo(
+          end.dx - headSize / 2 * cos(endAngle + pi / 3 + pi / 2),
+          end.dy - headSize / 2 * sin(endAngle + pi / 3 + pi / 2),
+        )
+        ..close();
+    } else {
+      // 始端座標
+      final start = Offset(
+        centerPos.dx + radius * cos(startAngle),
+        centerPos.dy + radius * sin(startAngle),
+      );
+
+      path = Path()
+        ..moveTo(
+          start.dx - headSize / 2 * cos(startAngle + pi / 2),
+          start.dy - headSize / 2 * sin(startAngle + pi / 2),
+        )
+        ..lineTo(
+          start.dx + headSize / 2 * cos(startAngle - pi / 3 + pi / 2),
+          start.dy + headSize / 2 * sin(startAngle - pi / 3 + pi / 2),
+        )
+        ..lineTo(
+          start.dx + headSize / 2 * cos(startAngle + pi / 3 + pi / 2),
+          start.dy + headSize / 2 * sin(startAngle + pi / 3 + pi / 2),
         )
         ..close();
     }
