@@ -2,17 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/utils/common_painter.dart';
 import 'package:kozo_ibaraki/core/constants/constant.dart';
 
-class BeamCanvasUi extends StatefulWidget {
-  const BeamCanvasUi({super.key});
+class FemCanvasUi extends StatefulWidget {
+  const FemCanvasUi({super.key});
 
   @override
-  State<BeamCanvasUi> createState() => _BeamCanvasUiState();
+  State<FemCanvasUi> createState() => _FemCanvasUiState();
 }
 
-class _BeamCanvasUiState extends State<BeamCanvasUi> {
+class _FemCanvasUiState extends State<FemCanvasUi> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // final orientation = MediaQuery.of(context).orientation;
 
     return IgnorePointer(
       child: Container(
@@ -24,17 +29,8 @@ class _BeamCanvasUiState extends State<BeamCanvasUi> {
             SizedBox(
               width: double.infinity,
               height: double.infinity,
-              child: CustomPaint(painter: BeamCanvasPainter()),
+              child: CustomPaint(painter: FemCanvasPainter()),
             ),
-
-            // if (_controller.isCalculation && _controller.resultIndex <= 2)...{
-            //   if (orientation == Orientation.landscape)...{
-            //     landscapeColorContour(),
-            //   }
-            //   else...{
-            //     portraitColorContour(),
-            //   }
-            // }
           ],
         )
       ),
@@ -42,7 +38,7 @@ class _BeamCanvasUiState extends State<BeamCanvasUi> {
   }
 }
 
-class BeamCanvasPainter extends CustomPainter {
+class FemCanvasPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -51,7 +47,7 @@ class BeamCanvasPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant BeamCanvasPainter oldDelegate) {
+  bool shouldRepaint(covariant FemCanvasPainter oldDelegate) {
     return false;
   }
 }

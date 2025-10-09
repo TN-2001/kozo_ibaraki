@@ -3,6 +3,7 @@ import 'package:kozo_ibaraki/app/components/common_drawer.dart';
 import 'package:kozo_ibaraki/app/pages/fem/canvas/fem_canvas.dart';
 import 'package:kozo_ibaraki/app/pages/fem/models/fem_data.dart';
 import 'package:kozo_ibaraki/app/pages/fem/ui/fem_bar.dart';
+import 'package:kozo_ibaraki/app/pages/fem/ui/fem_canvas_ui.dart';
 import 'package:kozo_ibaraki/app/pages/fem/ui/fem_setting_window.dart';
 import 'package:kozo_ibaraki/core/components/component.dart';
 import 'package:kozo_ibaraki/core/utils/status_bar.dart';
@@ -83,7 +84,7 @@ class _FemPageState extends State<FemPage> {
                   children: [
                     FemCanvas(controller: _controller),
 
-                    // TrussCanvasUi(controller: _controller),
+                    const FemCanvasUi(),
 
                     FemSettingWindow(controller: _controller),
                   ]
