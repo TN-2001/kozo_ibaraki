@@ -530,6 +530,24 @@ class FramePainter extends CustomPainter {
       path.lineTo(wpos1.dx + bx1, wpos1.dy + by1);
       path.close();
       canvas.drawPath(path, paint);
+      
+    }
+
+    for (int i = 0; i < data.resultElemCount; i++) {
+      Elem elem = data.getResultElem(i);
+      Offset pos1 = elem.getNode(0)!.pos;
+      Offset pos2 = elem.getNode(1)!.pos;
+      double he = sqrt(pow(pos1.dx - pos2.dx, 2) + pow(pos1.dy - pos2.dy, 2));
+      double ox = -(pos2.dy - pos1.dy) / he;
+      double oy = (pos2.dx - pos1.dx) / he;
+
+      Offset wpos1 = camera.worldToScreen(pos1);
+      Offset wpos2 = camera.worldToScreen(pos2);
+      double bx1 = - elem.getResult(3) * ox / resultMax * camera.scale * 0.2;
+      double by1 = elem.getResult(3) * oy / resultMax * camera.scale * 0.2;
+      double bx2 = - elem.getResult(4) * ox / resultMax * camera.scale * 0.2;
+      double by2 = elem.getResult(4) * oy / resultMax * camera.scale * 0.2;
+      
       canvas.drawLine(Offset(wpos2.dx + bx2, wpos2.dy + by2), Offset(wpos1.dx + bx1, wpos1.dy + by1), Paint());
     }
   }
