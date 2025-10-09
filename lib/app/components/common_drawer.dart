@@ -23,10 +23,33 @@ class CommonDrawer extends StatelessWidget {
         const BaseDivider(),
 
         ListTile(
-          title: const Text("はりの構造解析"),
+          title: const Text("ホーム"),
           onTap: () {
             String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
             String targetRoute = '/';
+
+            Navigator.pop(context);
+            if (currentRoute != targetRoute) {
+              Navigator.pushNamed(context, targetRoute);
+            }
+          },
+        ),
+
+        ListTile(
+          title: const Text("ヘルプ"),
+          onTap: () {
+            Navigator.pop(context);
+            onPressedHelpButton();
+          },
+        ),
+
+        const BaseDivider(),
+
+        ListTile(
+          title: const Text("はりの構造解析"),
+          onTap: () {
+            String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
+            String targetRoute = '/beam';
 
             Navigator.pop(context);
             if (currentRoute != targetRoute) {
@@ -49,7 +72,7 @@ class CommonDrawer extends StatelessWidget {
         ),
 
         ListTile(
-          title: const Text("フレームの構造解析"),
+          title: const Text("ラーメンの構造解析"),
           onTap: () {
             String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
             String targetRoute = '/frame';
@@ -73,8 +96,6 @@ class CommonDrawer extends StatelessWidget {
         //     }
         //   },
         // ),
-
-        const BaseDivider(),
 
         ListTile(
           title: const Text("橋づくりゲーム"),
@@ -101,16 +122,6 @@ class CommonDrawer extends StatelessWidget {
         //     }
         //   },
         // ),
-
-        const BaseDivider(),
-
-        ListTile(
-          title: const Text("ヘルプ"),
-          onTap: () {
-            Navigator.pop(context);
-            onPressedHelpButton();
-          },
-        ),
       ]
     );
   }
