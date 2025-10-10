@@ -16,6 +16,8 @@ class BeamData extends ChangeNotifier {
   int _toolIndex = 0; // 選択されているツールのインデックス（0:新規、2修正）
   int _resultIndex = 0; // 選択されている結果のインデックス（"変形図", "反力", "せん断力図","曲げモーメント図",）
 
+  static const double minValue = 10e-13; // 最小値
+
 
   /*
     ゲッター
@@ -336,19 +338,13 @@ class BeamData extends ChangeNotifier {
     }
 
     // 節点の結果をデータ化
-    double rmax = 0;
     for(int i = 0; i < nodeList.length; i++){
       nodeList[i].result[3] = freaResult[i][0]; // 反力V
       nodeList[i].result[4] = freaResult[i][1]; // 反力M
-
-      rmax = max(rmax, nodeList[i].result[3].abs());
-      rmax = max(rmax, nodeList[i].result[4].abs());
-    }
-    for(int i = 0; i < nodeList.length; i++){
-      if (nodeList[i].result[3].abs() <= rmax * 0.001) {
+      if (nodeList[i].result[3].abs() <= minValue) {
         nodeList[i].result[3] = 0;
       }
-      if (nodeList[i].result[4].abs() <= rmax * 0.001) {
+      if (nodeList[i].result[4].abs() <= minValue) {
         nodeList[i].result[4] = 0;
       }
     }

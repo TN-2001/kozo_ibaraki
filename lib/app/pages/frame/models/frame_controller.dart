@@ -22,6 +22,8 @@ class FrameController extends ChangeNotifier {
   double _resultMin = 0;
   double _resultMax = 0;
 
+  static const double minValue = 10e-13; // 最小値
+
   // ゲッター
   int get typeIndex => _typeIndex;
   int get toolIndex => _toolIndex;
@@ -268,6 +270,16 @@ class FrameController extends ChangeNotifier {
       }
       if (mfix[ix][2] == 1 && mfix[ix][3] == 0) {
         node.changeResult(2, frea[ndof * ix + 2]);
+      }
+
+      if (node.getResult(0).abs() < minValue) {
+        node.changeResult(0, 0.0);
+      }
+      if (node.getResult(1).abs() < minValue) {
+        node.changeResult(1, 0.0);
+      }
+      if (node.getResult(2).abs() < minValue) {
+        node.changeResult(2, 0.0);
       }
     }
 

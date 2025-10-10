@@ -173,7 +173,7 @@ class TrussCanvasPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // 座標系
-    CommonPainter.coordinate(canvas);
+    CommonPainter.coordinate(canvas, isEnableRotation: false);
   }
 
   @override

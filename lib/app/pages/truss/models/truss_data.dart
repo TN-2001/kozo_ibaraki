@@ -28,6 +28,8 @@ class TrussData extends ChangeNotifier {
 
   bool isCalculation = false; // 解析したかどうか
 
+  static const double minValue = 10e-13; // 最小値
+
   /*
     ゲッター
   */
@@ -379,10 +381,20 @@ class TrussData extends ChangeNotifier {
     for (int ix = 0; ix < nx; ix++) {
       Node node = getNode(ix);
       node.becPos = Offset(disp[ndof * ix + 0], disp[ndof * ix + 1]);
+      if (node.becPos.dx.abs() < minValue) {
+        node.becPos = Offset(0, node.becPos.dy);
+      }
+      if (node.becPos.dy.abs() < minValue) {
+        node.becPos = Offset(node.becPos.dx, 0);
+      }
       maxDisp = max(maxDisp, node.becPos.distance.abs());
     }
     for (int ix = 0; ix < nx; ix++) {
       Node node = getNode(ix);
+      if (maxDisp == 0) {
+        node.afterPos = node.pos;
+        continue;
+      }
       node.afterPos = Offset(
         node.pos.dx + node.becPos.dx / maxDisp * rectWidth / 8,
         node.pos.dy + node.becPos.dy / maxDisp * rectWidth / 8,
@@ -393,18 +405,27 @@ class TrussData extends ChangeNotifier {
     for (int ie = 0; ie < nelx; ie++) {
       Elem elem = getElem(ie);
       elem.result[0] = fint[ie];
+      if (elem.result[0].abs() < minValue) {
+        elem.result[0] = 0;
+      }
     }
 
     // 応力（軸方向）
     for (int ie = 0; ie < nelx; ie++) {
       Elem elem = getElem(ie);
       elem.result[1] = fint[ie] / prop[ie][1];
+      if (elem.result[1].abs() < minValue) {
+        elem.result[1] = 0;
+      }
     }
 
     // ひずみ
     for(int ie = 0; ie < nelx; ie++){
       Elem elem = getElem(ie);
       elem.result[2] = elem.result[0] / prop[ie][0];
+      if (elem.result[2].abs() < minValue) {
+        elem.result[2] = 0;
+      }
     }
     
     // 反力
@@ -412,6 +433,12 @@ class TrussData extends ChangeNotifier {
       Node node = getNode(ix);
       node.result[0] = mfix[ix][0] == 1 ? frea[ndof * ix + 0] : 0; // 水平方向の反力
       node.result[1] = mfix[ix][1] == 1 ? frea[ndof * ix + 1] : 0; // 垂直方向の反力
+      if (node.result[0].abs() < minValue) {
+        node.result[0] = 0;
+      }
+      if (node.result[1].abs() < minValue) {
+        node.result[1] = 0;
+      }
     }
 
 
