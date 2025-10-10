@@ -569,24 +569,6 @@ class FramePainter extends CustomPainter {
         MyPainter.doubleToString(value, 3), 
         14, Colors.black, true, 1000, alignment: Alignment.center);
     }
-
-    double resultMax = data.getResultElem(0).getResult(3).abs();
-    int nodeNumber = data.getResultElem(0).getNode(0)!.number;
-    for (int i = 0; i < data.resultElemCount; i++) {
-      if (data.getResultElem(i).getResult(3).abs() > resultMax) {
-        resultMax = data.getResultElem(i).getResult(3).abs();
-        nodeNumber = data.getResultElem(i).getNode(0)!.number;
-      }
-      if (data.getResultElem(i).getResult(4).abs() > resultMax) {
-        resultMax = data.getResultElem(i).getResult(4).abs();
-        nodeNumber = data.getResultElem(i).getNode(1)!.number;
-      }
-    }
-
-    MyPainter.text(
-      canvas, camera.worldToScreen(data.getResultNode(nodeNumber).pos),
-      MyPainter.doubleToString(resultMax, 3), 
-      14, Colors.black, true, 1000, alignment: Alignment.center);
   }
 
   // 反力

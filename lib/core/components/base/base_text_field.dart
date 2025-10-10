@@ -5,11 +5,18 @@ import '../../constants/constant.dart';
 
 
 class BaseTextField extends StatelessWidget {
-  const BaseTextField({super.key, this.width, required this.onChanged, required this.text});
+  const BaseTextField({
+    super.key, 
+    this.width, 
+    required this.onChanged, 
+    required this.text,
+    this.enabled = true,
+  });
 
   final double? width;
   final void Function(String text) onChanged;
   final String text;
+  final bool enabled;
 
 
   @override
@@ -42,6 +49,9 @@ class BaseTextField extends StatelessWidget {
         inputFormatters: [
           FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*$')),
         ],
+
+        // OnOff
+        enabled: enabled,
 
         // イベント
         onChanged: onChanged,

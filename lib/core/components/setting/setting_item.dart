@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../constants/dimens.dart';
+import 'package:kozo_ibaraki/core/constants/constant.dart';
 
 class SettingItem extends StatelessWidget {
   const SettingItem({
@@ -8,11 +7,13 @@ class SettingItem extends StatelessWidget {
     this.label,
     this.child,
     this.fieldFlex,
+    this.enabled = true,
   });
 
   final String? label;
   final Widget? child;
   final int? fieldFlex;
+  final bool enabled;
 
 
   @override
@@ -34,8 +35,9 @@ class SettingItem extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   label ?? "",
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: MyDimens.baseFontSize,
+                    color: enabled == true ? MyColors.baseText : MyColors.baseTextDisabled,
                   )
                 ),
               ),
@@ -51,7 +53,7 @@ class SettingItem extends StatelessWidget {
     );
   }
 
-  static Widget labelFit({String? label, Widget? child}) {
+  static Widget labelFit({String? label, Widget? child, bool enabled = true}) {
     return SizedBox(
       height: MyDimens.settingItemHeight,
       child: Row(
@@ -70,8 +72,9 @@ class SettingItem extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     label,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: MyDimens.baseFontSize,
+                      color: enabled == true ? MyColors.baseText : MyColors.baseTextDisabled,
                     )
                   ),
                 ),
@@ -85,7 +88,7 @@ class SettingItem extends StatelessWidget {
     );
   }
 
-  static Widget labelNotFit({String? label, Widget? child}) {
+  static Widget labelNotFit({String? label, Widget? child, bool enabled = true}) {
     return SizedBox(
       height: MyDimens.settingItemHeight,
       child: Row(
@@ -99,8 +102,9 @@ class SettingItem extends StatelessWidget {
               ),
               child: Text(
                 label,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: MyDimens.baseFontSize,
+                  color: enabled == true ? MyColors.baseText : MyColors.baseTextDisabled,
                 )
               ),
             ),

@@ -8,6 +8,8 @@ class MyColors {
   static const Color baseBackground = Color.fromARGB(255, 255, 255, 255);
   static const Color baseDivider = Color.fromARGB(255, 200, 200, 200);
   static const Color baseBorder = Color.fromARGB(255, 200, 200, 200);
+  static const Color baseText = Color.fromARGB(255, 0, 0, 0);
+  static const Color baseTextDisabled = Color.fromARGB(100, 0, 0, 0);
 
   static const Color toolBarBackground = Color.fromARGB(255, 255, 255, 255);
   static const Color toolBarDivider = Color.fromARGB(255, 235, 235, 235);
