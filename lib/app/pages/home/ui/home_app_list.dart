@@ -89,7 +89,7 @@ class _HomeAppListState extends State<HomeAppList> {
           button("はり", "/beam"),
           button("トラス", "/truss"),
           button("ラーメン", "/frame"),
-          // button("有限要素解析", "/fem"),
+          button("有限要素解析", "/fem"),
         ]),
 
         const SizedBox(height: 30),
