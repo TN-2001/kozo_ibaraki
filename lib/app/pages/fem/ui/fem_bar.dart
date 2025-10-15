@@ -133,21 +133,23 @@ class _FemBarState extends State<FemBar> {
             icons: const [
               Icon(Icons.circle),
               Icon(Icons.square),
+              Icon(Icons.texture),
             ], 
-            messages: const ["節点", "要素"],
+            messages: const ["節点", "要素", "要素のマテリアル"],
           ),
 
-          const ToolBarDivider(isVertivcal: true,),
-
-          ToolToggleButtons(
-            selectedIndex: _selectedToolIndex,
-            onPressed: _onPressedToolToggle,
-            icons: const [
-              Icon(Icons.add),
-              Icon(Icons.touch_app),
-            ], 
-            messages: const ["新規","修正"],
-          ),
+          if (_selectedTypeIndex == 0 || _selectedTypeIndex == 1)...{
+            const ToolBarDivider(isVertivcal: true,),
+            ToolToggleButtons(
+              selectedIndex: _selectedToolIndex,
+              onPressed: _onPressedToolToggle,
+              icons: const [
+                Icon(Icons.add),
+                Icon(Icons.touch_app),
+              ], 
+              messages: const ["新規","修正"],
+            ),
+          },
 
           const ToolBarDivider(isVertivcal: true,),
           const Expanded(child: SizedBox()),
