@@ -261,7 +261,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
         ),
       ]);
     }
-    else {
+    else if (_controller.typeIndex == 1) {
       Elem elem;
       if (_controller.toolIndex == 0) {
         elem = _controller.elem!;
@@ -305,6 +305,36 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
         },
 
         const BaseDivider(),
+
+        SettingItem(
+          label: "要素の形",
+          child: Row(
+            children: [
+              Expanded(
+                child: SettingItem.labelFit(
+                  label: "三角形",
+                  child: BaseCheckbox(
+                    onChanged: (value) {
+
+                    }, 
+                    value: true,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: SettingItem.labelFit(
+                  label: "四角形",
+                  child: BaseCheckbox(
+                    onChanged: (value) {
+                      
+                    }, 
+                    value: true,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
 
         SettingItem(
           label: "節点番号",
@@ -418,6 +448,78 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
           )
         ),
       ]);
+    }
+    else if (_controller.typeIndex == 2) {
+      return _settingWindow([
+        const SettingItem(
+          label: "要素のマテリアル",
+        ),
+
+        const BaseDivider(),
+
+        SettingItem(
+          label: "ヤング率",
+          child: BaseTextField(
+            onChanged: (String text) {
+
+            }, 
+            text: "",
+          ),
+        ),
+
+        SettingItem(
+          label: "ポアソン比",
+          child: BaseTextField(
+            onChanged: (String text) {
+
+            }, 
+            text: "",
+          ),
+        ),
+
+        SettingItem(
+          label: "要素の厚さ",
+          child: BaseTextField(
+            onChanged: (String text) {
+
+            }, 
+            text: "",
+          ),
+        ),
+
+        SettingItem(
+          label: "平面",
+          child: Row(
+            children: [
+              Expanded(
+                child: SettingItem.labelFit(
+                  label: "平面応力",
+                  child: BaseCheckbox(
+                    onChanged: (value) {
+
+                    }, 
+                    value: true,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: SettingItem.labelFit(
+                  label: "平面ひずみ",
+                  child: BaseCheckbox(
+                    onChanged: (value) {
+                      
+                    }, 
+                    value: true,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ]);
+    }
+    else {
+      return const SizedBox();
     }
   }
 }
