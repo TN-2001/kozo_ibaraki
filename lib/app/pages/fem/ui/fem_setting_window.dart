@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/app/pages/fem/models/fem_data.dart';
+import 'package:kozo_ibaraki/app/pages/fem/models/fem_controller.dart';
 import 'package:kozo_ibaraki/core/components/component.dart';
 import 'package:kozo_ibaraki/core/constants/constant.dart';
 
 class FemSettingWindow extends StatefulWidget {
   const FemSettingWindow({super.key, required this.controller});
 
-  final FemData controller;
+  final FemController controller;
 
   @override
   State<FemSettingWindow> createState() => _FemSettingWindowState();
 }
 
 class _FemSettingWindowState extends State<FemSettingWindow> {
-  late FemData _controller;
+  late FemController _controller;
   final double _windowMaxWidth = 500;
 
   bool isCheck = false;
@@ -53,16 +53,14 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
 
   @override
   Widget build(BuildContext context) {
-    if (_controller.isCalculation) {
+    if (_controller.isCalculated) {
       return const SizedBox();
     }
 
     if (_controller.typeIndex == 0) {
       Node node;
-      if (_controller.toolIndex == 0) {
-        node = _controller.node!;
-      } else if (_controller.selectedNumber != -1) {
-        node = _controller.nodeList[_controller.selectedNumber];
+      if (_controller.selectedNumber != -1) {
+        node = _controller.data.getNode(_controller.selectedNumber);
       } else {
         return const SizedBox();
       }
@@ -70,12 +68,12 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
       return _settingWindow([
         if (_controller.toolIndex == 0)...{
           SettingItem(
-            label: "No. ${_controller.nodeList.length + 1}",
+            label: "No. ${node.number + 1}",
             child: _buttonSettingItemField(
               BaseTextButton(
                 onPressed: () {
                   setState(() {
-                    _controller.addNode();
+                    _controller.data.addNode();
                     _controller.initSelect();
                   });
                 }, 
@@ -85,12 +83,12 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
           ),
         } else...{
           SettingItem(
-            label: "No. ${_controller.nodeList[_controller.selectedNumber].number+1}",
+            label: "No. ${node.number + 1}",
             child: _buttonSettingItemField(
               BaseTextButton(
                 onPressed: () {
                   setState(() {
-                    _controller.removeNode(_controller.selectedNumber);
+                    _controller.data.removeNode(_controller.selectedNumber);
                     _controller.initSelect();
                   });
                 },
@@ -112,9 +110,9 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                   child: BaseTextField(
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
-                        node.pos = Offset(double.parse(text), node.pos.dy);
+                        node.setPos(Offset(double.parse(text), node.pos.dy));
                       } else {
-                        node.pos = Offset(0, node.pos.dy);
+                        node.setPos(Offset(0, node.pos.dy));
                       }
                     }, 
                     text: '${node.pos.dx}',
@@ -127,9 +125,9 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                   child: BaseTextField(
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
-                        node.pos = Offset(node.pos.dx, double.parse(text));
+                        node.setPos(Offset(node.pos.dx, double.parse(text)));
                       } else {
-                        node.pos = Offset(node.pos.dx, 0);
+                        node.setPos(Offset(node.pos.dx, 0));
                       }
                     }, 
                     text: '${node.pos.dy}',
@@ -148,10 +146,10 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                 child: SettingItem.labelFit(
                   label: 'X',
                   child: BaseCheckbox(
-                    value: node.constXY[0], 
+                    value: node.getConst(0), 
                     onChanged: (value){
                       setState(() {
-                        node.constXY[0] = value!;
+                        node.setConst(0, value!);
                       });
                     },
                   ),
@@ -161,10 +159,10 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                 child: SettingItem.labelFit(
                   label: 'Y',
                   child: BaseCheckbox(
-                    value: node.constXY[1], 
+                    value: node.getConst(1),  
                     onChanged: (value){
                       setState(() {
-                        node.constXY[1] = value!;
+                        node.setConst(1, value!);
                       });
                     },
                   ),
@@ -180,36 +178,36 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
             children: [
               Expanded(
                 child: SettingItem.labelNotFit(
-                  enabled: node.constXY[0],
+                  enabled: node.getConst(0),
                   label: 'X',
                   child: BaseTextField(
-                    enabled: node.constXY[0],
+                    enabled: node.getConst(0),
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
-                        node.loadXY[0] = double.parse(text);
+                        node.setLoad(0, double.parse(text));
                       } else {
-                        node.loadXY[0] = 0;
+                        node.setLoad(0, 0);
                       }
                     }, 
-                    text: node.loadXY[0] != 0 ? "${node.loadXY[0]}" : "",
+                    text: node.getLoad(0) != 0 ? "${node.getLoad(0)}" : "",
                   ),
                 ),
               ),
               
               Expanded(
                 child: SettingItem.labelNotFit(
-                  enabled: node.constXY[1],
+                  enabled: node.getConst(1),
                   label: 'Y',
                   child: BaseTextField(
-                    enabled: node.constXY[1],
+                    enabled: node.getConst(1),
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
-                        node.loadXY[1] = double.parse(text);
+                        node.setLoad(1, double.parse(text));
                       } else {
-                        node.loadXY[1] = 0;
+                        node.setLoad(1, 0);
                       }
                     }, 
-                    text: node.loadXY[1] != 0 ? "${node.loadXY[1]}" : "",
+                    text: node.getLoad(1) != 0 ? "${node.getLoad(1)}" : "",
                   ),
                 ),
               ),
@@ -223,36 +221,36 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
             children: [
               Expanded(
                 child: SettingItem.labelNotFit(
-                  enabled: !node.constXY[0],
+                  enabled: !node.getConst(0),
                   label: 'X',
                   child: BaseTextField(
-                    enabled: !node.constXY[0],
+                    enabled: !node.getConst(0),
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
-                        node.loadXY[0] = double.parse(text);
+                        node.setLoad(2, double.parse(text));
                       } else {
-                        node.loadXY[0] = 0;
+                        node.setLoad(2, 0);
                       }
                     }, 
-                    text: node.loadXY[0] != 0 ? "${node.loadXY[0]}" : "",
+                    text: node.getLoad(2) != 0 ? "${node.getLoad(2)}" : "",
                   ),
                 ),
               ),
               
               Expanded(
                 child: SettingItem.labelNotFit(
-                  enabled: !node.constXY[1],
+                  enabled: !node.getConst(1),
                   label: 'Y',
                   child: BaseTextField(
-                    enabled: !node.constXY[1],
+                    enabled: !node.getConst(1),
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
-                        node.loadXY[1] = double.parse(text);
+                        node.setLoad(3, double.parse(text));
                       } else {
-                        node.loadXY[1] = 0;
+                        node.setLoad(3, 0);
                       }
                     }, 
-                    text: node.loadXY[1] != 0 ? "${node.loadXY[1]}" : "",
+                    text: node.getLoad(3) != 0 ? "${node.getLoad(3)}" : "",
                   ),
                 ),
               ),
@@ -263,23 +261,23 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
     }
     else if (_controller.typeIndex == 1) {
       Elem elem;
-      if (_controller.toolIndex == 0) {
-        elem = _controller.elem!;
-      } else if (_controller.selectedNumber != -1) {
-        elem = _controller.elemList[_controller.selectedNumber];
+      if (_controller.selectedNumber != -1) {
+        elem = _controller.data.getElem(_controller.selectedNumber);
       } else {
         return const SizedBox();
       }
 
+      Elem matElem = _controller.data.matElem;
+
       return _settingWindow([
         if (_controller.toolIndex == 0)...{
           SettingItem(
-            label: "No. ${_controller.elemList.length + 1}",
+            label: "No. ${elem.number + 1}",
             child: _buttonSettingItemField(
               BaseTextButton(
                 onPressed: (){
                   setState(() {
-                    _controller.addElem();
+                    _controller.data.addElem();
                     _controller.initSelect();
                   });
                 }, 
@@ -289,12 +287,12 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
           ),
         } else...{
           SettingItem(
-            label: "No. ${_controller.elemList[_controller.selectedNumber].number+1}",
+            label: "No. ${elem.number + 1}",
             child: _buttonSettingItemField(
               BaseTextButton(
                 onPressed: (){
                   setState(() {
-                    _controller.removeElem(_controller.selectedNumber);
+                    _controller.data.removeElem(_controller.selectedNumber);
                     _controller.initSelect();
                   });
                 }, 
@@ -312,23 +310,45 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
             children: [
               Expanded(
                 child: SettingItem.labelFit(
+                  enabled: _controller.toolIndex == 0,
                   label: "三角形",
                   child: BaseCheckbox(
+                    enabled: _controller.toolIndex == 0,
                     onChanged: (value) {
-
+                      setState(() {
+                        if (value! == true) {
+                          _controller.data.matElem.setNodeCount(3);
+                          elem.setNodeCount(3);
+                          elem.setNode(3, null);
+                        } else {
+                          _controller.data.matElem.setNodeCount(4);
+                          elem.setNodeCount(4);
+                        }
+                      });
                     }, 
-                    value: true,
+                    value: elem.nodeCount == 3,
                   ),
                 ),
               ),
               Expanded(
                 child: SettingItem.labelFit(
+                  enabled: _controller.toolIndex == 0,
                   label: "四角形",
                   child: BaseCheckbox(
+                    enabled: _controller.toolIndex == 0,
                     onChanged: (value) {
-                      
+                      setState(() {
+                        if (value! == true) {
+                          _controller.data.matElem.setNodeCount(4);
+                          elem.setNodeCount(4);
+                        } else {
+                          _controller.data.matElem.setNodeCount(3);
+                          elem.setNodeCount(3);
+                          elem.setNode(3, null);
+                        }
+                      });
                     }, 
-                    value: true,
+                    value: elem.nodeCount == 4,
                   ),
                 ),
               ),
@@ -342,80 +362,121 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
             children: [
               Expanded(
                 child: SettingItem.labelNotFit(
+                  enabled: _controller.toolIndex == 0,
                   label: "a",
                   child: BaseTextField(
+                    enabled: _controller.toolIndex == 0,
                     onChanged: (String text) {
                       if (int.tryParse(text) != null) {
                         int value = int.parse(text);
-                        if(0 <= value-1 && value-1 < _controller.nodeList.length){
-                          elem.nodeList[0] = _controller.nodeList[value-1];
+                        if(0 <= value - 1 && value - 1 < _controller.data.nodeCount){
+                          elem.setNode(0, _controller.data.getNode(value - 1));
                         } else {
-                          elem.nodeList[0] = null;
+                          elem.setNode(0, null);
                         }
                       }
                     }, 
-                    text: elem.nodeList[0] != null ? "${elem.nodeList[0]!.number+1}" : "",
+                    text: elem.getNode(0) != null ? "${elem.getNode(0)!.number + 1}" : "",
                   ),
                 ),
               ),
 
               Expanded(
                 child: SettingItem.labelNotFit(
+                  enabled: _controller.toolIndex == 0,
                   label: "b",
                   child: BaseTextField(
+                    enabled: _controller.toolIndex == 0,
                     onChanged: (String text) {
                       if (int.tryParse(text) != null) {
                         int value = int.parse(text);
-                        if(0 <= value-1 && value-1 < _controller.nodeList.length){
-                          elem.nodeList[1] = _controller.nodeList[value-1];
+                        if(0 <= value - 1 && value - 1 < _controller.data.nodeCount){
+                          elem.setNode(1, _controller.data.getNode(value - 1));
                         } else {
-                          elem.nodeList[1] = null;
+                          elem.setNode(1, null);
                         }
                       }
                     }, 
-                    text: elem.nodeList[1] != null ? "${elem.nodeList[1]!.number+1}" : "",
+                    text: elem.getNode(1) != null ? "${elem.getNode(1)!.number + 1}" : "",
                   ),
                 ),
               ),
 
               Expanded(
                 child: SettingItem.labelNotFit(
+                  enabled: _controller.toolIndex == 0,
                   label: "c",
                   child: BaseTextField(
+                    enabled: _controller.toolIndex == 0,
                     onChanged: (String text) {
                       if (int.tryParse(text) != null) {
                         int value = int.parse(text);
-                        if(0 <= value-1 && value-1 < _controller.nodeList.length){
-                          elem.nodeList[2] = _controller.nodeList[value-1];
+                        if(0 <= value - 1 && value - 1 < _controller.data.nodeCount){
+                          elem.setNode(2, _controller.data.getNode(value - 1));
                         } else {
-                          elem.nodeList[2] = null;
+                          elem.setNode(2, null);
                         }
                       }
                     }, 
-                    text: elem.nodeList[2] != null ? "${elem.nodeList[2]!.number+1}" : "",
+                    text: elem.getNode(2) != null ? "${elem.getNode(2)!.number + 1}" : "",
                   ),
                 ),
               ),
 
+              if (elem.nodeCount == 4)
               Expanded(
                 child: SettingItem.labelNotFit(
+                  enabled: _controller.toolIndex == 0,
                   label: "d",
                   child: BaseTextField(
+                    enabled: _controller.toolIndex == 0,
                     onChanged: (String text) {
                       if (int.tryParse(text) != null) {
                         int value = int.parse(text);
-                        if(0 <= value-1 && value-1 < _controller.nodeList.length){
-                          elem.nodeList[2] = _controller.nodeList[value-1];
+                        if(0 <= value - 1 && value - 1 < _controller.data.nodeCount){
+                          elem.setNode(3, _controller.data.getNode(value - 1));
                         } else {
-                          elem.nodeList[2] = null;
+                          elem.setNode(3, null);
                         }
                       }
                     }, 
-                    text: elem.nodeList[2] != null ? "${elem.nodeList[2]!.number+1}" : "",
+                    text: elem.getNode(3) != null ? "${elem.getNode(3)!.number + 1}" : "",
                   ),
                 ),
               ),
             ],
+          ),
+        ),
+
+        SettingItem(
+          label: "ヤング率",
+          child: BaseTextField(
+            onChanged: (String text) {
+              if (double.tryParse(text) != null) {
+                matElem.setRigid(0, double.parse(text));
+                elem.setRigid(0, double.parse(text));
+              } else {
+                matElem.setRigid(0, 0);
+                elem.setRigid(0, 0);
+              }
+            }, 
+            text: elem.getRigid(0).toString(),
+          ),
+        ),
+
+        SettingItem(
+          label: "ポアソン比",
+          child: BaseTextField(
+            onChanged: (String text) {
+              if (double.tryParse(text) != null) {
+                matElem.setRigid(1, double.parse(text));
+                elem.setRigid(1, double.parse(text));
+              } else {
+                matElem.setRigid(1, 0);
+                elem.setRigid(1, 0);
+              }
+            }, 
+            text: elem.getRigid(1).toString(),
           ),
         ),
 
@@ -428,8 +489,15 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                   label: 'bx',
                   child: BaseTextField(
                     onChanged: (String text) {
+                      if (double.tryParse(text) != null) {
+                        matElem.setRigid(2, double.parse(text));
+                        elem.setRigid(2, double.parse(text));
+                      } else {
+                        matElem.setRigid(2, 0);
+                        elem.setRigid(2, 0);
+                      }
                     }, 
-                    text: '',
+                    text: elem.getRigid(2) != 0 ? elem.getRigid(2).toString() : "",
                   ),
                 ),
               ),
@@ -439,8 +507,15 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                   label: 'by',
                   child: BaseTextField(
                     onChanged: (String text) {
+                      if (double.tryParse(text) != null) {
+                        matElem.setRigid(3, double.parse(text));
+                        elem.setRigid(3, double.parse(text));
+                      } else {
+                        matElem.setRigid(3, 0);
+                        elem.setRigid(3, 0);
+                      }
                     }, 
-                    text: '',
+                    text: elem.getRigid(3) != 0 ? elem.getRigid(3).toString() : "",
                   ),
                 ),
               ),
@@ -450,6 +525,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
       ]);
     }
     else if (_controller.typeIndex == 2) {
+      Elem elem = _controller.data.matElem; 
       return _settingWindow([
         const SettingItem(
           label: "要素のマテリアル",
@@ -458,32 +534,16 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
         const BaseDivider(),
 
         SettingItem(
-          label: "ヤング率",
-          child: BaseTextField(
-            onChanged: (String text) {
-
-            }, 
-            text: "",
-          ),
-        ),
-
-        SettingItem(
-          label: "ポアソン比",
-          child: BaseTextField(
-            onChanged: (String text) {
-
-            }, 
-            text: "",
-          ),
-        ),
-
-        SettingItem(
           label: "要素の厚さ",
           child: BaseTextField(
             onChanged: (String text) {
-
+              if (double.tryParse(text) != null) {
+                elem.setRigid(4, double.parse(text));
+              } else {
+                elem.setRigid(4, 0);
+              }
             }, 
-            text: "",
+            text: elem.getRigid(4).toString(),
           ),
         ),
 
@@ -496,9 +556,15 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                   label: "平面応力",
                   child: BaseCheckbox(
                     onChanged: (value) {
-
+                      setState(() {
+                        if (value! == true) {
+                          elem.setPlane(0);
+                        } else {
+                          elem.setPlane(1);
+                        }
+                      });
                     }, 
-                    value: true,
+                    value: elem.plane == 0,
                   ),
                 ),
               ),
@@ -507,9 +573,15 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                   label: "平面ひずみ",
                   child: BaseCheckbox(
                     onChanged: (value) {
-                      
+                      setState(() {
+                        if (value! == true) {
+                          elem.setPlane(1);
+                        } else {
+                          elem.setPlane(0);
+                        }
+                      });
                     }, 
-                    value: true,
+                    value: elem.plane == 1,
                   ),
                 ),
               ),

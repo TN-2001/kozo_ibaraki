@@ -12,7 +12,7 @@ class FemController extends ChangeNotifier {
   }
 
   // パラメータ
-  final data = FemData();
+  final FemData data = FemData();
   int _typeIndex = 0; // 選択されているタイプのインデックス（0:節点、1:要素）
   int _toolIndex = 0; // 選択されているツールのインデックス（0:新規、1:修正）
   int _resultIndex = 0; // 選択されている結果のインデックス（0:変形図、1:反力、2:せん断力図、3:曲げモーメント図）
@@ -75,11 +75,11 @@ class FemController extends ChangeNotifier {
     _resultIndex = index;
 
     if (index <= 2) {
-      _resultMin = data.getResultElem(0).getResult(resultIndex);
-      _resultMax = data.getResultElem(0).getResult(resultIndex);
-      for (int i = 0; i < data.resultElemCount; i++) {
-        _resultMin = min(resultMin, data.getResultElem(i).getResult(resultIndex));
-        _resultMax = max(resultMax, data.getResultElem(i).getResult(resultIndex));
+      _resultMin = data.getElem(0).getResult(resultIndex);
+      _resultMax = data.getElem(0).getResult(resultIndex);
+      for (int i = 0; i < data.elemCount; i++) {
+        _resultMin = min(resultMin, data.getElem(i).getResult(resultIndex));
+        _resultMax = max(resultMax, data.getElem(i).getResult(resultIndex));
       }
     }
 
@@ -97,12 +97,14 @@ class FemController extends ChangeNotifier {
 
     notifyListeners();
   }
-  void selectNode(Offset pos) {
+  void setSelectNode(Offset pos) {
     initSelect();
+
+    double nodeRadius = data.getNodeRadius();
 
     for (int i = 0; i < data.nodeCount; i++) {
       double dis = (data.getNode(i).pos - pos).distance;
-      if (dis <= data.nodeRadius * 3) {
+      if (dis <= nodeRadius * 3) {
         _selectedNumber = i;
         break;
       }
@@ -110,20 +112,26 @@ class FemController extends ChangeNotifier {
 
     notifyListeners();
   }
-  void selectElem(Offset pos) {
+  void setSelectElem(Offset pos) {
     initSelect();
 
     for (int i = 0; i < data.elemCount; i++) {
-      List<Offset> nodePosList = [];
-      for (int j = 0; j < 2; j++) {
-        nodePosList.add(data.getElem(i).getNode(j)!.pos);
+      Elem elem = data.getElem(i);
+      List<Offset> p = [];
+      for (int j = 0; j < elem.nodeCount; j++) {
+        p.add(data.getElem(i).getNode(j)!.pos);
       }
 
-      List<Offset> p = MyCalculator.getRectanglePoints(nodePosList[0], nodePosList[1], data.elemWidth * 3);
-
-      if(MyCalculator.isPointInRectangle(pos, p[0], p[1], p[2], p[3])){
-        _selectedNumber = i;
-        break;
+      if (elem.nodeCount == 3) {
+        if (MyCalculator.isPointInTriangle(pos, p[0], p[1], p[2])) {
+          _selectedNumber = i;
+          break;
+        }
+      } else {
+        if (MyCalculator.isPointInRectangle(pos, p[0], p[1], p[2], p[3])) {
+          _selectedNumber = i;
+          break;
+        }
       }
     }
 
@@ -143,96 +151,93 @@ class FemController extends ChangeNotifier {
     }
   }
   void _calculationFrame2d() {
-    final int nx = data.nodeCount; // 節点数
-    final List<List<double>> xyz0 = List.generate(nx, (_) => List.filled(2, 0.0));
-    final List<List<int>> mfix = List.generate(nx, (_) => List.filled(4, 0));
-    final List<List<double>> fnod = List.generate(nx, (_) => List.filled(3, 0.0));
-    final int nelx = data.elemCount; // 要素数
-    final List<List<int>> ijk0 = List.generate(nelx, (_) => List.filled(2, 0));
-    final List<List<double>> prp0 = List.generate(nelx, (_) => List.filled(3, 0.0));
-    final List<double> felm = List<double>.filled(nelx, 0.0);
+    final Elem matElem = data.matElem;
+
+    final int nx = data.nodeCount;
+    final List<List<double>> xyzn = List.generate(nx, (_) => List.filled(2, 0.0));
+    final List<List<int>> mfix = List.generate(nx, (_) => List.filled(2, 0));
+    final List<List<double>> dnod = List.generate(nx, (_) => List.filled(2, 0.0));
+    final List<List<double>> fnod = List.generate(nx, (_) => List.filled(2, 0.0));
+    final int nelx = data.elemCount;
+    final List<List<int>> ijke = List.generate(nelx, (_) => List.filled(5, 0));
+    final List<List<double>> prop = List.generate(nelx, (_) => List.filled(2, 0.0));
+    final List<List<double>> body = List.generate(nelx, (_) => List.filled(2, 0.0));
+    final int n2d = matElem.plane + 1;
+    final double he = matElem.getRigid(4);
 
     for (int i = 0; i < nx; i++) {
       Node node = data.getNode(i);
-      xyz0[i][0] = node.pos.dx;
-      xyz0[i][1] = node.pos.dy;
+      xyzn[i][0] = node.pos.dx;
+      xyzn[i][1] = node.pos.dy;
       mfix[i][0] = node.getConst(0) ? 1 : 0;
       mfix[i][1] = node.getConst(1) ? 1 : 0;
-      mfix[i][2] = node.getConst(2) ? 1 : 0;
-      mfix[i][3] = node.getConst(3) ? 1 : 0;
-      fnod[i][0] = node.getLoad(0);
-      fnod[i][1] = node.getLoad(1);
-      fnod[i][2] = node.getLoad(2);
+      dnod[i][0] = node.getLoad(0);
+      dnod[i][1] = node.getLoad(1);
+      fnod[i][0] = node.getLoad(2);
+      fnod[i][1] = node.getLoad(3);
     }
+    
 
     for (int i = 0; i < nelx; i++) {
       Elem elem = data.getElem(i);
-      ijk0[i][0] = elem.getNode(0)!.number;
-      ijk0[i][1] = elem.getNode(1)!.number;
-      prp0[i][0] = elem.getRigid(0);
-      prp0[i][1] = elem.getRigid(1);
-      prp0[i][2] = elem.getRigid(2);
-      felm[i] = elem.load;
+      ijke[i][4] = elem.nodeCount;
+      ijke[i][0] = elem.getNode(0)!.number + 1;
+      ijke[i][1] = elem.getNode(1)!.number + 1;
+      ijke[i][2] = elem.getNode(2)!.number + 1;
+      if (elem.nodeCount == 4) {
+        ijke[i][3] = elem.getNode(3)!.number;
+      }
+      prop[i][0] = elem.getRigid(0);
+      prop[i][1] = elem.getRigid(1);
+      body[i][0] = elem.getRigid(2);
+      body[i][0] = elem.getRigid(3);
     }
 
     Map<String, Object> input = {
       'nx': nx,
-      'xyz0': xyz0,
+      'xyzn': xyzn,
       'mfix': mfix,
+      'dnod': dnod,
       'fnod': fnod,
       'nelx': nelx,
-      'ijk0': ijk0,
-      'prp0': prp0,
-      'felm': felm,
+      'ijke': ijke,
+      'prop': prop,
+      'body': body,
+      'n2d': n2d,
+      'he': he,
     };
 
     Map<String, Object> output = fem2d(input);
 
-    final int nx2 = output['nx2'] as int;
-    final List<List<double>> xyzn = output['xyzn'] as List<List<double>>;
-    final int nelx2 = output['nelx2'] as int;
-    final int node = output['node'] as int;
-    final List<List<int>> ijke = output['ijke'] as List<List<int>>;
-    final List<List<List<int>>> mhng = output['mhng'] as List<List<List<int>>>;
-    final int ndof = output['ndof'] as int;
-    final List<double> disp = output['disp'] as List<double>;
-    final List<List<double>> fint = output['fint'] as List<List<double>>;
-    final List<double> frea = output['frea'] as List<double>;
-
-    data.initResultNode(nx2);
-    data.initResultElem(nelx2);
-
-    // 分割した節点の初期化
-    for (int ix = 0; ix < nx2; ix++) {
-      Node node = data.getResultNode(ix);
-      node.changePos(Offset(xyzn[ix][0], xyzn[ix][1]));
-    }
+    // final nx = output['nx'] as int;
+    final nd = output['nd'] as int;
+    final disp = output['disp'] as List<double>;
+    // final nelx = output['nelx'] as int;
+    // final ijke = output['ijke'] as List<List<int>>;
+    final strs = output['strs'] as List<List<double>>;
+    final strn = output['strn'] as List<List<double>>;
+    
 
     // 変位
     double maxBecPos = 0;
-    for (int ie = 0; ie < nelx2; ie++) {
-      Elem elem = data.getResultElem(ie);
-      for (int jn = 0; jn < node; jn++) {
-        double ui = disp[mhng[ie][jn][0]];
-        double vi = disp[mhng[ie][jn][1]];
-        double qi = disp[mhng[ie][jn][2]];
+    for (int ix = 0; ix < nx; ix++) {
+      Node node = data.getNode(ix);
 
-        Node node = data.getResultNode(ijke[ie][jn]);
-        node.changeBecPos(Offset(ui, vi));
-        node.changeAfterPos(node.pos + node.becPos / 100);
-        node.changeResult(3, qi);
-        elem.changeNode(jn, node);
+      double ui = disp[nd * ix + 0];
+      double vi = disp[nd * ix + 1];
 
-        maxBecPos = max(maxBecPos, ui.abs());
-        maxBecPos = max(maxBecPos, vi.abs());
-      }
+      maxBecPos = max(maxBecPos, ui.abs());
+      maxBecPos = max(maxBecPos, vi.abs());
+
+      node.setBecPos(Offset(ui, vi));
     }
 
     // ワールド範囲の最大1/8まで変位
-    final double rectWidth = max(data.rect.width, data.rect.height);
-    for (int ix = 0; ix < nx2; ix++) {
-      Node node = data.getResultNode(ix);
-      node.changeAfterPos(
+    final Rect rect = data.getRect();
+    final double rectWidth = max(rect.width, rect.height);
+    for (int ix = 0; ix < nx; ix++) {
+      Node node = data.getNode(ix);
+      node.setAfterPos(
         Offset(
           node.pos.dx + node.becPos.dx / maxBecPos * rectWidth / 8,
           node.pos.dy + node.becPos.dy / maxBecPos * rectWidth / 8
@@ -241,52 +246,14 @@ class FemController extends ChangeNotifier {
     }
     
     // 力
-    for (int ie = 0; ie < nelx2; ie++) {
-      Elem elem = data.getResultElem(ie);
-      elem.changeResult(0, fint[ie][0]);
-      elem.changeResult(1, fint[ie][1]);
-      elem.changeResult(2, fint[ie][2]);
-
-      // Offset pos1 = elem.getNode(0)!.pos;
-      // Offset pos2 = elem.getNode(1)!.pos;
-      // double he = sqrt(pow(pos1.dx - pos2.dx, 2) + pow(pos1.dy - pos2.dy, 2));
-      // double ox = -(pos2.dy - pos1.dy) / he;
-      // double oy = (pos2.dx - pos1.dx) / he;
-      elem.changeResult(3, fint[ie][3]);
-      elem.changeResult(4, fint[ie][4]);
-    }
-    
-    // 反力
-    for (int ix = 0; ix < nx; ix++) {
-      Node node = data.getNode(ix);
-      node.changeResult(0, 0.0);
-      node.changeResult(1, 0.0);
-      node.changeResult(2, 0.0);
-      if (mfix[ix][0] == 1) {
-        node.changeResult(0, frea[ndof * ix + 0]);
+    for (int ie = 0; ie < nelx; ie++) {
+      Elem elem = data.getElem(ie);
+      for (int i = 0; i < 7; i++) {
+        elem.setResult(i, strs[ie][i]);
       }
-      if (mfix[ix][1] == 1) {
-        node.changeResult(1, frea[ndof * ix + 1]);
+      for (int i = 0; i < 4; i++) {
+        elem.setResult(i + 7, strn[ie][i]);
       }
-      if (mfix[ix][2] == 1 && mfix[ix][3] == 0) {
-        node.changeResult(2, frea[ndof * ix + 2]);
-      }
-
-      if (node.getResult(0).abs() < minValue) {
-        node.changeResult(0, 0.0);
-      }
-      if (node.getResult(1).abs() < minValue) {
-        node.changeResult(1, 0.0);
-      }
-      if (node.getResult(2).abs() < minValue) {
-        node.changeResult(2, 0.0);
-      }
-    }
-
-    for (int ix = 0; ix < nx; ix++) {
-      Node node = data.getNode(ix);
-      node.changeBecPos(data.getResultNode(ix).becPos);
-      node.changeAfterPos(data.getResultNode(ix).afterPos);
     }
   }
   void resetCalculation() {

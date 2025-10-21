@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/app/pages/fem/models/fem_data.dart';
+import 'package:kozo_ibaraki/app/pages/fem/models/fem_controller.dart';
 import 'package:kozo_ibaraki/core/components/component.dart';
 
 class FemBar extends StatefulWidget {
   const FemBar({super.key, required this.controller, required this.scaffoldKey});
 
-  final FemData controller;
+  final FemController controller;
   final GlobalKey<ScaffoldState> scaffoldKey;
 
   @override
@@ -13,7 +13,7 @@ class FemBar extends StatefulWidget {
 }
 
 class _FemBarState extends State<FemBar> {
-  late FemData _controller;
+  late FemController _controller;
   late GlobalKey<ScaffoldState> _scaffoldKey;
 
   int _selectedTypeIndex = 0; // 選択されているツールのインデックス（0:節点、1:要素）
@@ -71,14 +71,14 @@ class _FemBarState extends State<FemBar> {
   }
 
   Future<void> _onPressedAnalysisButton() async {
-    String errorMessage = _controller.checkCalculation();
-    if (errorMessage.isNotEmpty) {
-      // エラーメッセージを表示
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
-      );
-      return;
-    }
+    // String errorMessage = _controller.checkCalculation();
+    // if (errorMessage.isNotEmpty) {
+    //   // エラーメッセージを表示
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     SnackBar(content: Text(errorMessage)),
+    //   );
+    //   return;
+    // }
 
     // 解析を実行
     setState(() {
@@ -119,7 +119,7 @@ class _FemBarState extends State<FemBar> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_controller.isCalculation) {
+    if (!_controller.isCalculated) {
       // 編集モードのUIを表示
       return ToolBar(
         children: [

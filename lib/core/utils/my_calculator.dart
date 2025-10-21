@@ -151,6 +151,28 @@ class MyCalculator {
     }
   }
 
+  // ある点pが点p0~2の三角形要素の中にあるかどうか
+  static bool isPointInTriangle(Offset p, Offset p0, Offset p1, Offset p2) {
+    // クロスプロダクトを計算するヘルパー関数
+    double cross(Offset v1, Offset v2) {
+      return v1.dx * v2.dy - v1.dy * v2.dx;
+    }
+
+    // 各頂点から点 p へのベクトル
+    Offset v0 = p1 - p0;
+    Offset v1 = p2 - p1;
+    Offset v2 = p0 - p2;
+
+    // 各辺に対して点 p がどちら側にあるか調べる
+    double c0 = cross(v0, p - p0);
+    double c1 = cross(v1, p - p1);
+    double c2 = cross(v2, p - p2);
+
+    // すべての符号が同じなら、点は三角形の内側
+    return (c0 >= 0 && c1 >= 0 && c2 >= 0) ||
+          (c0 <= 0 && c1 <= 0 && c2 <= 0);
+  }
+
   // ある点pが点p0~3の四角形要素の中にあるかどうか
   static bool isPointInRectangle(Offset p, Offset p0, Offset p1, Offset p2, Offset p3) {
     // クロスプロダクトを計算するヘルパー関数

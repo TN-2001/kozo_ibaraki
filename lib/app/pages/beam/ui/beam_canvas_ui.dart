@@ -47,7 +47,7 @@ class BeamCanvasPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // 座標系
-    CommonPainter.coordinate(canvas);
+    CommonPainter.drawCoordinate(canvas);
   }
 
   @override

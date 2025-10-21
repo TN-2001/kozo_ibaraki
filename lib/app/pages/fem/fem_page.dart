@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/components/common_drawer.dart';
 import 'package:kozo_ibaraki/app/pages/fem/canvas/fem_canvas.dart';
-import 'package:kozo_ibaraki/app/pages/fem/models/fem_data.dart';
+import 'package:kozo_ibaraki/app/pages/fem/models/fem_controller.dart';
 import 'package:kozo_ibaraki/app/pages/fem/ui/fem_bar.dart';
 import 'package:kozo_ibaraki/app/pages/fem/ui/fem_canvas_ui.dart';
 import 'package:kozo_ibaraki/app/pages/fem/ui/fem_setting_window.dart';
@@ -17,7 +17,7 @@ class FemPage extends StatefulWidget {
 
 class _FemPageState extends State<FemPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); // メニュー用キー
-  late FemData _controller;
+  late FemController _controller;
   bool isSumaho = false;
 
 
@@ -33,8 +33,7 @@ class _FemPageState extends State<FemPage> {
   void initState() {
     super.initState();
 
-    _controller = FemData();
-    _controller.node = Node();
+    _controller = FemController();
     _controller.addListener(_onUpdate);
 
     StatusBar.setStyle(isDarkBackground: true);

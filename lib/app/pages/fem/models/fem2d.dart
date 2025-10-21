@@ -30,6 +30,11 @@ Map<String, Object> fem2d(Map<String, Object> input) {
   int n2d = 1;     // 1: plane stress, 2: plane strain
   double he = 1.0; // Thickness
 
+  try {
+    n2d = input['n2d'] as int;
+    he = input['he'] as double;
+  // ignore: empty_catches
+  } catch (e) {}
 
   nx = input['nx'] as int;
   xyzn = input['xyzn'] as List<List<double>>; 
