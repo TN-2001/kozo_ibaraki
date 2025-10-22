@@ -83,7 +83,7 @@ class _FemPageState extends State<FemPage> {
                   children: [
                     FemCanvas(controller: _controller),
 
-                    const FemCanvasUi(),
+                    FemCanvasUi(controller: _controller),
 
                     FemSettingWindow(controller: _controller),
                   ]

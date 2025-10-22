@@ -2,8 +2,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/pages/fem/models/fem_controller.dart';
 import 'package:kozo_ibaraki/app/utils/common_painter.dart';
-import 'package:kozo_ibaraki/core/utils/my_painter.dart';
+import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
 import 'package:kozo_ibaraki/core/utils/camera.dart';
+import 'package:kozo_ibaraki/core/utils/string_utils.dart';
 
 class FemPainter extends CustomPainter {
   FemPainter({required this.controller, required this.camera});
@@ -25,15 +26,12 @@ class FemPainter extends CustomPainter {
       _drawNodeNumber(canvas); // 節点番号
     }
     else{
-      _drawElem(canvas); // 要素
+      // _drawElem(canvas); // 要素
+      _drawElemResult(canvas);
       _drawConst(canvas); // 節点拘束
       _drawPower(canvas); // 荷重
       _drawNode(canvas); // 節点
-      // _drawResultElem(Rect.fromLTRB(rect.left, rect.top+rect.height/6, rect.right, rect.bottom-rect.height/6), elemWidth, canvas); // 変形図
-      // MyPainter.rainbowBand(canvas, Offset(size.width - 60, size.height/4), Offset(size.width - 80, size.height - size.height/4), 50); // 虹色
-      // 最大最小
-      // Painter().text(canvas, size.width, MyPainter.doubleToString(data.resultMax, 3), Offset(size.width - 55, size.height/4-10), 12, Colors.black);
-      // Painter().text(canvas, size.width, MyPainter.doubleToString(data.resultMin, 3), Offset(size.width - 55, size.height - size.height/4-10), 12, Colors.black);
+      _drawElemResultValue(canvas);
     }
   }
 
@@ -111,7 +109,7 @@ class FemPainter extends CustomPainter {
       } else {
         color = Colors.black;
       }
-      MyPainter.text(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), 20, color, true, 100);
+      CanvasUtils.text(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), 20, color, true, 100);
     }
   }
 
@@ -185,7 +183,7 @@ class FemPainter extends CustomPainter {
 
       if (node.getConst(0)) {
         if (pos.dx <= center.dx) {
-          MyPainter.roller(canvas, Offset(pos.dx - 10, pos.dy), pi/2, radius: 7.5);
+          CanvasUtils.roller(canvas, Offset(pos.dx - 10, pos.dy), pi/2, radius: 7.5);
           CommonPainter.drawCircleConst(
             canvas, 
             camera.worldToScreen(pos), 
@@ -272,9 +270,9 @@ class FemPainter extends CustomPainter {
         }
 
         if (loadX > 0) {
-          MyPainter.drawArrow2(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow2(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         } else {
-          MyPainter.drawArrow2(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow2(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         }
       }
       if (loadY != 0) {
@@ -289,61 +287,84 @@ class FemPainter extends CustomPainter {
         }
 
         if (loadY > 0) {
-          MyPainter.drawArrow2(canvas, bottom, top, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow2(canvas, bottom, top, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         } else {
-          MyPainter.drawArrow2(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow2(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         }
       }
     }
   }
 
-  // 変形後の要素
-  void _drawResultElem(Canvas canvas) {
-    // Paint paint = Paint()
-    //   ..color = const Color.fromARGB(255, 225, 135, 135)
-    //   ..style = PaintingStyle.fill;
-    // // 面
-    // paint = Paint()
-    //   ..color = const Color.fromARGB(255, 49, 49, 49);
+  // 要素の結果
+  void _drawElemResult(Canvas canvas) {
+    Paint paint = Paint()
+      ..color = const Color.fromARGB(255, 225, 135, 135)
+      ..style = PaintingStyle.fill;
+    // 面
+    paint = Paint()
+      ..color = const Color.fromARGB(255, 49, 49, 49);
 
-    // for(int i = 0; i < data.elemCount; i++){
-    //   if(data.resultMax != 0 || data.resultMin != 0){
-    //     paint.color = MyPainter.getColor((data.resultList[i] - data.resultMin) / (data.resultMax - data.resultMin) * 100);
-    //   }
+    int resultIndex = controller.resultIndex;
+    double resultMax = controller.resultMax;
+    double resultMin = controller.resultMin;
 
-    //   final path = Path();
-    //   for(int j = 0; j < data.elemNode; j++){
-    //     Offset pos = data.elemList[i].nodeList[j]!.canvasAfterPos;
-    //     if(j == 0){
-    //       path.moveTo(pos.dx, pos.dy);
-    //     }else{
-    //       path.lineTo(pos.dx, pos.dy);
-    //     }
-    //   }
-    //   path.close();
-    //   canvas.drawPath(path, paint);
-    // }
+    for (int i = 0; i < data.elemCount; i++) {
+      Elem elem = data.getElem(i);
+      if (controller.resultMax != 0 || controller.resultMin != 0) {
+        paint.color = CanvasUtils.getColor(
+          (elem.getResult(resultIndex) - resultMin) / (resultMax - resultMin) * 100);
+      }
 
-    // // 辺
-    // paint = Paint()
-    //   ..color = const Color.fromARGB(255, 49, 49, 49)
-    //   ..style = PaintingStyle.stroke;
+      final path = Path();
+      for (int j = 0; j < elem.nodeCount; j++) {
+        Offset pos = camera.worldToScreen(elem.getNode(j)!.afterPos);
+        if (j == 0) {
+          path.moveTo(pos.dx, pos.dy);
+        } else {
+          path.lineTo(pos.dx, pos.dy);
+        }
+      }
+      path.close();
+      canvas.drawPath(path, paint);
+    }
 
-    // if(data.elemList.isNotEmpty){
-    //   for(int i = 0; i < data.elemList.length; i++){
-    //     final path = Path();
-    //     for(int j = 0; j < data.elemNode; j++){
-    //       Offset pos = data.elemList[i].nodeList[j]!.canvasAfterPos;
-    //       if(j == 0){
-    //         path.moveTo(pos.dx, pos.dy);
-    //       }else{
-    //         path.lineTo(pos.dx, pos.dy);
-    //       }
-    //     }
-    //     path.close();
-    //     canvas.drawPath(path, paint);
-    //   }
-    // }
+    // 辺
+    paint = Paint()
+      ..color = const Color.fromARGB(255, 49, 49, 49)
+      ..style = PaintingStyle.stroke;
+
+    for (int i = 0; i < data.elemCount; i++) {
+      Elem elem = data.getElem(i);
+
+      final path = Path();
+      for (int j = 0; j < elem.nodeCount; j++) {
+        Offset pos = camera.worldToScreen(elem.getNode(j)!.afterPos);
+        if (j == 0) {
+          path.moveTo(pos.dx, pos.dy);
+        } else {
+          path.lineTo(pos.dx, pos.dy);
+        }
+      }
+      path.close();
+      canvas.drawPath(path, paint);
+    }
+  }
+
+  // 要素の結果値
+  void _drawElemResultValue(Canvas canvas) {
+    for (int i = 0; i < data.elemCount; i++) {
+      Elem elem = data.getElem(i);
+
+      Offset pos = Offset.zero;
+      for (int j = 0; j < elem.nodeCount; j++) {
+        Offset npos = elem.getNode(j)!.afterPos;
+        pos += Offset(npos.dx, npos.dy);
+      }
+      pos = pos / elem.nodeCount.toDouble();
+      pos = camera.worldToScreen(pos);
+
+      CanvasUtils.drawText(canvas, pos, StringUtils.doubleToString(elem.getResult(controller.resultIndex), 3), alignment: Alignment.center);
+    }
   }
 
 

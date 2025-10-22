@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/app/components/color_contour.dart';
 import 'package:kozo_ibaraki/app/pages/truss/models/truss_data.dart';
 import 'package:kozo_ibaraki/app/utils/common_painter.dart';
-import 'package:kozo_ibaraki/core/components/component.dart';
 import 'package:kozo_ibaraki/core/constants/constant.dart';
-import 'package:kozo_ibaraki/core/utils/my_painter.dart';
+import 'package:kozo_ibaraki/core/utils/string_utils.dart';
 
 class TrussCanvasUi extends StatefulWidget {
   const TrussCanvasUi({super.key, required this.controller});
@@ -16,119 +16,6 @@ class TrussCanvasUi extends StatefulWidget {
 
 class _TrussCanvasUiState extends State<TrussCanvasUi> {
   late TrussData _controller;
-
-
-  Widget landscapeColorContour() {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Container(
-        constraints: const BoxConstraints(
-          maxHeight: 500,
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Column(
-              children: [
-                BaseText(
-                  MyPainter.doubleToString(_controller.resultMax, 3),
-                  isStroke: true,
-                ),
-
-                const SizedBox(height: MyDimens.baseSpacing,),
-
-                Expanded(
-                  child: Container(
-                    height: double.infinity,
-                    width: 30,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Color.fromARGB(255, 255, 0, 0),
-                          Color.fromARGB(255, 255, 255, 0),
-                          Color.fromARGB(255, 0, 255, 0),
-                          Color.fromARGB(255, 0, 255, 255),
-                          Color.fromARGB(255, 0, 0, 255),
-                        ]
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: MyDimens.baseSpacing,),
-
-                BaseText(
-                  MyPainter.doubleToString(_controller.resultMin, 3),
-                  isStroke: true,
-                ),
-              ],
-            ),
-
-            const SizedBox(width: MyDimens.baseSpacing * 2,),
-          ]
-        ),
-      ),
-    );
-  }
-
-  Widget portraitColorContour() {
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Container(
-        constraints: const BoxConstraints(
-          maxWidth: 500,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              textDirection: TextDirection.rtl,
-              children: [
-                BaseText(
-                  MyPainter.doubleToString(_controller.resultMax, 3),
-                  isStroke: true,
-                ),
-
-                const SizedBox(width: MyDimens.baseSpacing,),
-
-                Expanded(
-                  child: Container(
-                    height: 30,
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.centerRight,
-                        end: Alignment.centerLeft,
-                        colors: [
-                          Color.fromARGB(255, 255, 0, 0),
-                          Color.fromARGB(255, 255, 255, 0),
-                          Color.fromARGB(255, 0, 255, 0),
-                          Color.fromARGB(255, 0, 255, 255),
-                          Color.fromARGB(255, 0, 0, 255),
-                        ]
-                      ),
-                    ),
-                  ),
-                ),
-
-                const SizedBox(width: MyDimens.baseSpacing,),
-
-                BaseText(
-                  MyPainter.doubleToString(_controller.resultMin, 3),
-                  isStroke: true,
-                ),
-              ],
-            ),
-
-            const SizedBox(height: MyDimens.baseSpacing * 2,),
-          ]
-        ),
-      ),
-    );
-  }
-
 
   @override
   void initState() {
@@ -155,10 +42,16 @@ class _TrussCanvasUiState extends State<TrussCanvasUi> {
 
             if (_controller.isCalculation && _controller.resultIndex <= 2)...{
               if (orientation == Orientation.landscape)...{
-                landscapeColorContour(),
+                ColorContour.landscape(
+                  maxText: StringUtils.doubleToString(_controller.resultMax, 3),
+                  minText: StringUtils.doubleToString(_controller.resultMin, 3),
+                ),
               }
               else...{
-                portraitColorContour(),
+                ColorContour.portrait(
+                  maxText: StringUtils.doubleToString(_controller.resultMax, 3),
+                  minText: StringUtils.doubleToString(_controller.resultMin, 3),
+                ),
               }
             }
           ],

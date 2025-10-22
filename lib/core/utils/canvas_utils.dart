@@ -1,27 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'my_calculator.dart';
+import 'package:kozo_ibaraki/core/utils/string_utils.dart';
+import 'math_utils.dart';
 
-class MyPainter {
-  // 数字を文字にする
-  static String doubleToString(double value, int digit) {
-    // 数字を桁数(digit)分を文字にする
-    String text;
-    if(value == 0.0) {
-      text = " 0";
-    } else if(value.abs() >= 1.0 * pow(10, -(digit-1))) {
-      text = value.toStringAsPrecision(digit);
-    } else {
-      text = value.toStringAsExponential(digit-1);
-    }
-
-    // -の分のスペースを開ける
-    if(value > 0) {
-      text = " $text";
-    }
-
-    return text;
-  }
+class CanvasUtils {
 
   // 色0～100
   static Color getColor(double par){
@@ -100,7 +82,7 @@ class MyPainter {
       ..color = color;
     if(!isfull) paint.style = PaintingStyle.stroke;
 
-    var p = MyCalculator.angleRectanglePos(p0, p1, width);
+    var p = MathUtils.angleRectanglePos(p0, p1, width);
 
     Offset topLeft = p.$1;
     Offset topRight = p.$2;
@@ -227,7 +209,7 @@ class MyPainter {
   }
 
   static void drawText(Canvas canvas, Offset pos, String text, {Alignment alignment = Alignment.topLeft}) {
-    MyPainter.text(canvas, pos, text, 16, Colors.black, true, 1000, alignment: alignment);
+    CanvasUtils.text(canvas, pos, text, 16, Colors.black, true, 1000, alignment: alignment);
   }
 
   // 正三角形
@@ -293,7 +275,7 @@ class MyPainter {
       if(value.abs() <= 1/(digitScale*100)) {
         label = " 0";
       } else {
-        label = doubleToString(value, 2);
+        label = StringUtils.doubleToString(value, 2);
       }
 
       text(canvas, Offset(rect.center.dx + 10, p.dy-13), label, 16, Colors.black, false, 500);

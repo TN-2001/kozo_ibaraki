@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/pages/bridgegame/models/des_fem70x25.dart';
 import 'package:kozo_ibaraki/app/pages/bridgegame/models/pixel_canvas_controller.dart';
-import 'package:kozo_ibaraki/core/utils/my_calculator.dart';
+import 'package:kozo_ibaraki/core/utils/math_utils.dart';
 
 class BridgegameController extends ChangeNotifier {
   BridgegameController() {
@@ -508,7 +508,7 @@ class BridgegameController extends ChangeNotifier {
       _selectedResultList[i] = _elemList[i].resultList[index];
     }
 
-    _selectedResultList = MyCalculator.normalizeArray(_selectedResultList);
+    _selectedResultList = MathUtils.normalizeArray(_selectedResultList);
   }
 
   // 要素の選択
@@ -536,7 +536,7 @@ class BridgegameController extends ChangeNotifier {
         p3 = _elemList[i].nodeList[3].pos + _elemList[i].nodeList[3].becPos*dispScale;
       }
 
-      if (MyCalculator.isPointInRectangle(pos, p0, p1, p2, p3)) {
+      if (MathUtils.isPointInRectangle(pos, p0, p1, p2, p3)) {
         _selectedElemIndex = i;
         notifyListeners();
         return;

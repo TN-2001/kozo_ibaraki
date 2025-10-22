@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/pages/fem/models/fem2d.dart';
 import 'package:kozo_ibaraki/app/pages/fem/models/fem_data.dart';
-import 'package:kozo_ibaraki/core/utils/my_calculator.dart';
+import 'package:kozo_ibaraki/core/utils/math_utils.dart';
 export 'package:kozo_ibaraki/app/pages/fem/models/fem_data.dart';
 
 class FemController extends ChangeNotifier {
@@ -74,7 +74,7 @@ class FemController extends ChangeNotifier {
   void changeResultIndex(int index) {
     _resultIndex = index;
 
-    if (index <= 2) {
+    if (index <= 10) {
       _resultMin = data.getElem(0).getResult(resultIndex);
       _resultMax = data.getElem(0).getResult(resultIndex);
       for (int i = 0; i < data.elemCount; i++) {
@@ -123,12 +123,12 @@ class FemController extends ChangeNotifier {
       }
 
       if (elem.nodeCount == 3) {
-        if (MyCalculator.isPointInTriangle(pos, p[0], p[1], p[2])) {
+        if (MathUtils.isPointInTriangle(pos, p[0], p[1], p[2])) {
           _selectedNumber = i;
           break;
         }
       } else {
-        if (MyCalculator.isPointInRectangle(pos, p[0], p[1], p[2], p[3])) {
+        if (MathUtils.isPointInRectangle(pos, p[0], p[1], p[2], p[3])) {
           _selectedNumber = i;
           break;
         }

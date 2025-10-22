@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/pages/truss/models/truss_data.dart';
 import 'package:kozo_ibaraki/core/utils/camera.dart';
-import 'package:kozo_ibaraki/core/utils/my_painter.dart';
+import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
+import 'package:kozo_ibaraki/core/utils/string_utils.dart';
 
 class TrussPainter extends CustomPainter {
   const TrussPainter({required this.data, required this.camera});
@@ -58,9 +59,9 @@ class TrussPainter extends CustomPainter {
           if(data.elemNode == 2){
             Offset pos1 = data.elemList[i].nodeList[0]!.afterPos;
             Offset pos2 = data.elemList[i].nodeList[1]!.afterPos;
-            MyPainter.text(canvas, 
+            CanvasUtils.text(canvas, 
               camera.worldToScreen(Offset((pos1.dx+pos2.dx)/2, (pos1.dy+pos2.dy)/2)),
-              MyPainter.doubleToString(data.resultList[i], 3), 14, Colors.black, true, size.width, alignment: Alignment.center);
+              StringUtils.doubleToString(data.resultList[i], 3), 14, Colors.black, true, size.width, alignment: Alignment.center);
           }
         }
       } else if (data.resultIndex == 3) {
@@ -69,63 +70,63 @@ class TrussPainter extends CustomPainter {
           Node node = data.getNode(i);
           String text = "";
           if (node.becPos.dx != 0) {
-            text = "x：${MyPainter.doubleToString(node.becPos.dx, 3)}";
+            text = "x：${StringUtils.doubleToString(node.becPos.dx, 3)}";
           }
           if (node.becPos.dy != 0) {
             if (text.isNotEmpty) {
               text += "\n";
             }
-            text += "y：${MyPainter.doubleToString(node.becPos.dy, 3)}";
+            text += "y：${StringUtils.doubleToString(node.becPos.dy, 3)}";
           }
-          MyPainter.text(canvas, camera.worldToScreen(node.afterPos), text, 16, Colors.black, true, size.width);
+          CanvasUtils.text(canvas, camera.worldToScreen(node.afterPos), text, 16, Colors.black, true, size.width);
         }
       } else if (data.resultIndex == 4) {
         // 反力
         for (int i = 0; i < data.nodeCount; i++) {
           Node node = data.getNode(i);
           if (node.result[0] != 0) {
-            String text = MyPainter.doubleToString(node.result[0].abs(), 3);
+            String text = StringUtils.doubleToString(node.result[0].abs(), 3);
             if (node.pos.dx <= data.rect.center.dx) {
               Offset left = camera.worldToScreen(Offset(node.afterPos.dx - data.nodeRadius * 8, node.afterPos.dy));
               Offset right = camera.worldToScreen(Offset(node.afterPos.dx - data.nodeRadius * 3, node.afterPos.dy));
               if (node.result[0] > 0) {
-                MyPainter.arrow(left, right, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+                CanvasUtils.arrow(left, right, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
               } else {
-                MyPainter.arrow(right, left, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+                CanvasUtils.arrow(right, left, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
               }
-              MyPainter.text(canvas, left, text, 16, Colors.black, true, size.width, alignment: Alignment.centerRight);
+              CanvasUtils.text(canvas, left, text, 16, Colors.black, true, size.width, alignment: Alignment.centerRight);
             } else {
               Offset left = camera.worldToScreen(Offset(node.afterPos.dx + data.nodeRadius * 3, node.afterPos.dy));
               Offset right = camera.worldToScreen(Offset(node.afterPos.dx + data.nodeRadius * 8, node.afterPos.dy));
               if (node.result[0] > 0) {
-                MyPainter.arrow(left, right, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+                CanvasUtils.arrow(left, right, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
               } else {
-                MyPainter.arrow(right, left, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+                CanvasUtils.arrow(right, left, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
               }
-              MyPainter.text(canvas, right, text, 16, Colors.black, true, size.width, alignment: Alignment.centerLeft);
+              CanvasUtils.text(canvas, right, text, 16, Colors.black, true, size.width, alignment: Alignment.centerLeft);
             }
           }
 
           if (node.result[1] != 0) {
-            String text = MyPainter.doubleToString(node.result[1].abs(), 3);
+            String text = StringUtils.doubleToString(node.result[1].abs(), 3);
             if (node.pos.dy <= data.rect.center.dy) {
               Offset bottom = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy - data.nodeRadius * 8));
               Offset top = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy - data.nodeRadius * 3));
               if (node.result[1] > 0) {
-                MyPainter.arrow(bottom, top, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+                CanvasUtils.arrow(bottom, top, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
               } else {
-                MyPainter.arrow(top, bottom, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+                CanvasUtils.arrow(top, bottom, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
               }
-              MyPainter.text(canvas, bottom, text, 16, Colors.black, true, size.width, alignment: Alignment.topCenter);
+              CanvasUtils.text(canvas, bottom, text, 16, Colors.black, true, size.width, alignment: Alignment.topCenter);
             } else {
               Offset bottom = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy + data.nodeRadius * 3));
               Offset top = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy + data.nodeRadius * 8));
               if (node.result[1] > 0) {
-                MyPainter.arrow(bottom, top, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+                CanvasUtils.arrow(bottom, top, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
               } else {
-                MyPainter.arrow(top, bottom, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
+                CanvasUtils.arrow(top, bottom, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
               }
-              MyPainter.text(canvas, top, text, 16, Colors.black, true, size.width, alignment: Alignment.bottomCenter);
+              CanvasUtils.text(canvas, top, text, 16, Colors.black, true, size.width, alignment: Alignment.bottomCenter);
             }
           }
         }
@@ -181,7 +182,7 @@ class TrussPainter extends CustomPainter {
       } else {
         color = Colors.black;
       }
-      MyPainter.text(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), 20, color, true, 100);
+      CanvasUtils.text(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), 20, color, true, 100);
     }
   }
 
@@ -255,12 +256,12 @@ class TrussPainter extends CustomPainter {
       }
       if(nodes[i].loadXY[0] != 0){
         if(nodes[i].loadXY[0] < 0){
-          MyPainter.arrow(
+          CanvasUtils.arrow(
             camera.worldToScreen(Offset(pos.dx-data.nodeRadius, pos.dy)), 
             camera.worldToScreen(Offset(pos.dx-data.nodeRadius*6, pos.dy)), 
             data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 0, 63, 95), canvas);
         }else{
-          MyPainter.arrow(
+          CanvasUtils.arrow(
             camera.worldToScreen(Offset(pos.dx+data.nodeRadius, pos.dy)), 
             camera.worldToScreen(Offset(pos.dx+data.nodeRadius*6, pos.dy)), 
             data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 0, 63, 95), canvas);
@@ -268,12 +269,12 @@ class TrussPainter extends CustomPainter {
       }
       if (nodes[i].loadXY[1] != 0) {
         if (nodes[i].loadXY[1] > 0) {
-          MyPainter.arrow(
+          CanvasUtils.arrow(
             camera.worldToScreen(Offset(pos.dx, pos.dy+data.nodeRadius)), 
             camera.worldToScreen(Offset(pos.dx, pos.dy+data.nodeRadius*6)), 
             data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 0, 63, 95), canvas);
         } else {
-          MyPainter.arrow(
+          CanvasUtils.arrow(
             camera.worldToScreen(Offset(pos.dx, pos.dy-data.nodeRadius)), 
             camera.worldToScreen(Offset(pos.dx, pos.dy-data.nodeRadius*6)), 
             data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 0, 63, 95), canvas);
@@ -302,7 +303,7 @@ class TrussPainter extends CustomPainter {
           pos1 = elems[i].nodeList[0]!.afterPos;
           pos2 = elems[i].nodeList[1]!.afterPos;
           if (!isNormalColor) {
-            paint.color = MyPainter.getColor((data.resultList[i] - data.resultMin) / (data.resultMax - data.resultMin) * 100);
+            paint.color = CanvasUtils.getColor((data.resultList[i] - data.resultMin) / (data.resultMax - data.resultMin) * 100);
           }
         } else {
           pos1 = elems[i].nodeList[0]!.pos;

@@ -2,7 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/pages/bridgegame_free/des_fem_free.dart';
-import 'package:kozo_ibaraki/core/utils/my_calculator.dart';
+import 'package:kozo_ibaraki/core/utils/math_utils.dart';
 
 
 class BridgegameFreeData {
@@ -411,7 +411,7 @@ class BridgegameFreeData {
       }
     }
 
-    resultList = MyCalculator.normalizeArray(resultList);
+    resultList = MathUtils.normalizeArray(resultList);
 
     resultMax = resultList.reduce(max);
     resultMin = resultList.reduce(min);
@@ -444,7 +444,7 @@ class BridgegameFreeData {
         p3 = _elemList[i].nodeList[3]!.pos + _elemList[i].nodeList[3]!.becPos*dispScale;
       }
 
-      if(MyCalculator.isPointInRectangle(pos, p0, p1, p2, p3)){
+      if(MathUtils.isPointInRectangle(pos, p0, p1, p2, p3)){
         selectedNumber = i;
         _elemList[i].isSelect = true;
         return;

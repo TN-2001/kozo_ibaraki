@@ -3,7 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/pages/frame/models/frame_controller.dart';
 import 'package:kozo_ibaraki/core/utils/camera.dart';
-import 'package:kozo_ibaraki/core/utils/my_painter.dart';
+import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
+import 'package:kozo_ibaraki/core/utils/string_utils.dart';
 
 
 class FramePainter extends CustomPainter {
@@ -66,13 +67,13 @@ class FramePainter extends CustomPainter {
           Node node = data.getNode(i);
           String text = "";
           if (node.becPos.dx != 0) {
-            text = "x：${MyPainter.doubleToString(node.becPos.dx, 3)}";
+            text = "x：${StringUtils.doubleToString(node.becPos.dx, 3)}";
           }
           if (node.becPos.dy != 0) {
             if (text.isNotEmpty) {
               text += "\n";
             }
-            text += "y：${MyPainter.doubleToString(node.becPos.dy, 3)}";
+            text += "y：${StringUtils.doubleToString(node.becPos.dy, 3)}";
           }
           // たわみ角
           Node resultNode = data.getResultNode(i);
@@ -80,9 +81,9 @@ class FramePainter extends CustomPainter {
             if (text.isNotEmpty) {
               text += "\n";
             }
-            text += "θ：${MyPainter.doubleToString(resultNode.getResult(3), 3)}";
+            text += "θ：${StringUtils.doubleToString(resultNode.getResult(3), 3)}";
           }
-          MyPainter.text(canvas, camera.worldToScreen(node.afterPos), text, 16, Colors.black, true, size.width);
+          CanvasUtils.text(canvas, camera.worldToScreen(node.afterPos), text, 16, Colors.black, true, size.width);
         }
       } else if (controller.resultIndex == 4) {
         _drawReactionForce(canvas); // 反力
@@ -252,7 +253,7 @@ class FramePainter extends CustomPainter {
       } else {
         color = Colors.black;
       }
-      MyPainter.text(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), 20, color, true, 100);
+      CanvasUtils.text(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), 20, color, true, 100);
     }
   }
 
@@ -275,7 +276,7 @@ class FramePainter extends CustomPainter {
       }
 
       if (node.getConst(0) && node.getConst(1) && node.getConst(2)) {
-        MyPainter.drawWallConst(
+        CanvasUtils.drawWallConst(
           canvas, 
           camera.worldToScreen(pos),
           size: data.nodeRadius * 15 * camera.scale,
@@ -283,7 +284,7 @@ class FramePainter extends CustomPainter {
         );
       }
       else if (node.getConst(0) && node.getConst(1)) {
-        MyPainter.drawTriangleConst(
+        CanvasUtils.drawTriangleConst(
           canvas, 
           camera.worldToScreen(pos), 
           size: data.nodeRadius * 3 * camera.scale, 
@@ -294,7 +295,7 @@ class FramePainter extends CustomPainter {
       }
       else if (node.getConst(0)) {
         if (node.pos.dx < center.dx) {
-          MyPainter.drawTriangleConst(
+          CanvasUtils.drawTriangleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: data.nodeRadius * 3 * camera.scale, 
@@ -303,7 +304,7 @@ class FramePainter extends CustomPainter {
             isLine: true
           );
         } else {
-          MyPainter.drawTriangleConst(
+          CanvasUtils.drawTriangleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: data.nodeRadius * 3 * camera.scale, 
@@ -314,7 +315,7 @@ class FramePainter extends CustomPainter {
         }
       } else if (node.getConst(1)) {
         if (node.pos.dy <= center.dy) {
-          MyPainter.drawTriangleConst(
+          CanvasUtils.drawTriangleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: data.nodeRadius * 3 * camera.scale, 
@@ -323,7 +324,7 @@ class FramePainter extends CustomPainter {
             isLine: true
           );
         } else {
-          MyPainter.drawTriangleConst(
+          CanvasUtils.drawTriangleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: data.nodeRadius * 3 * camera.scale, 
@@ -362,12 +363,12 @@ class FramePainter extends CustomPainter {
           final Offset left = camera.worldToScreen(Offset(pos.dx + data.nodeRadius, pos.dy));
           final Offset right = Offset(left.dx + lineLength, left.dy);
 
-          MyPainter.drawArrow2(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow2(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         } else {
           final Offset right = camera.worldToScreen(Offset(pos.dx - data.nodeRadius, pos.dy));
           final Offset left = Offset(right.dx - lineLength, right.dy);
 
-          MyPainter.drawArrow2(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow2(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         }
       }
 
@@ -376,12 +377,12 @@ class FramePainter extends CustomPainter {
           final Offset end = camera.worldToScreen(Offset(pos.dx, pos.dy - data.nodeRadius));
           final Offset start = Offset(end.dx, end.dy + lineLength);
 
-          MyPainter.drawArrow2(canvas, start, end, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow2(canvas, start, end, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         } else {
           final Offset end = camera.worldToScreen(Offset(pos.dx, pos.dy + data.nodeRadius));
           final Offset start = Offset(end.dx, end.dy - lineLength);
 
-          MyPainter.drawArrow2(canvas, start, end, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow2(canvas, start, end, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         }
       }
 
@@ -392,7 +393,7 @@ class FramePainter extends CustomPainter {
         if (node.getLoad(2) > 0) {
           isCounterclockwise = true;
         }
-        MyPainter.drawCircleArrow2(
+        CanvasUtils.drawCircleArrow2(
           canvas, 
           pos, 
           radius, 
@@ -462,9 +463,9 @@ class FramePainter extends CustomPainter {
         // }
 
         if (elem.load > 0) {
-          MyPainter.drawDistributionArrows(canvas, start, end, headSize: headSize, lineWidth: lineWidth, lineLength: lineLength, color: arrowColor);
+          CanvasUtils.drawDistributionArrows(canvas, start, end, headSize: headSize, lineWidth: lineWidth, lineLength: lineLength, color: arrowColor);
         } else {
-          MyPainter.drawDistributionArrows(canvas, end, start, headSize: headSize, lineWidth: lineWidth, lineLength: lineLength, color: arrowColor);
+          CanvasUtils.drawDistributionArrows(canvas, end, start, headSize: headSize, lineWidth: lineWidth, lineLength: lineLength, color: arrowColor);
         }
       }
     }
@@ -491,7 +492,7 @@ class FramePainter extends CustomPainter {
       }
     
       if (!isNormalColor) {
-        paint.color = MyPainter.getColor((elem.getResult(controller.resultIndex) - controller.resultMin) / (controller.resultMax - controller.resultMin) * 100);
+        paint.color = CanvasUtils.getColor((elem.getResult(controller.resultIndex) - controller.resultMin) / (controller.resultMax - controller.resultMin) * 100);
       }
       canvas.drawLine(camera.worldToScreen(pos1), camera.worldToScreen(pos2), paint);
       // if (!isNormalColor && (i == 0 || i == 56)) {
@@ -564,9 +565,9 @@ class FramePainter extends CustomPainter {
           break;
         }
       }
-      MyPainter.text(
+      CanvasUtils.text(
         canvas, camera.worldToScreen(node.pos),
-        MyPainter.doubleToString(value, 3), 
+        StringUtils.doubleToString(value, 3), 
         14, Colors.black, true, 1000, alignment: Alignment.center);
     }
   }
@@ -584,63 +585,63 @@ class FramePainter extends CustomPainter {
 
       // 水平方向の反力
       if (node.getResult(0) != 0) {
-        String text = MyPainter.doubleToString(node.getResult(0).abs(), 3);
+        String text = StringUtils.doubleToString(node.getResult(0).abs(), 3);
         if (direction == Direction.left || node.pos.dx > data.rect.center.dx) {
           Offset left = camera.worldToScreen(Offset(node.afterPos.dx + data.nodeRadius * 3, node.afterPos.dy));
           Offset right = Offset(left.dx + lineLength, left.dy);
 
           if (node.getResult(0) > 0) {
-            MyPainter.drawArrow2(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow2(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           } else {
-            MyPainter.drawArrow2(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow2(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
-          MyPainter.text(canvas, right, text, 16, Colors.black, true, 1000, alignment: Alignment.centerLeft);
+          CanvasUtils.text(canvas, right, text, 16, Colors.black, true, 1000, alignment: Alignment.centerLeft);
         } else {
           Offset right = camera.worldToScreen(Offset(node.afterPos.dx - data.nodeRadius * 3, node.afterPos.dy));
           Offset left = Offset(right.dx - lineLength, right.dy);
 
           if (node.getResult(0) > 0) {
-            MyPainter.drawArrow2(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow2(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           } else {
-            MyPainter.drawArrow2(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow2(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
-          MyPainter.text(canvas, left, text, 16, Colors.black, true, 1000, alignment: Alignment.centerRight);
+          CanvasUtils.text(canvas, left, text, 16, Colors.black, true, 1000, alignment: Alignment.centerRight);
         }
       }
 
       // 鉛直方向の反力
       if (node.getResult(1) != 0) {
-        String text = MyPainter.doubleToString(node.getResult(1).abs(), 3);
+        String text = StringUtils.doubleToString(node.getResult(1).abs(), 3);
         if(direction == Direction.down || node.pos.dy > data.rect.center.dy) {
           Offset bottom = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy + data.nodeRadius * 3));
           Offset top = Offset(bottom.dx, bottom.dy - lineLength);
 
           if (node.getResult(1) > 0) {
-            MyPainter.drawArrow2(canvas, bottom, top, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow2(canvas, bottom, top, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           } else {
-            MyPainter.drawArrow2(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow2(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
-          MyPainter.text(canvas, top, text, 16, Colors.black, true, 1000, alignment: Alignment.bottomCenter);
+          CanvasUtils.text(canvas, top, text, 16, Colors.black, true, 1000, alignment: Alignment.bottomCenter);
         } else {
           Offset top = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy - data.nodeRadius * 3));
           Offset bottom = Offset(top.dx, top.dy + lineLength);
           
           if (node.getResult(1) > 0) {
-            MyPainter.drawArrow2(canvas, bottom, top, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow2(canvas, bottom, top, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           } else {
-            MyPainter.drawArrow2(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow2(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
-          MyPainter.text(canvas, bottom, text, 16, Colors.black, true, 1000, alignment: Alignment.topCenter);
+          CanvasUtils.text(canvas, bottom, text, 16, Colors.black, true, 1000, alignment: Alignment.topCenter);
         }
       }
 
       // モーメント反力
       if (node.getResult(2) != 0) {
-        String text = MyPainter.doubleToString(node.getResult(2).abs(), 3);
+        String text = StringUtils.doubleToString(node.getResult(2).abs(), 3);
 
         Offset vector = Offset(sin(nodeAngleList[i]), cos(nodeAngleList[i]));
         Offset pos = camera.worldToScreen(node.afterPos);
@@ -660,7 +661,7 @@ class FramePainter extends CustomPainter {
         if (node.getResult(2) > 0) {
           isCounterclockwise = true;
         }
-        MyPainter.drawCircleArrow(
+        CanvasUtils.drawCircleArrow(
           canvas, pos, radius, 
           headSize: headSize,
           lineWidth: lineWidth,
@@ -670,13 +671,13 @@ class FramePainter extends CustomPainter {
         );
 
         if (vector.dy.abs() >= vector.dx.abs() + 0.001 && vector.dy <= 0) {
-          MyPainter.text(canvas, Offset(pos.dx + radius, pos.dy + radius), text, 16, Colors.black, true, 1000, alignment: Alignment.topCenter);
+          CanvasUtils.text(canvas, Offset(pos.dx + radius, pos.dy + radius), text, 16, Colors.black, true, 1000, alignment: Alignment.topCenter);
         } else if (vector.dy.abs() + 0.001 >= vector.dx.abs() && vector.dy > 0) {
-          MyPainter.text(canvas, Offset(pos.dx - radius, pos.dy + radius), text, 16, Colors.black, true, 1000, alignment: Alignment.topCenter);
+          CanvasUtils.text(canvas, Offset(pos.dx - radius, pos.dy + radius), text, 16, Colors.black, true, 1000, alignment: Alignment.topCenter);
         } else if (vector.dx >= 0) {
-          MyPainter.text(canvas, Offset(pos.dx - radius, pos.dy + radius), text, 16, Colors.black, true, 1000, alignment: Alignment.centerRight);
+          CanvasUtils.text(canvas, Offset(pos.dx - radius, pos.dy + radius), text, 16, Colors.black, true, 1000, alignment: Alignment.centerRight);
         } else if (vector.dx < 0) {
-          MyPainter.text(canvas, Offset(pos.dx - radius, pos.dy - radius), text, 16, Colors.black, true, 1000, alignment: Alignment.centerRight);
+          CanvasUtils.text(canvas, Offset(pos.dx - radius, pos.dy - radius), text, 16, Colors.black, true, 1000, alignment: Alignment.centerRight);
         }
       }
     }

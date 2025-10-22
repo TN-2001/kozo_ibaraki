@@ -2,7 +2,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/pages/beam/models/beam_data.dart';
 import 'package:kozo_ibaraki/core/utils/canvas_data.dart';
-import 'package:kozo_ibaraki/core/utils/my_painter.dart';
+import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
+import 'package:kozo_ibaraki/core/utils/string_utils.dart';
 
 class BeamPainter extends CustomPainter {
   const BeamPainter({required this.data, required this.devTypeNum, required this.isSumaho});
@@ -93,7 +94,7 @@ class BeamPainter extends CustomPainter {
       }
       
       double a = rect.height < 300 ? rect.height/5+7.5 : 300/5+7.5;
-      MyPainter.memory(canvas, Rect.fromLTRB(rect.right+a, rect.top, rect.right+a, rect.bottom), memory.$2, memory.$3, memory.$4, memory.$5);
+      CanvasUtils.memory(canvas, Rect.fromLTRB(rect.right+a, rect.top, rect.right+a, rect.bottom), memory.$2, memory.$3, memory.$4, memory.$5);
     }
     else {
       // キャンバスの広さ
@@ -129,20 +130,20 @@ class BeamPainter extends CustomPainter {
       rect = Rect.fromLTRB((size.width-width)/2, size.height/2-heigh/2, size.width-(size.width-width)/2, size.height/2+heigh/2);
       data.updateCanvasPos(rect, nodeWidth, elemWidth);
       memory = _drawShear(Rect.fromLTRB(rect.left-75, rect.top, rect.right, rect.bottom), canvas); // せん断力
-      MyPainter.text(canvas, Offset(rect.center.dx-50, rect.bottom-25), "せん断力図", 18, Colors.black, true, 1000);
+      CanvasUtils.text(canvas, Offset(rect.center.dx-50, rect.bottom-25), "せん断力図", 18, Colors.black, true, 1000);
       _drawElem(data.elemList, false, elemWidth, canvas); // 辺
       canvas.drawLine(Offset(rect.left, rect.top), Offset(rect.left, rect.bottom), Paint());
       canvas.drawLine(Offset(rect.right, rect.top), Offset(rect.right, rect.bottom), Paint());
-      MyPainter.memory(canvas, Rect.fromLTRB(rect.right, rect.top, rect.right, rect.bottom), memory.$2, memory.$3, memory.$4, memory.$5);
+      CanvasUtils.memory(canvas, Rect.fromLTRB(rect.right, rect.top, rect.right, rect.bottom), memory.$2, memory.$3, memory.$4, memory.$5);
 
       rect = Rect.fromLTRB((size.width-width)/2, size.height/6*5-heigh/2-25, size.width-(size.width-width)/2, size.height/6*5+heigh/2-25);
       data.updateCanvasPos(rect, nodeWidth, elemWidth);
       memory = _drawMoment(Rect.fromLTRB(rect.left-75, rect.top, rect.right, rect.bottom), canvas); // 曲げモーメント
-      MyPainter.text(canvas, Offset(rect.center.dx-65, rect.bottom-25), "曲げモーメント図", 18, Colors.black, true, 1000);
+      CanvasUtils.text(canvas, Offset(rect.center.dx-65, rect.bottom-25), "曲げモーメント図", 18, Colors.black, true, 1000);
       _drawElem(data.elemList, false, elemWidth, canvas); // 辺
       canvas.drawLine(Offset(rect.left, rect.top), Offset(rect.left, rect.bottom), Paint());
       canvas.drawLine(Offset(rect.right, rect.top), Offset(rect.right, rect.bottom), Paint());
-      MyPainter.memory(canvas, Rect.fromLTRB(rect.right, rect.top, rect.right, rect.bottom), memory.$2, memory.$3, memory.$4, memory.$5);
+      CanvasUtils.memory(canvas, Rect.fromLTRB(rect.right, rect.top, rect.right, rect.bottom), memory.$2, memory.$3, memory.$4, memory.$5);
     }
   }
 
@@ -197,7 +198,7 @@ class BeamPainter extends CustomPainter {
       }else{
         color = Colors.black;
       }
-      MyPainter.text(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), 20, color, true, 100);
+      CanvasUtils.text(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), 20, color, true, 100);
     }
   }
 
@@ -290,16 +291,16 @@ class BeamPainter extends CustomPainter {
         Offset pos = nodes[i].canvasPos;
         if(nodes[i].loadXY[1] != 0){ // 集中荷重
           if(nodes[i].loadXY[1] < 0){
-            MyPainter.arrow(Offset(pos.dx, pos.dy-75), Offset(pos.dx, pos.dy-5), 4, const Color.fromARGB(255, 0, 63, 95), canvas);
+            CanvasUtils.arrow(Offset(pos.dx, pos.dy-75), Offset(pos.dx, pos.dy-5), 4, const Color.fromARGB(255, 0, 63, 95), canvas);
             if (isValueText) {
-              MyPainter.text(canvas, Offset(pos.dx-20, pos.dy-95), 
-                MyPainter.doubleToString(nodes[i].loadXY[1].abs(), 3), 16, Colors.black, true, 1000,);
+              CanvasUtils.text(canvas, Offset(pos.dx-20, pos.dy-95), 
+                StringUtils.doubleToString(nodes[i].loadXY[1].abs(), 3), 16, Colors.black, true, 1000,);
             }
           }else{
-            MyPainter.arrow(Offset(pos.dx, pos.dy+75), Offset(pos.dx, pos.dy+5), 4, const Color.fromARGB(255, 0, 63, 95), canvas);
+            CanvasUtils.arrow(Offset(pos.dx, pos.dy+75), Offset(pos.dx, pos.dy+5), 4, const Color.fromARGB(255, 0, 63, 95), canvas);
             if (isValueText) {
-              MyPainter.text(canvas, Offset(pos.dx-20, pos.dy+75), 
-                MyPainter.doubleToString(nodes[i].loadXY[1].abs(), 3), 16, Colors.black, true, 1000,);
+              CanvasUtils.text(canvas, Offset(pos.dx-20, pos.dy+75), 
+                StringUtils.doubleToString(nodes[i].loadXY[1].abs(), 3), 16, Colors.black, true, 1000,);
             }
           }
         }
@@ -310,26 +311,26 @@ class BeamPainter extends CustomPainter {
             canvas.drawArc(Rect.fromCircle(center: pos, radius: 40), pi/3*2, pi/3*2, false, paint);
             paint.style = PaintingStyle.fill;
             if(nodes[i].loadXY[2] > 0.0){
-              MyPainter.triangleEquilateral(Offset(pos.dx-17, pos.dy+40), 20, -pi/3*0.8, paint, canvas);
+              CanvasUtils.triangleEquilateral(Offset(pos.dx-17, pos.dy+40), 20, -pi/3*0.8, paint, canvas);
             }else{
-              MyPainter.triangleEquilateral(Offset(pos.dx-17, pos.dy-40), 20, pi/3*0.8, paint, canvas);
+              CanvasUtils.triangleEquilateral(Offset(pos.dx-17, pos.dy-40), 20, pi/3*0.8, paint, canvas);
             }
             if (isValueText) {
-              MyPainter.text(canvas, Offset(pos.dx-50, pos.dy+35), 
-                MyPainter.doubleToString(nodes[i].loadXY[2].abs(), 3), 16, Colors.black, true, 1000,);
+              CanvasUtils.text(canvas, Offset(pos.dx-50, pos.dy+35), 
+                StringUtils.doubleToString(nodes[i].loadXY[2].abs(), 3), 16, Colors.black, true, 1000,);
             }
           }else{
             paint.style = PaintingStyle.stroke;
             canvas.drawArc(Rect.fromCircle(center: pos, radius: 40), -pi/3, pi/3*2, false, paint);
             paint.style = PaintingStyle.fill;
             if(nodes[i].loadXY[2] > 0.0){
-              MyPainter.triangleEquilateral(Offset(pos.dx+17, pos.dy-40), 20, pi/3*2.2, paint, canvas);
+              CanvasUtils.triangleEquilateral(Offset(pos.dx+17, pos.dy-40), 20, pi/3*2.2, paint, canvas);
             }else{
-              MyPainter.triangleEquilateral(Offset(pos.dx+17, pos.dy+40), 20, -pi/3*2.2, paint, canvas);
+              CanvasUtils.triangleEquilateral(Offset(pos.dx+17, pos.dy+40), 20, -pi/3*2.2, paint, canvas);
             }
             if (isValueText) {
-              MyPainter.text(canvas, Offset(pos.dx+10, pos.dy+35), 
-                MyPainter.doubleToString(nodes[i].loadXY[2].abs(), 3), 16, Colors.black, true, 1000,);
+              CanvasUtils.text(canvas, Offset(pos.dx+10, pos.dy+35), 
+                StringUtils.doubleToString(nodes[i].loadXY[2].abs(), 3), 16, Colors.black, true, 1000,);
             }
           }
         }
@@ -354,10 +355,10 @@ class BeamPainter extends CustomPainter {
           for(int j = 0; j <= count; j++){
             Offset cpos = canvasData.dToC(Offset(left+width/count*j, 0));
             if(elems[i].load < 0){
-              MyPainter.arrow(Offset(cpos.dx, cpos.dy-50), Offset(cpos.dx, cpos.dy-5), 3, const Color.fromARGB(255, 0, 63, 95), canvas, lineWidth: 2);
+              CanvasUtils.arrow(Offset(cpos.dx, cpos.dy-50), Offset(cpos.dx, cpos.dy-5), 3, const Color.fromARGB(255, 0, 63, 95), canvas, lineWidth: 2);
             }
             else{
-              MyPainter.arrow(Offset(cpos.dx, cpos.dy+50), Offset(cpos.dx, cpos.dy+5), 3, const Color.fromARGB(255, 0, 63, 95), canvas, lineWidth: 2);
+              CanvasUtils.arrow(Offset(cpos.dx, cpos.dy+50), Offset(cpos.dx, cpos.dy+5), 3, const Color.fromARGB(255, 0, 63, 95), canvas, lineWidth: 2);
             }
           }
           Offset cleftPos = canvasData.dToC(Offset(left, 0));
@@ -365,14 +366,14 @@ class BeamPainter extends CustomPainter {
           if(elems[i].load < 0){
             canvas.drawLine(Offset(cleftPos.dx, cleftPos.dy-48.5), Offset(cRightPos.dx, cRightPos.dy-48.5), paint);
             if (isValueText) {
-              MyPainter.text(canvas, Offset((cleftPos.dx+cRightPos.dx)/2-20, cleftPos.dy-70), 
-                MyPainter.doubleToString(elems[i].load.abs(), 3), 16, Colors.black, true, 1000,);
+              CanvasUtils.text(canvas, Offset((cleftPos.dx+cRightPos.dx)/2-20, cleftPos.dy-70), 
+                StringUtils.doubleToString(elems[i].load.abs(), 3), 16, Colors.black, true, 1000,);
             }
           }else{
             canvas.drawLine(Offset(cleftPos.dx, cleftPos.dy+48.5), Offset(cRightPos.dx, cRightPos.dy+48.5), paint);
             if (isValueText) {
-              MyPainter.text(canvas, Offset((cleftPos.dx+cRightPos.dx)/2-20, cleftPos.dy+50), 
-                MyPainter.doubleToString(elems[i].load.abs(), 3), 16, Colors.black, true, 1000,);
+              CanvasUtils.text(canvas, Offset((cleftPos.dx+cRightPos.dx)/2-20, cleftPos.dy+50), 
+                StringUtils.doubleToString(elems[i].load.abs(), 3), 16, Colors.black, true, 1000,);
             }
           }
 
@@ -439,20 +440,20 @@ class BeamPainter extends CustomPainter {
       }
 
       // 結果の数値
-      String text = "v=${MyPainter.doubleToString(data.resultNodeList[i].result[0], 3)}\n";
+      String text = "v=${StringUtils.doubleToString(data.resultNodeList[i].result[0], 3)}\n";
       if(data.nodeList[i] == leftNodes[leftNodes.length-1]){
-        text += "θ=${MyPainter.doubleToString(data.resultNodeList[i].result[2], 3)}";
+        text += "θ=${StringUtils.doubleToString(data.resultNodeList[i].result[2], 3)}";
       }else if(data.nodeList[i] == leftNodes[0]){
-        text += "θ=${MyPainter.doubleToString(data.resultNodeList[i].result[1], 3)}";
+        text += "θ=${StringUtils.doubleToString(data.resultNodeList[i].result[1], 3)}";
       }else{
         if(data.nodeList[i].constXYR[3]){
-          text += "θ1=${MyPainter.doubleToString(data.resultNodeList[i].result[1], 3)}\n";
-          text += "θ2=${MyPainter.doubleToString(data.resultNodeList[i].result[2], 3)}";
+          text += "θ1=${StringUtils.doubleToString(data.resultNodeList[i].result[1], 3)}\n";
+          text += "θ2=${StringUtils.doubleToString(data.resultNodeList[i].result[2], 3)}";
         }else{
-          text += "θ=${MyPainter.doubleToString(data.resultNodeList[i].result[2], 3)}";
+          text += "θ=${StringUtils.doubleToString(data.resultNodeList[i].result[2], 3)}";
         }
       }
-      MyPainter.text(canvas, Offset(cpos.dx-10, cpos.dy), text, 16, Colors.black, true, 1000, );
+      CanvasUtils.text(canvas, Offset(cpos.dx-10, cpos.dy), text, 16, Colors.black, true, 1000, );
     }
   }
 
@@ -468,12 +469,12 @@ class BeamPainter extends CustomPainter {
         Offset pos = nodes[i].canvasPos;
         if(nodes[i].result[3] != 0.0){ // 反力V
           if(nodes[i].result[3] < 0){
-            MyPainter.arrow(Offset(pos.dx, pos.dy+30), Offset(pos.dx, pos.dy+75), 4, const Color.fromARGB(255, 196, 0, 0), canvas, lineWidth: 3.5);
+            CanvasUtils.arrow(Offset(pos.dx, pos.dy+30), Offset(pos.dx, pos.dy+75), 4, const Color.fromARGB(255, 196, 0, 0), canvas, lineWidth: 3.5);
           }else{
-            MyPainter.arrow(Offset(pos.dx, pos.dy+75), Offset(pos.dx, pos.dy+30), 4, const Color.fromARGB(255, 196, 0, 0), canvas, lineWidth: 3.5);
+            CanvasUtils.arrow(Offset(pos.dx, pos.dy+75), Offset(pos.dx, pos.dy+30), 4, const Color.fromARGB(255, 196, 0, 0), canvas, lineWidth: 3.5);
           }
-          MyPainter.text(canvas, Offset(pos.dx-20, pos.dy+75), 
-            MyPainter.doubleToString(data.nodeList[i].result[3].abs(), 3), 16, Colors.black, true, 1000,);
+          CanvasUtils.text(canvas, Offset(pos.dx-20, pos.dy+75), 
+            StringUtils.doubleToString(data.nodeList[i].result[3].abs(), 3), 16, Colors.black, true, 1000,);
         }
 
         if(nodes[i].result[4] != 0.0){ // 反力M
@@ -482,23 +483,23 @@ class BeamPainter extends CustomPainter {
             canvas.drawArc(Rect.fromCircle(center: pos, radius: 40), pi/3*2, pi/3*2, false, paint);
             paint.style = PaintingStyle.fill;
             if(nodes[i].result[4] > 0.0){
-              MyPainter.triangleEquilateral(Offset(pos.dx-17, pos.dy+40), 20, -pi/3*0.8, paint, canvas);
+              CanvasUtils.triangleEquilateral(Offset(pos.dx-17, pos.dy+40), 20, -pi/3*0.8, paint, canvas);
             }else{
-              MyPainter.triangleEquilateral(Offset(pos.dx-17, pos.dy-40), 20, pi/3*0.8, paint, canvas);
+              CanvasUtils.triangleEquilateral(Offset(pos.dx-17, pos.dy-40), 20, pi/3*0.8, paint, canvas);
             }
-            MyPainter.text(canvas, Offset(pos.dx-55, pos.dy-55), 
-              MyPainter.doubleToString(data.nodeList[i].result[4].abs(), 3), 16, Colors.black, true, 1000,);
+            CanvasUtils.text(canvas, Offset(pos.dx-55, pos.dy-55), 
+              StringUtils.doubleToString(data.nodeList[i].result[4].abs(), 3), 16, Colors.black, true, 1000,);
           }else{
             paint.style = PaintingStyle.stroke;
             canvas.drawArc(Rect.fromCircle(center: pos, radius: 40), -pi/3, pi/3*2, false, paint);
             paint.style = PaintingStyle.fill;
             if(nodes[i].result[4] > 0.0){
-              MyPainter.triangleEquilateral(Offset(pos.dx+17, pos.dy-40), 20, pi/3*2.2, paint, canvas);
+              CanvasUtils.triangleEquilateral(Offset(pos.dx+17, pos.dy-40), 20, pi/3*2.2, paint, canvas);
             }else{
-              MyPainter.triangleEquilateral(Offset(pos.dx+17, pos.dy+40), 20, -pi/3*2.2, paint, canvas);
+              CanvasUtils.triangleEquilateral(Offset(pos.dx+17, pos.dy+40), 20, -pi/3*2.2, paint, canvas);
             }
-            MyPainter.text(canvas, Offset(pos.dx+10, pos.dy-55), 
-              MyPainter.doubleToString(data.nodeList[i].result[4].abs(), 3), 16, Colors.black, true, 1000,);
+            CanvasUtils.text(canvas, Offset(pos.dx+10, pos.dy-55), 
+              StringUtils.doubleToString(data.nodeList[i].result[4].abs(), 3), 16, Colors.black, true, 1000,);
           }
         }
       }

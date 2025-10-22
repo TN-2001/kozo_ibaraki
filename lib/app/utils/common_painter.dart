@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/core/utils/my_painter.dart';
+import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
 
 class CommonPainter {
   // 座標系
@@ -14,17 +14,17 @@ class CommonPainter {
     final Offset topPos = Offset(startPos.dx, startPos.dy - lineLength);
     final Offset rightPos = Offset(startPos.dx + lineLength, startPos.dy);
 
-    MyPainter.drawArrow2(
+    CanvasUtils.drawArrow2(
       canvas, startPos, topPos, 
       headSize: headSize, lineWidth: lineWidth, color: arrowColor
     );
-    MyPainter.drawArrow2(
+    CanvasUtils.drawArrow2(
       canvas, startPos, rightPos, 
       headSize: headSize, lineWidth: lineWidth, color: arrowColor
     );
 
     if (isEnableRotation) {
-      MyPainter.drawCircleArrow(
+      CanvasUtils.drawCircleArrow(
         canvas, startPos, lineLength / 3,
         headSize: headSize, lineWidth: lineWidth, 
         startAngle: - pi, 
@@ -33,11 +33,11 @@ class CommonPainter {
       );
     }
 
-    MyPainter.text(canvas, topPos, "Y", 16, Colors.black, false, 1000, alignment: Alignment.bottomCenter);
-    MyPainter.text(canvas, Offset(rightPos.dx + 5, rightPos.dy), "X", 16, Colors.black, false, 1000, alignment: Alignment.centerLeft);
+    CanvasUtils.text(canvas, topPos, "Y", 16, Colors.black, false, 1000, alignment: Alignment.bottomCenter);
+    CanvasUtils.text(canvas, Offset(rightPos.dx + 5, rightPos.dy), "X", 16, Colors.black, false, 1000, alignment: Alignment.centerLeft);
     
     if (isEnableRotation) {
-      MyPainter.text(canvas, (topPos + rightPos) / 2, "θ", 16, Colors.black, false, 1000, alignment: Alignment.center);
+      CanvasUtils.text(canvas, (topPos + rightPos) / 2, "θ", 16, Colors.black, false, 1000, alignment: Alignment.center);
     }
   }
 

@@ -84,6 +84,11 @@ class FemData extends ChangeNotifier {
   void addElem() {
     Elem elem = Elem(elemCount);
     elem.setNodeCount(matElem.nodeCount);
+    elem.setRigid(0, matElem.getRigid(0));
+    elem.setRigid(1, matElem.getRigid(1));
+    elem.setRigid(2, matElem.getRigid(2));
+    elem.setRigid(3, matElem.getRigid(3));
+    
     elem.addListener(notifyListeners);
     _elems.add(elem);
     notifyListeners();

@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/pages/frame/models/data_manager.dart';
 import 'package:kozo_ibaraki/app/pages/frame/models/frame2d.dart';
-import 'package:kozo_ibaraki/core/utils/my_calculator.dart';
+import 'package:kozo_ibaraki/core/utils/math_utils.dart';
 export 'package:kozo_ibaraki/app/pages/frame/models/data_manager.dart';
 
 class FrameController extends ChangeNotifier {
@@ -119,9 +119,9 @@ class FrameController extends ChangeNotifier {
         nodePosList.add(data.getElem(i).getNode(j)!.pos);
       }
 
-      List<Offset> p = MyCalculator.getRectanglePoints(nodePosList[0], nodePosList[1], data.elemWidth * 3);
+      List<Offset> p = MathUtils.getRectanglePoints(nodePosList[0], nodePosList[1], data.elemWidth * 3);
 
-      if(MyCalculator.isPointInRectangle(pos, p[0], p[1], p[2], p[3])){
+      if(MathUtils.isPointInRectangle(pos, p[0], p[1], p[2], p[3])){
         _selectedNumber = i;
         break;
       }

@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 
-class MyCalculator {
+class MathUtils {
   // ベクトルの加算
   static List<double> addVectors(List<double> v1, List<double> v2) {
     return List.generate(v1.length, (i) => v1[i] + v2[i]);

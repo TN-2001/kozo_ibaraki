@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/pages/bridgegame/models/bridgegame_controller.dart';
 import 'package:kozo_ibaraki/core/utils/camera.dart';
-import 'package:kozo_ibaraki/core/utils/my_painter.dart';
+import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
+import 'package:kozo_ibaraki/core/utils/string_utils.dart';
 
 
 
@@ -33,16 +34,16 @@ class BridgegamePainter extends CustomPainter {
       if(data.powerIndex == 0){ // 3点曲げ
         for(int i = 34; i <= 36; i++){
           Offset pos = data.getNode(i).pos;
-          MyPainter.arrow(camera.worldToScreen(pos), camera.worldToScreen(Offset(pos.dx, pos.dy-1.5)), arrowSize*camera.scale, const Color.fromARGB(255, 0, 63, 95), canvas);
+          CanvasUtils.arrow(camera.worldToScreen(pos), camera.worldToScreen(Offset(pos.dx, pos.dy-1.5)), arrowSize*camera.scale, const Color.fromARGB(255, 0, 63, 95), canvas);
         }
       }else if(data.powerIndex == 1){ // 4点曲げ
         for(int i = 22; i <= 24; i++){
           Offset pos = data.getNode(i).pos;
-          MyPainter.arrow(camera.worldToScreen(pos), camera.worldToScreen(Offset(pos.dx, pos.dy-1.5)), arrowSize*camera.scale, const Color.fromARGB(255, 0, 63, 95), canvas);
+          CanvasUtils.arrow(camera.worldToScreen(pos), camera.worldToScreen(Offset(pos.dx, pos.dy-1.5)), arrowSize*camera.scale, const Color.fromARGB(255, 0, 63, 95), canvas);
         }
         for(int i = 46; i <= 48; i++){
           Offset pos = data.getNode(i).pos;
-          MyPainter.arrow(camera.worldToScreen(pos), camera.worldToScreen(Offset(pos.dx, pos.dy-1.5)), arrowSize*camera.scale, const Color.fromARGB(255, 0, 63, 95), canvas);
+          CanvasUtils.arrow(camera.worldToScreen(pos), camera.worldToScreen(Offset(pos.dx, pos.dy-1.5)), arrowSize*camera.scale, const Color.fromARGB(255, 0, 63, 95), canvas);
         }
       }
     } else {
@@ -84,8 +85,8 @@ class BridgegamePainter extends CustomPainter {
       }
       if(data.selectedElemIndex >= 0){
         if(data.getElem(data.selectedElemIndex).isPainted){
-          MyPainter.text(canvas, camera.worldToScreen(data.getElem(data.selectedElemIndex).nodeList[0].pos + data.getElem(data.selectedElemIndex).nodeList[0].becPos*data.dispScale), 
-            MyPainter.doubleToString(data.getSelectedResult(data.selectedElemIndex), 3), 14, Colors.black, true, size.width);
+          CanvasUtils.text(canvas, camera.worldToScreen(data.getElem(data.selectedElemIndex).nodeList[0].pos + data.getElem(data.selectedElemIndex).nodeList[0].becPos*data.dispScale), 
+            StringUtils.doubleToString(data.getSelectedResult(data.selectedElemIndex), 3), 14, Colors.black, true, size.width);
         }
       }
     }
@@ -131,7 +132,7 @@ class BridgegamePainter extends CustomPainter {
     for(int i = 0; i < data.elemListLength; i++){
       if(data.getElem(i).isPainted || data.pcController.getPixelColor(i).a != 0){
         if(isAfter && (data.selectedResultMax != 0 || data.selectedResultMin != 0)){
-          paint.color = MyPainter.getColor((data.getSelectedResult(i) - data.selectedResultMin) / (data.selectedResultMax - data.selectedResultMin) * 100);
+          paint.color = CanvasUtils.getColor((data.getSelectedResult(i) - data.selectedResultMin) / (data.selectedResultMax - data.selectedResultMin) * 100);
         }
         else if(!isAfter){
           if(data.getElem(i).isCanPaint){

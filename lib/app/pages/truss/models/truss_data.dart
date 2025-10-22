@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/pages/truss/models/truss2d.dart';
-import 'package:kozo_ibaraki/core/utils/my_calculator.dart';
+import 'package:kozo_ibaraki/core/utils/math_utils.dart';
 
 class TrussData extends ChangeNotifier {
   TrussData() {
@@ -474,9 +474,9 @@ class TrussData extends ChangeNotifier {
         nodePosList.add(elemList[i].nodeList[j]!.pos);
       }
 
-      List<Offset> p = MyCalculator.getRectanglePoints(nodePosList[0], nodePosList[1], elemWidth);
+      List<Offset> p = MathUtils.getRectanglePoints(nodePosList[0], nodePosList[1], elemWidth);
 
-      if(MyCalculator.isPointInRectangle(pos, p[0], p[1], p[2], p[3])){
+      if(MathUtils.isPointInRectangle(pos, p[0], p[1], p[2], p[3])){
         _selectedNumber = i;
         break;
       }

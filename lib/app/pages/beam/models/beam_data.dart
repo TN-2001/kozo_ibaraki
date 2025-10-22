@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/core/utils/canvas_data.dart';
-import 'package:kozo_ibaraki/core/utils/my_calculator.dart';
+import 'package:kozo_ibaraki/core/utils/math_utils.dart';
 import 'beam2d_hinge_remesh.dart';
 
 class BeamData extends ChangeNotifier {
@@ -377,7 +377,7 @@ class BeamData extends ChangeNotifier {
     List<Elem> elems = allElemList();
     for(int i = 0; i < elems.length; i++){
       if(elems[i].nodeList[0] != null && elems[i].nodeList[1] != null){
-        var p = MyCalculator.angleRectanglePos(elems[i].nodeList[0]!.canvasPos, elems[i].nodeList[1]!.canvasPos, elemWidth*5);
+        var p = MathUtils.angleRectanglePos(elems[i].nodeList[0]!.canvasPos, elems[i].nodeList[1]!.canvasPos, elemWidth*5);
         elems[i].canvasPosList[0] = p.$1;
         elems[i].canvasPosList[1] = p.$2;
         elems[i].canvasPosList[2] = p.$3;
@@ -414,7 +414,7 @@ class BeamData extends ChangeNotifier {
       Offset p2 = elemList[i].canvasPosList[2];
       Offset p3 = elemList[i].canvasPosList[3];
 
-      if(MyCalculator.isPointInRectangle(pos, p0, p1, p2, p3)){
+      if(MathUtils.isPointInRectangle(pos, p0, p1, p2, p3)){
         selectElemNumber = i;
         elemList[i].isSelect = true;
         break;
