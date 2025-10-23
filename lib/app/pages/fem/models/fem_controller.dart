@@ -148,15 +148,15 @@ class FemController extends ChangeNotifier {
   
   // 計算
   void calculation() {
-    try {
+    // try {
       _removeTemporaryData();
       _calculationFrame2d();
       _selectedNumber = -1; // 選択番号をリセット
       _isCalculated = true;
       changeResultIndex(resultIndex); // 結果のインデックスを変更
-    } catch(e) {
-      _changeTypeAndToolIndex();
-    }
+    // } catch(e) {
+    //   _changeTypeAndToolIndex();
+    // }
   }
   void _calculationFrame2d() {
     final Elem matElem = data.matElem;
@@ -193,7 +193,7 @@ class FemController extends ChangeNotifier {
       ijke[i][1] = elem.getNode(1)!.number + 1;
       ijke[i][2] = elem.getNode(2)!.number + 1;
       if (elem.nodeCount == 4) {
-        ijke[i][3] = elem.getNode(3)!.number;
+        ijke[i][3] = elem.getNode(3)!.number + 1;
       }
       prop[i][0] = elem.getRigid(0);
       prop[i][1] = elem.getRigid(1);

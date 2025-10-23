@@ -133,7 +133,8 @@ class FemPainter extends CustomPainter {
     // 面
     for (int i = 0; i < data.elemCount; i++) {
       Elem elem = data.getElem(i);
-      if (elem.getNode(0) != null && elem.getNode(1) != null && elem.getNode(2) != null) {
+      if ((elem.nodeCount == 3 && (elem.getNode(0) != null && elem.getNode(1) != null && elem.getNode(2) != null))
+        || (elem.nodeCount == 4 && (elem.getNode(0) != null && elem.getNode(1) != null && elem.getNode(2) != null && elem.getNode(3) != null))) {
         Path path = Path();
         for (int j = 0; j < elem.nodeCount; j++) {
           Offset pos;
@@ -161,9 +162,9 @@ class FemPainter extends CustomPainter {
       } else {
         paint.color = const Color.fromARGB(255, 55, 55, 55);
       }
-      for(int j = 0; j < 3; j++){
+      for(int j = 0; j < elem.nodeCount; j++){
         int num1 = j;
-        int num2 = j < 2 ? j + 1 : 0;
+        int num2 = j < elem.nodeCount-1 ? j + 1 : 0;
         if(elem.getNode(num1) != null && elem.getNode(num2) != null){
           if (!controller.isCalculated) {
             canvas.drawLine(camera.worldToScreen(elem.getNode(num1)!.pos), camera.worldToScreen(elem.getNode(num2)!.pos), paint);
@@ -182,6 +183,11 @@ class FemPainter extends CustomPainter {
 
     for (int i = 0; i < data.elemCount; i++) {
       Elem elem = data.getElem(i);
+
+      if ((elem.nodeCount == 3 && (elem.getNode(0) == null || elem.getNode(1) == null || elem.getNode(2) == null))
+        || (elem.nodeCount == 4 && (elem.getNode(0) == null || elem.getNode(1) == null || elem.getNode(2) == null || elem.getNode(3) == null))) {
+          continue;
+      }
 
       Offset pos = Offset.zero;
       for (int j = 0; j < elem.nodeCount; j++) {
