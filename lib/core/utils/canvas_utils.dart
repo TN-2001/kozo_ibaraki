@@ -208,8 +208,9 @@ class CanvasUtils {
     textPainter.paint(canvas, alignOffset(offset, textPainter, alignment));
   }
 
-  static void drawText(Canvas canvas, Offset pos, String text, {Alignment alignment = Alignment.topLeft}) {
-    CanvasUtils.text(canvas, pos, text, 16, Colors.black, true, 1000, alignment: alignment);
+  static void drawText(Canvas canvas, Offset pos, String text, 
+  {Alignment alignment = Alignment.topLeft, Color color = Colors.black}) {
+    CanvasUtils.text(canvas, pos, text, 16, color, true, 1000, alignment: alignment);
   }
 
   // 正三角形

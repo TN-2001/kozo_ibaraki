@@ -23,7 +23,8 @@ class FemPainter extends CustomPainter {
       _drawConst(canvas); // 節点拘束
       _drawPower(canvas); // 荷重
       _drawNode(canvas); // 節点
-      _drawNodeNumber(canvas); // 節点番号
+      if (controller.getIsDisplay(0)) _drawNodeNumber(canvas); // 節点番号
+      if (controller.getIsDisplay(1)) _drawElemNumber(canvas); // 要素番号 
     }
     else{
       // _drawElem(canvas); // 要素
@@ -31,7 +32,9 @@ class FemPainter extends CustomPainter {
       _drawConst(canvas); // 節点拘束
       _drawPower(canvas); // 荷重
       _drawNode(canvas); // 節点
-      _drawElemResultValue(canvas);
+      if (controller.getIsDisplay(2)) _drawElemResultValue(canvas); // 要素の結果値
+      if (controller.getIsDisplay(0)) _drawNodeNumber(canvas); // 節点番号
+      if (controller.getIsDisplay(1)) _drawElemNumber(canvas); // 要素番号 
     }
   }
 
@@ -102,7 +105,12 @@ class FemPainter extends CustomPainter {
 
     for(int i = 0; i < data.nodeCount; i++){
       Node node = data.getNode(i);
-      Offset pos = camera.worldToScreen(node.pos);
+      Offset pos;
+      if (!controller.isCalculated) {
+        pos = camera.worldToScreen(node.pos);
+      } else {
+        pos = camera.worldToScreen(node.afterPos);
+      }
       Color color;
       if (node.number == controller.selectedNumber && controller.typeIndex == 0) {
         color = Colors.red;
@@ -122,19 +130,23 @@ class FemPainter extends CustomPainter {
       ..color = const Color.fromARGB(255, 194, 194, 194)
       ..style = PaintingStyle.fill;
 
-    // 三角形
+    // 面
     for (int i = 0; i < data.elemCount; i++) {
       Elem elem = data.getElem(i);
       if (elem.getNode(0) != null && elem.getNode(1) != null && elem.getNode(2) != null) {
         Path path = Path();
-        if (!controller.isCalculated) {
-          path.moveTo(camera.worldToScreen(elem.getNode(0)!.pos).dx, camera.worldToScreen(elem.getNode(0)!.pos).dy);
-          path.lineTo(camera.worldToScreen(elem.getNode(1)!.pos).dx, camera.worldToScreen(elem.getNode(1)!.pos).dy);
-          path.lineTo(camera.worldToScreen(elem.getNode(2)!.pos).dx, camera.worldToScreen(elem.getNode(2)!.pos).dy);
-        } else {
-          path.moveTo(camera.worldToScreen(elem.getNode(0)!.afterPos).dx, camera.worldToScreen(elem.getNode(0)!.afterPos).dy);
-          path.lineTo(camera.worldToScreen(elem.getNode(1)!.afterPos).dx, camera.worldToScreen(elem.getNode(1)!.afterPos).dy);
-          path.lineTo(camera.worldToScreen(elem.getNode(2)!.afterPos).dx, camera.worldToScreen(elem.getNode(2)!.afterPos).dy);
+        for (int j = 0; j < elem.nodeCount; j++) {
+          Offset pos;
+          if (!controller.isCalculated) {
+            pos = camera.worldToScreen(elem.getNode(j)!.pos);
+          } else {
+            pos = camera.worldToScreen(elem.getNode(j)!.afterPos);
+          }
+          if (j == 0) {
+            path.moveTo(pos.dx, pos.dy);
+          } else {
+            path.lineTo(pos.dx, pos.dy);
+          }
         }
         path.close();
         canvas.drawPath(path, paint);
@@ -160,6 +172,38 @@ class FemPainter extends CustomPainter {
           }
         }
       }
+    }
+  }
+
+  // 要素番号
+  void _drawElemNumber(Canvas canvas) {
+    // バグ対策
+    if (data.elemCount == 0) return;
+
+    for (int i = 0; i < data.elemCount; i++) {
+      Elem elem = data.getElem(i);
+
+      Offset pos = Offset.zero;
+      for (int j = 0; j < elem.nodeCount; j++) {
+        Offset npos;
+        if (!controller.isCalculated) {
+          npos = elem.getNode(j)!.pos;
+        } else {
+          npos = elem.getNode(j)!.afterPos;
+        }
+        pos += Offset(npos.dx, npos.dy);
+      }
+      pos = pos / elem.nodeCount.toDouble();
+      pos = camera.worldToScreen(pos);
+
+      String text = "(${i+1})";
+      Color color;
+      if (elem.number == controller.selectedNumber && controller.typeIndex == 1) {
+        color = Colors.red;
+      } else {
+        color = Colors.black;
+      }
+      CanvasUtils.drawText(canvas, pos, text, alignment: Alignment.bottomCenter, color: color);
     }
   }
 
@@ -363,7 +407,7 @@ class FemPainter extends CustomPainter {
       pos = pos / elem.nodeCount.toDouble();
       pos = camera.worldToScreen(pos);
 
-      CanvasUtils.drawText(canvas, pos, StringUtils.doubleToString(elem.getResult(controller.resultIndex), 3), alignment: Alignment.center);
+      CanvasUtils.drawText(canvas, pos, StringUtils.doubleToString(elem.getResult(controller.resultIndex), 3), alignment: Alignment.topCenter);
     }
   }
 

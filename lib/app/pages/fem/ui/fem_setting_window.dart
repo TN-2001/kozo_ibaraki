@@ -275,11 +275,18 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
             label: "No. ${elem.number + 1}",
             child: _buttonSettingItemField(
               BaseTextButton(
-                onPressed: (){
-                  setState(() {
-                    _controller.data.addElem();
-                    _controller.initSelect();
-                  });
+                onPressed: () {
+                  String info = _controller.data.checkElem(elem);
+                  if (info == "") {
+                    setState(() {
+                      _controller.data.addElem();
+                      _controller.initSelect();
+                    });
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(info)),
+                    );
+                  }
                 }, 
                 text: "追加",
               ),
@@ -374,6 +381,8 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         } else {
                           elem.setNode(0, null);
                         }
+                      } else {
+                        elem.setNode(0, null);
                       }
                     }, 
                     text: elem.getNode(0) != null ? "${elem.getNode(0)!.number + 1}" : "",
@@ -395,6 +404,8 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         } else {
                           elem.setNode(1, null);
                         }
+                      } else {
+                        elem.setNode(1, null);
                       }
                     }, 
                     text: elem.getNode(1) != null ? "${elem.getNode(1)!.number + 1}" : "",
@@ -416,6 +427,8 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         } else {
                           elem.setNode(2, null);
                         }
+                      } else {
+                        elem.setNode(2, null);
                       }
                     }, 
                     text: elem.getNode(2) != null ? "${elem.getNode(2)!.number + 1}" : "",
@@ -438,6 +451,8 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         } else {
                           elem.setNode(3, null);
                         }
+                      } else {
+                        elem.setNode(3, null);
                       }
                     }, 
                     text: elem.getNode(3) != null ? "${elem.getNode(3)!.number + 1}" : "",

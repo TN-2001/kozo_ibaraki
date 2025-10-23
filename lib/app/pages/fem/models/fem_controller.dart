@@ -18,6 +18,7 @@ class FemController extends ChangeNotifier {
   int _resultIndex = 0; // 選択されている結果のインデックス（0:変形図、1:反力、2:せん断力図、3:曲げモーメント図）
   int _selectedNumber = -1;
   bool _isCalculated = false;
+  final List<bool> _isDisplays = [true, true, true, true]; // キャンバスで表示のOn・Off 
 
   double _resultMin = 0;
   double _resultMax = 0;
@@ -30,6 +31,7 @@ class FemController extends ChangeNotifier {
   int get resultIndex => _resultIndex;
   int get selectedNumber => _selectedNumber;
   bool get isCalculated => _isCalculated;
+  bool getIsDisplay(int index) => _isDisplays[index];
 
   double get resultMin => _resultMin;
   double get resultMax => _resultMax;
@@ -83,6 +85,12 @@ class FemController extends ChangeNotifier {
       }
     }
 
+    notifyListeners();
+  }
+
+  // 表示の設定
+  void setIsDisplay(int index, bool value) {
+    _isDisplays[index] = value;
     notifyListeners();
   }
 

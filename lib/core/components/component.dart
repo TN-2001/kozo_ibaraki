@@ -12,6 +12,8 @@ export 'tool/tool_dropdown_button.dart';
 export 'tool/tool_icon_button.dart';
 export 'tool/tool_popup_menu_button.dart';
 export 'tool/tool_toggle_buttons.dart';
+export 'tool/tool_text_button.dart';
+export 'tool/tool_checkbox_menu_button.dart';
 
 export 'setting/setting_window.dart';
 export 'setting/setting_item.dart';

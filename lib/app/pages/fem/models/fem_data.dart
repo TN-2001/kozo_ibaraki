@@ -88,7 +88,7 @@ class FemData extends ChangeNotifier {
     elem.setRigid(1, matElem.getRigid(1));
     elem.setRigid(2, matElem.getRigid(2));
     elem.setRigid(3, matElem.getRigid(3));
-    
+
     elem.addListener(notifyListeners);
     _elems.add(elem);
     notifyListeners();
@@ -99,6 +99,27 @@ class FemData extends ChangeNotifier {
       _elems[i].setNumber(i);
     }
     notifyListeners();
+  }
+  String checkElem(Elem elem) {
+    for (int i = 0; i < elem.nodeCount; i++) {
+      if (elem.getNode(i) == null) return "節点が登録されていません。";
+    } 
+
+    double x1 = elem.getNode(0)!.pos.dx;
+    double y1 = elem.getNode(0)!.pos.dy;
+    double x2 = elem.getNode(1)!.pos.dx;
+    double y2 = elem.getNode(1)!.pos.dy;
+    double x3 = elem.getNode(2)!.pos.dx;
+    double y3 = elem.getNode(2)!.pos.dy;
+    
+    // Calculate area
+    double ae = (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2.0;
+
+    if (ae <= 0) {
+      return "節点は反時計周りに登録しましょう。";
+    } else {
+      return "";
+    }
   }
 }
 
