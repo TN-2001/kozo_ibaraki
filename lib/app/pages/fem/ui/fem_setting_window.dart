@@ -543,7 +543,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
       Elem elem = _controller.data.matElem; 
       return _settingWindow([
         const SettingItem(
-          label: "要素のマテリアル",
+          label: "Z方向",
         ),
 
         const BaseDivider(),
@@ -563,7 +563,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
         ),
 
         SettingItem(
-          label: "平面",
+          label: "平面条件",
           child: Row(
             children: [
               Expanded(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/constant.dart';
+import '../base/base_icon_button.dart';
 
 class ToolIconButton extends StatelessWidget {
   const ToolIconButton({
@@ -15,31 +16,14 @@ class ToolIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // デザイン
-      width: MyDimens.toolButtonWidth,
-      height: MyDimens.toolButtonHeight,
-      color: MyColors.toolButtonBackground,
-
-      child: Tooltip(
-        message: message,
-        child: IconButton(
-          // デザイン
-          style: IconButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(MyDimens.toolButtonBorderRadius),
-              side: const BorderSide(
-                color: MyColors.toolButtonBorder, // ここで色を指定
-                width: MyDimens.toolButtonBorderWidth // 線の太さも指定可能
-              ),
-            ),
-          ),
-          // イベント
-          onPressed: onPressed, 
-          // ウィジェット
-          icon: icon,
-        ),
-      ),
+    return BaseIconButton(
+      onPressed: onPressed, 
+      icon: icon,
+      message: message,
+      width: ToolDimens.buttonWidth,
+      height: ToolDimens.buttonHeight,
+      borderWidth: ToolDimens.buttonBorderWidth,
+      borderColor: ToolColors.buttonBorder,
     );
   }
 }

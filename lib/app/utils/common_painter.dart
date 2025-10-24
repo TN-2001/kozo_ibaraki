@@ -57,7 +57,7 @@ class CommonPainter {
     Paint paint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
+      ..strokeWidth = 1.0;
 
     canvas.drawCircle(Offset(0, radius), radius, paint);
 

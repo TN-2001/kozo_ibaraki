@@ -440,7 +440,7 @@ class BeamPainter extends CustomPainter {
       }
 
       // 結果の数値
-      String text = "v=${StringUtils.doubleToString(data.resultNodeList[i].result[0], 3)}\n";
+      String text = "Y=${StringUtils.doubleToString(data.resultNodeList[i].result[0], 3)}\n";
       if(data.nodeList[i] == leftNodes[leftNodes.length-1]){
         text += "θ=${StringUtils.doubleToString(data.resultNodeList[i].result[2], 3)}";
       }else if(data.nodeList[i] == leftNodes[0]){

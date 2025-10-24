@@ -148,15 +148,15 @@ class FemController extends ChangeNotifier {
   
   // 計算
   void calculation() {
-    // try {
+    try {
       _removeTemporaryData();
       _calculationFrame2d();
       _selectedNumber = -1; // 選択番号をリセット
       _isCalculated = true;
       changeResultIndex(resultIndex); // 結果のインデックスを変更
-    // } catch(e) {
-    //   _changeTypeAndToolIndex();
-    // }
+    } catch(e) {
+      _changeTypeAndToolIndex();
+    }
   }
   void _calculationFrame2d() {
     final Elem matElem = data.matElem;

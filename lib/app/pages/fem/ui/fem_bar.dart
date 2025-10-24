@@ -182,7 +182,7 @@ class _FemBarState extends State<FemBar> {
               Icon(Icons.square),
               Icon(Icons.texture),
             ], 
-            messages: const ["節点", "要素", "要素のマテリアル"],
+            messages: const ["節点", "要素", "Z方向"],
           ),
 
           if (_selectedTypeIndex == 0 || _selectedTypeIndex == 1)...{

@@ -4,34 +4,40 @@ import '../../constants/constant.dart';
 class BaseDivider extends StatelessWidget {
   const BaseDivider({
     super.key, 
-    this.isVertivcal = false,
+    this.width = MyDimens.baseDividerWidth,
+    this.margin = EdgeInsets.zero,
+    this.color = MyColors.baseDivider,
+    this.isVertivcal = false, 
   });
 
+  final double width;
+  final EdgeInsets margin;
+  final Color color;
   final bool isVertivcal;
 
   @override
   Widget build(BuildContext context) {
     if (isVertivcal) {
-      return const SizedBox(
+      return Container(
         height: double.infinity,
+        color: Colors.transparent,
+        margin: margin,
         child: VerticalDivider(
-          width: MyDimens.baseDividerWidth,
-          thickness: MyDimens.baseDividerWidth,
-          indent: 0.0,
-          endIndent: 0.0,
-          color: MyColors.baseDivider,
+          width: width,
+          thickness: width,
+          color: color,
         ),
       );
     }
     else {
-      return const SizedBox(
+      return Container(
         width: double.infinity,
+        color: Colors.transparent,
+        margin: margin,
         child: Divider(
-          height: MyDimens.baseDividerWidth,
-          thickness: MyDimens.baseDividerWidth,
-          indent: 0.0,
-          endIndent: 0.0,
-          color: MyColors.baseDivider,
+          height: width,
+          thickness: width,
+          color: color,
         ),
       );
     }

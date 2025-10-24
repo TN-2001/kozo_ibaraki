@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/core/constants/constant.dart';
+import 'tool_text.dart';
 
 class ToolTextButton extends StatelessWidget {
   const ToolTextButton({super.key, required this.text, required this.onPressed, this.iconData, });
@@ -12,11 +13,6 @@ class ToolTextButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       style: TextButton.styleFrom(
-        textStyle: const TextStyle(
-          fontSize: MyDimens.baseFontSize,
-          color: Colors.black,
-          fontWeight: FontWeight.bold,
-        ),
         fixedSize: const Size.fromHeight(MyDimens.toolButtonHeight),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero, // 👈 角を丸くしない（完全な四角）
@@ -27,16 +23,12 @@ class ToolTextButton extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
-            text,
-            style: const TextStyle(
-              fontSize: MyDimens.baseFontSize,
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          ToolText(text),
           if (iconData != null)
-            Icon(iconData),
+            Icon(
+              iconData,
+              size: 25,
+            ),
         ],
       ),
     );

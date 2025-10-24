@@ -3,6 +3,8 @@
   Define dimensions here.
 */
 
+import 'package:flutter/material.dart';
+
 class MyDimens {
   static const double baseDividerWidth = 0.0; // 線の幅
   static const double baseFontSize = 16.0; // 文字の大きさ
@@ -31,4 +33,41 @@ class MyDimens {
   static const double settingWindowBorderRadius = 4.0;
   static const double settingItemHeight = baseTextButtonHeight;
   static const int settingItemFieldFlex = 2;
+}
+
+class BaseDimens {
+  static const double fontSize = 16.0;
+
+  static const double barWidth = 52.0;
+  static const double barHeight = 52.0;
+  static const double barSpacing = 4.0;
+
+  static const double dividerWidth = 0.0;
+  static const EdgeInsets dividerMargin = EdgeInsets.zero;
+
+  static const double buttonWidth = barWidth - barSpacing * 2;
+  static const double buttonHeight = barHeight - barSpacing * 2;
+  static const double buttonBorderWidth = 0.0;
+  static const double buttonBorderRadius = 0.0; // ボタンの角の丸み
+}
+
+class ToolDimens {
+  static const double fontSize = 16.0;
+
+  static const double barWidth = 52.0;
+  static const double barHeight = 52.0;
+  static const double barSpacing = 4.0;
+
+  static const double dividerWidth = 0.0;
+  static const EdgeInsets dividerMargin = EdgeInsets.only(left: barSpacing, right: barSpacing, top: 1.0, bottom: 1.0);
+
+  static const double buttonWidth = barWidth - barSpacing * 2;
+  static const double buttonHeight = barHeight - barSpacing * 2;
+  static const double buttonBorderWidth = 0.0;
+
+  static const double dropdownElevation = 8.0; // 影の大きさ
+  static const double dropdownBorderWidth = 0.0;
+  static const double dropdownBorderRadius = 8.0; // ウィンドウの角の丸み
+  static const double dropdownItemHeight = 48.0; // テキストボタンの高さ
+  static const double dropdownItemFontSize = 16.0;
 }

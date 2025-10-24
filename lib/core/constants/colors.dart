@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 /*
   色を定義する。
   Define colors here.
@@ -20,4 +20,15 @@ class MyColors {
   static const Color toolDropdownBackground = toolBarBackground;
 
   static const Color canvasBackground = Color.fromARGB(255, 235, 235, 235);
+}
+
+class ToolColors {
+  static const Color toolBarBackground = Color.fromARGB(255, 255, 255, 255);
+  
+  static const Color divider = Color.fromARGB(255, 235, 235, 235);
+
+  static const Color buttonBackground = Colors.transparent;
+  static const Color buttonBorder = Colors.transparent;
+
+  static const Color toolDropdownBackground = toolBarBackground;
 }

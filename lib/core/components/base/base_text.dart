@@ -5,18 +5,18 @@ class BaseText extends StatelessWidget {
     this.text, {
     super.key,
     this.isStroke = false,
-    this.color,
-    this.strokeColor,
-    this.fontSize,
-    this.strokeSize,
+    this.color = Colors.black,
+    this.strokeColor = Colors.white,
+    this.fontSize = 16,
+    this.strokeWidth = 3.0,
   });
 
   final String text;
   final bool isStroke;
-  final Color? color;
-  final Color? strokeColor;
-  final double? fontSize;
-  final double? strokeSize;
+  final Color color;
+  final Color strokeColor;
+  final double fontSize;
+  final double strokeWidth;
 
 
   @override
@@ -30,8 +30,8 @@ class BaseText extends StatelessWidget {
               fontSize: fontSize,
               foreground: Paint()
                 ..style = PaintingStyle.stroke
-                ..strokeWidth = strokeSize ?? 3
-                ..color = strokeColor ?? Colors.white,
+                ..strokeWidth = strokeWidth
+                ..color = strokeColor,
             ),
           ),
         },
@@ -40,7 +40,7 @@ class BaseText extends StatelessWidget {
           text,
           style: TextStyle(
             fontSize: fontSize,
-            color: color ?? Colors.black,
+            color: color,
           ),
         ),
       ],
