@@ -64,11 +64,7 @@ class _FemPageState extends State<FemPage> {
       backgroundColor: Colors.black,
       key: _scaffoldKey,
 
-      drawer: CommonDrawer(
-        onPressedHelpButton: () {
-          
-        },
-      ),
+      drawer: const CommonDrawer(),
 
       body: SafeArea(
         child: ClipRect(

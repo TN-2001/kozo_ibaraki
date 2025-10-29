@@ -63,11 +63,7 @@ class _FramePageState extends State<FramePage> {
       backgroundColor: Colors.black,
       key: _scaffoldKey,
 
-      drawer: CommonDrawer(
-        onPressedHelpButton: () {
-          
-        },
-      ),
+      drawer: const CommonDrawer(),
 
 
       body: SafeArea(

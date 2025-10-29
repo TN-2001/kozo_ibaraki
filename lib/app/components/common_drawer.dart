@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/app/models/setting.dart';
 import 'package:kozo_ibaraki/core/components/component.dart';
 
 class CommonDrawer extends StatelessWidget {
-  const CommonDrawer({super.key, required this.onPressedHelpButton});
+  const CommonDrawer({super.key, this.onPressedHelpButton});
 
-  final void Function() onPressedHelpButton;
+  final void Function()? onPressedHelpButton;
+
 
   @override
   Widget build(BuildContext context) {
@@ -35,11 +37,12 @@ class CommonDrawer extends StatelessWidget {
           },
         ),
 
+        if (onPressedHelpButton != null)
         ListTile(
           title: const Text("ヘルプ"),
           onTap: () {
             Navigator.pop(context);
-            onPressedHelpButton();
+            onPressedHelpButton!();
           },
         ),
 
@@ -122,7 +125,75 @@ class CommonDrawer extends StatelessWidget {
         //     }
         //   },
         // ),
+
+        const BaseDivider(),
+
+        ListTile(
+          title: const Text("設定"),
+          onTap: () {
+            Navigator.pop(context);
+            showDialog(
+              context: context,
+              builder: (context) {
+                return const SettingView();
+              },
+            );
+          },
+        ),
       ]
+    );
+  }
+}
+
+class SettingView extends StatefulWidget {
+  const SettingView({super.key});
+
+  @override
+  State<SettingView> createState() => _SettingViewState();
+}
+
+class _SettingViewState extends State<SettingView> {
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text("設定"),
+      content: Column(
+        children: [
+          ToolCheckboxMenuButton(
+            value: Setting.isNodeNumber, 
+            onChanged: (value) {
+              setState(() {
+                Setting.setIsNodeNumber(value);
+              });
+            }, 
+            text: "節点の表示",
+          ),
+          ToolCheckboxMenuButton(
+            value: Setting.isElemNumber, 
+            onChanged: (value) {
+              setState(() {
+                Setting.setIsElemNumber(value);
+              });
+            }, 
+            text: "要素の表示",
+          ),
+          ToolCheckboxMenuButton(
+            value: Setting.isResultValue, 
+            onChanged: (value) {
+              setState(() {
+                Setting.setIsResultValue(value);
+              });
+            }, 
+            text: "結果の値の表示",
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          child: const Text("閉じる"),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
     );
   }
 }

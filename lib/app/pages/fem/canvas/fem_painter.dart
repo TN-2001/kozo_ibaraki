@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/app/models/setting.dart';
 import 'package:kozo_ibaraki/app/pages/fem/models/fem_controller.dart';
 import 'package:kozo_ibaraki/app/utils/common_painter.dart';
 import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
@@ -23,8 +24,8 @@ class FemPainter extends CustomPainter {
       _drawConst(canvas); // 節点拘束
       _drawPower(canvas); // 荷重
       _drawNode(canvas); // 節点
-      if (controller.getIsDisplay(0)) _drawNodeNumber(canvas); // 節点番号
-      if (controller.getIsDisplay(1)) _drawElemNumber(canvas); // 要素番号 
+      if (Setting.isNodeNumber) _drawNodeNumber(canvas); // 節点番号
+      if (Setting.isElemNumber) _drawElemNumber(canvas); // 要素番号 
     }
     else{
       // _drawElem(canvas); // 要素
@@ -32,9 +33,9 @@ class FemPainter extends CustomPainter {
       _drawConst(canvas); // 節点拘束
       _drawPower(canvas); // 荷重
       _drawNode(canvas); // 節点
-      if (controller.getIsDisplay(2)) _drawElemResultValue(canvas); // 要素の結果値
-      if (controller.getIsDisplay(0)) _drawNodeNumber(canvas); // 節点番号
-      if (controller.getIsDisplay(1)) _drawElemNumber(canvas); // 要素番号 
+      if (Setting.isResultValue) _drawElemResultValue(canvas); // 要素の結果値
+      if (Setting.isNodeNumber) _drawNodeNumber(canvas); // 節点番号
+      if (Setting.isElemNumber) _drawElemNumber(canvas); // 要素番号 
     }
   }
 

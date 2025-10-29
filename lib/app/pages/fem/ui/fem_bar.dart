@@ -109,52 +109,52 @@ class _FemBarState extends State<FemBar> {
     );
   }
 
-  Widget _displayButton() {
-    return MenuAnchor(
-      builder: (BuildContext context, MenuController controller, Widget? child) {
-        return ToolTextButton(
-          onPressed: () {
-            if (controller.isOpen) {
-              controller.close();
-            } else {
-              controller.open();
-            }
-          },
-          text: "表示",
-          iconData: Icons.arrow_drop_down,
-        );
-      },
-      menuChildren: [
-        ToolCheckboxMenuButton(
-          value: _controller.getIsDisplay(0), 
-          onChanged: (value) {
-            setState(() {
-              _controller.setIsDisplay(0, value);
-            });
-          }, 
-          text: "節点番号"
-        ),
-        ToolCheckboxMenuButton(
-          value: _controller.getIsDisplay(1), 
-          onChanged: (value) {
-            setState(() {
-              _controller.setIsDisplay(1, value);
-            });
-          },  
-          text: "要素番号",
-        ),
-        ToolCheckboxMenuButton(
-          value: _controller.getIsDisplay(2), 
-          onChanged: (value) {
-            setState(() {
-              _controller.setIsDisplay(2, value);
-            });
-          },  
-          text: "結果の値",
-        ),
-      ],
-    );
-  }
+  // Widget _displayButton() {
+    // return MenuAnchor(
+    //   builder: (BuildContext context, MenuController controller, Widget? child) {
+    //     return ToolTextButton(
+    //       onPressed: () {
+    //         if (controller.isOpen) {
+    //           controller.close();
+    //         } else {
+    //           controller.open();
+    //         }
+    //       },
+    //       text: "表示",
+    //       iconData: Icons.arrow_drop_down,
+    //     );
+    //   },
+    //   menuChildren: [
+    //     ToolCheckboxMenuButton(
+    //       value: _controller.getIsDisplay(0), 
+    //       onChanged: (value) {
+    //         setState(() {
+    //           _controller.setIsDisplay(0, value);
+    //         });
+    //       }, 
+    //       text: "節点番号"
+    //     ),
+    //     ToolCheckboxMenuButton(
+    //       value: _controller.getIsDisplay(1), 
+    //       onChanged: (value) {
+    //         setState(() {
+    //           _controller.setIsDisplay(1, value);
+    //         });
+    //       },  
+    //       text: "要素番号",
+    //     ),
+    //     ToolCheckboxMenuButton(
+    //       value: _controller.getIsDisplay(2), 
+    //       onChanged: (value) {
+    //         setState(() {
+    //           _controller.setIsDisplay(2, value);
+    //         });
+    //       },  
+    //       text: "結果の値",
+    //     ),
+    //   ],
+    // );
+  // }
 
 
   @override
@@ -202,15 +202,15 @@ class _FemBarState extends State<FemBar> {
           const Expanded(child: SizedBox()),
           const ToolBarDivider(isVertivcal: true,),
 
-          _displayButton(),
+          // _displayButton(),
 
-          const ToolBarDivider(isVertivcal: true,),
+          // const ToolBarDivider(isVertivcal: true,),
 
           ToolIconButton(
             onPressed: _onPressedAnalysisButton,
             icon: const Icon(Icons.play_arrow),
             message: "解析",
-          ), 
+          ),
         ],
       );
     } 
@@ -224,9 +224,9 @@ class _FemBarState extends State<FemBar> {
           const Expanded(child: SizedBox()),
           const ToolBarDivider(isVertivcal: true,),
 
-          _displayButton(),
+          // _displayButton(),
 
-          const ToolBarDivider(isVertivcal: true,),
+          // const ToolBarDivider(isVertivcal: true,),
 
           ToolDropdownButton(
             selectedIndex: _selectedResultIndex, 

@@ -31,7 +31,7 @@ class FemController extends ChangeNotifier {
   int get resultIndex => _resultIndex;
   int get selectedNumber => _selectedNumber;
   bool get isCalculated => _isCalculated;
-  bool getIsDisplay(int index) => _isDisplays[index];
+  // bool getIsDisplay(int index) => _isDisplays[index];
 
   double get resultMin => _resultMin;
   double get resultMax => _resultMax;

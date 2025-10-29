@@ -12,6 +12,7 @@ class ToolTextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
+      
       style: TextButton.styleFrom(
         fixedSize: const Size.fromHeight(MyDimens.toolButtonHeight),
         shape: const RoundedRectangleBorder(
@@ -28,6 +29,7 @@ class ToolTextButton extends StatelessWidget {
             Icon(
               iconData,
               size: 25,
+              
             ),
         ],
       ),
