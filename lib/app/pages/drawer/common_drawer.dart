@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/app/models/setting.dart';
+import 'package:kozo_ibaraki/app/pages/drawer/setting_page.dart';
 import 'package:kozo_ibaraki/core/components/component.dart';
 
 class CommonDrawer extends StatelessWidget {
-  const CommonDrawer({super.key, this.onPressedHelpButton});
+  const CommonDrawer({super.key, this.onPressedHelpButton, this.onChangeValue});
 
   final void Function()? onPressedHelpButton;
+  final void Function()? onChangeValue;
 
 
   @override
@@ -113,19 +114,7 @@ class CommonDrawer extends StatelessWidget {
           },
         ),
 
-        // ListTile(
-        //   title: const Text("橋づくりゲーム（難しい）"),
-        //   onTap: () {
-        //     String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
-        //     String targetRoute = '/bridgegamefree';
-
-        //     Navigator.pop(context);
-        //     if (currentRoute != targetRoute) {
-        //       Navigator.pushNamed(context, targetRoute);
-        //     }
-        //   },
-        // ),
-
+        const Expanded(child: SizedBox()),
         const BaseDivider(),
 
         ListTile(
@@ -135,65 +124,12 @@ class CommonDrawer extends StatelessWidget {
             showDialog(
               context: context,
               builder: (context) {
-                return const SettingView();
+                return SettingPage(onChangeValue: onChangeValue,);
               },
             );
           },
         ),
       ]
-    );
-  }
-}
-
-class SettingView extends StatefulWidget {
-  const SettingView({super.key});
-
-  @override
-  State<SettingView> createState() => _SettingViewState();
-}
-
-class _SettingViewState extends State<SettingView> {
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text("設定"),
-      content: Column(
-        children: [
-          ToolCheckboxMenuButton(
-            value: Setting.isNodeNumber, 
-            onChanged: (value) {
-              setState(() {
-                Setting.setIsNodeNumber(value);
-              });
-            }, 
-            text: "節点の表示",
-          ),
-          ToolCheckboxMenuButton(
-            value: Setting.isElemNumber, 
-            onChanged: (value) {
-              setState(() {
-                Setting.setIsElemNumber(value);
-              });
-            }, 
-            text: "要素の表示",
-          ),
-          ToolCheckboxMenuButton(
-            value: Setting.isResultValue, 
-            onChanged: (value) {
-              setState(() {
-                Setting.setIsResultValue(value);
-              });
-            }, 
-            text: "結果の値の表示",
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          child: const Text("閉じる"),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ],
     );
   }
 }

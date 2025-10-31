@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/app/models/setting.dart';
 import 'package:kozo_ibaraki/app/pages/beam/models/beam_data.dart';
 import 'package:kozo_ibaraki/core/utils/canvas_data.dart';
 import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
@@ -55,7 +56,12 @@ class BeamPainter extends CustomPainter {
       _drawConst(nodes, dataRect, rect, canvas); // 節点拘束
       _drawPower(nodes, elems, dataRect, data.canvasData, canvas); // 荷重
       _drawNode(nodes, true, nodeWidth, canvas); // 節点
-      _drawNodeNumber(nodes, true, canvas); // 節点番号
+      if (Setting.isNodeNumber) {
+        _drawNodeNumber(nodes, true, canvas); // 節点番号
+      }
+      if (Setting.isElemNumber) {
+        _drawElemNumber(canvas, elems, isSelect: true); // 要素番号
+      }
     }
     else if(!isSumaho) {
       // キャンバスの広さ
@@ -92,6 +98,13 @@ class BeamPainter extends CustomPainter {
       } else if (devTypeNum == 1) {
         _drawFrea(nodes, dataRect, rect, canvas);
       }
+
+      if (Setting.isNodeNumber) {
+        _drawNodeNumber(nodes, true, canvas); // 節点番号
+      }
+      if (Setting.isElemNumber) {
+        _drawElemNumber(canvas, elems); // 要素番号
+      }
       
       double a = rect.height < 300 ? rect.height/5+7.5 : 300/5+7.5;
       CanvasUtils.memory(canvas, Rect.fromLTRB(rect.right+a, rect.top, rect.right+a, rect.bottom), memory.$2, memory.$3, memory.$4, memory.$5);
@@ -124,6 +137,13 @@ class BeamPainter extends CustomPainter {
         _drawResultNode(nodeWidth, canvas);
       } else if (devTypeNum == 1) {
         _drawFrea(nodes, dataRect, rect, canvas);
+      }
+
+      if (Setting.isNodeNumber) {
+        _drawNodeNumber(nodes, true, canvas); // 節点番号
+      }
+      if (Setting.isElemNumber) {
+        _drawElemNumber(canvas, elems); // 要素番号
       }
 
       (Rect, double, double, double, bool) memory = (Rect.zero,0,0,0,false);
@@ -198,7 +218,7 @@ class BeamPainter extends CustomPainter {
       }else{
         color = Colors.black;
       }
-      CanvasUtils.text(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), 20, color, true, 100);
+      CanvasUtils.drawText(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), color: color, fontSize: 20);
     }
   }
 
@@ -224,6 +244,28 @@ class BeamPainter extends CustomPainter {
           }
         }
         canvas.drawLine(elems[i].nodeList[0]!.canvasPos, elems[i].nodeList[1]!.canvasPos, paint);
+      }
+    }
+  }
+
+  // 要素番号
+  void _drawElemNumber(Canvas canvas, List<Elem> elems, {bool isSelect = false}) {
+    if (elems.isEmpty) {
+      return;
+    }
+
+    for(int i = 0; i < elems.length; i++) {
+      if(elems[i].nodeList[0] != null && elems[i].nodeList[1] != null) {
+        Offset pos = (elems[i].nodeList[0]!.canvasPos + elems[i].nodeList[1]!.canvasPos) / 2;
+
+        Color color;
+        if(elems[i].isSelect && isSelect){
+          color = Colors.red;
+        }else{
+          color = const Color.fromARGB(255, 86, 86, 86);
+        }
+
+        CanvasUtils.drawText(canvas, pos, "(${i+1})", color: color, alignment: Alignment.center);
       }
     }
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:kozo_ibaraki/app/components/common_drawer.dart';
+import 'package:kozo_ibaraki/app/pages/drawer/common_drawer.dart';
 import 'package:kozo_ibaraki/app/pages/privacy/ui/privacy_bar.dart';
 import 'package:kozo_ibaraki/core/components/component.dart';
 

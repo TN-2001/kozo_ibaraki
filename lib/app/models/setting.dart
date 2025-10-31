@@ -1,4 +1,6 @@
 class Setting {
+  Setting._(); // インスタンス化禁止（staticクラス風）
+
   static bool _isNodeNumber = true;
   static bool _isElemNumber = true;
   static bool _isResultValue = true;

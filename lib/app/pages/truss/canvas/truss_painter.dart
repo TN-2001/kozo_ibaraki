@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/app/models/setting.dart';
 import 'package:kozo_ibaraki/app/pages/truss/models/truss_data.dart';
 import 'package:kozo_ibaraki/core/utils/camera.dart';
 import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
@@ -41,7 +42,12 @@ class TrussPainter extends CustomPainter {
       _drawConst(canvas, size, nodes, false); // 節点拘束拘束
       _drawPower(canvas, size, nodes, false); // 節点荷重
       _drawNode(canvas, size, nodes, false); // 節点
-      _drawNodeNumber(canvas, size, nodes); // 節点番号
+      if (Setting.isNodeNumber) {
+        _drawNodeNumber(canvas, nodes); // 節点番号
+      }
+      if (Setting.isElemNumber) {
+        _drawElemNumber(canvas, elems); // 要素番号
+      }
     }
     else {
       if (data.resultIndex <= 2) {
@@ -52,19 +58,18 @@ class TrussPainter extends CustomPainter {
       _drawConst(canvas, size, nodes, true); // 節点拘束拘束
       _drawPower(canvas, size, nodes, true); // 節点荷重
       _drawNode(canvas, size, nodes, true); // 節点
-
-      if (data.resultIndex <= 2) {
+      if (Setting.isNodeNumber) {
+        _drawNodeNumber(canvas, nodes, isAfter: true); // 節点番号
+      }
+      if (Setting.isElemNumber) {
+        _drawElemNumber(canvas, elems, isAfter: true); // 要素番号
+      }
+      if (data.resultIndex <= 2 && Setting.isResultValue) {
         // 要素の結果
-        for(int i = 0; i < data.elemList.length; i++){
-          if(data.elemNode == 2){
-            Offset pos1 = data.elemList[i].nodeList[0]!.afterPos;
-            Offset pos2 = data.elemList[i].nodeList[1]!.afterPos;
-            CanvasUtils.text(canvas, 
-              camera.worldToScreen(Offset((pos1.dx+pos2.dx)/2, (pos1.dy+pos2.dy)/2)),
-              StringUtils.doubleToString(data.resultList[i], 3), 14, Colors.black, true, size.width, alignment: Alignment.center);
-          }
-        }
-      } else if (data.resultIndex == 3) {
+        _drawElemResultValue(canvas);
+      }
+
+      if (data.resultIndex == 3) {
         // 変位
         for(int i = 0; i < data.nodeCount; i++){
           Node node = data.getNode(i);
@@ -168,21 +173,27 @@ class TrussPainter extends CustomPainter {
   }
 
   // 節点番号
-  void _drawNodeNumber(Canvas canvas, Size size, List<Node> nodes) {
+  void _drawNodeNumber(Canvas canvas, List<Node> nodes, {bool isAfter = false}) {
     // バグ対策
     if (nodes.isEmpty) {
       return;
     }
 
     for (int i = 0; i < nodes.length; i++) {
-      Offset pos = camera.worldToScreen(nodes[i].pos);
+      Offset pos;
+      if (!isAfter) {
+        pos = camera.worldToScreen(nodes[i].pos);
+      } else {
+        pos = camera.worldToScreen(nodes[i].afterPos);
+      }
+
       Color color = Colors.red;
       if (nodes[i].number == data.selectedNumber && data.typeIndex == 0) {
         color = Colors.red;
       } else {
         color = Colors.black;
       }
-      CanvasUtils.text(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), 20, color, true, 100);
+      CanvasUtils.drawText(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), color: color, fontSize: 20);
     }
   }
 
@@ -319,6 +330,51 @@ class TrussPainter extends CustomPainter {
     }
   }
 
+  // 要素の番号
+  void _drawElemNumber(Canvas canvas, List<Elem> elems, {bool isAfter = false}) {
+    if (elems.isEmpty) {
+      return;
+    }
+
+    for(int i = 0; i < elems.length; i++) {
+      if(elems[i].nodeList[0] != null && elems[i].nodeList[1] != null) {
+        Offset pos;
+        if (!isAfter) {
+          pos = elems[i].nodeList[0]!.pos + elems[i].nodeList[1]!.pos;
+        } else {
+          pos = elems[i].nodeList[0]!.afterPos + elems[i].nodeList[1]!.afterPos;
+        }
+        pos = camera.worldToScreen(pos/2);
+
+        CanvasUtils.drawText(
+          canvas, 
+          pos,
+          "(${i+1})", 
+          alignment: Alignment.bottomCenter,
+        );
+      }
+    }
+  }
+
+  // 要素の結果値
+  void _drawElemResultValue(Canvas canvas) {
+    if (data.elemList.isEmpty) {
+      return;
+    }
+
+    for(int i = 0; i < data.elemList.length; i++) {
+      if(data.elemNode == 2) {
+        Offset pos1 = data.elemList[i].nodeList[0]!.afterPos;
+        Offset pos2 = data.elemList[i].nodeList[1]!.afterPos;
+        CanvasUtils.drawText(
+          canvas, 
+          camera.worldToScreen(Offset((pos1.dx+pos2.dx)/2, (pos1.dy+pos2.dy)/2)),
+          StringUtils.doubleToString(data.resultList[i], 3), 
+          alignment: Alignment.topCenter,
+        );
+      }
+    }
+  }
 
 
   @override

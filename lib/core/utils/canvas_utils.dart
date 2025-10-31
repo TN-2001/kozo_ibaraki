@@ -209,8 +209,8 @@ class CanvasUtils {
   }
 
   static void drawText(Canvas canvas, Offset pos, String text, 
-  {Alignment alignment = Alignment.topLeft, Color color = Colors.black}) {
-    CanvasUtils.text(canvas, pos, text, 16, color, true, 1000, alignment: alignment);
+  {Alignment alignment = Alignment.topLeft, Color color = Colors.black, double fontSize = 16}) {
+    CanvasUtils.text(canvas, pos, text, fontSize, color, true, 1000, alignment: alignment);
   }
 
   // 正三角形

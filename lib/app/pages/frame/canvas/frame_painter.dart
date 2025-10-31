@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/app/models/setting.dart';
 import 'package:kozo_ibaraki/app/pages/frame/models/frame_controller.dart';
 import 'package:kozo_ibaraki/core/utils/camera.dart';
 import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
@@ -27,7 +28,12 @@ class FramePainter extends CustomPainter {
       _drawElemPower(canvas);
       _drawPower(canvas, isAfter: false); // 節点荷重
       _drawNode(canvas, isAfter: false); // 節点
-      _drawNodeNumber(canvas); // 節点番号
+      if (Setting.isNodeNumber) {
+        _drawNodeNumber(canvas); // 節点番号
+      }
+      if (Setting.isElemNumber) {
+        _drawElemNumber(canvas); // 要素番号
+      }
     }
     else {
       if (controller.resultIndex <= 2) {
@@ -40,8 +46,13 @@ class FramePainter extends CustomPainter {
         _drawConst(canvas, isAfter: false); // 節点拘束拘束
         _drawPower(canvas, isAfter: false); // 節点荷重
         _drawNode(canvas, isAfter: false); // 節点
-
-        if (controller.resultIndex == 2) {
+        if (Setting.isNodeNumber) {
+          _drawNodeNumber(canvas); // 節点番号
+        }
+        if (Setting.isElemNumber) {
+          _drawElemNumber(canvas); // 要素番号
+        }
+        if (controller.resultIndex == 2 && Setting.isResultValue) {
           _drawMomentText(canvas);
         }
       } else {
@@ -49,6 +60,12 @@ class FramePainter extends CustomPainter {
         _drawConst(canvas, isAfter: true); // 節点拘束拘束
         _drawPower(canvas, isAfter: true); // 節点荷重
         _drawNode(canvas, isAfter: true); // 節点
+        if (Setting.isNodeNumber) {
+          _drawNodeNumber(canvas, isAfter: true); // 節点番号
+        }
+        if (Setting.isElemNumber) {
+          _drawElemNumber(canvas, isAfter: true); // 要素番号
+        }
       }
 
       if (controller.resultIndex <= 2) {
@@ -238,7 +255,7 @@ class FramePainter extends CustomPainter {
   }
 
   // 節点番号
-  void _drawNodeNumber(Canvas canvas) {
+  void _drawNodeNumber(Canvas canvas, {bool isAfter = false}) {
     // バグ対策
     if (data.nodeCount == 0) {
       return;
@@ -246,7 +263,12 @@ class FramePainter extends CustomPainter {
 
     for (int i = 0; i < data.nodeCount; i++) {
       Node node = data.getNode(i);
-      Offset pos = camera.worldToScreen(node.pos);
+      Offset pos;
+      if (!isAfter) {
+        pos = camera.worldToScreen(node.pos);
+      } else {
+        pos = camera.worldToScreen(node.afterPos);
+      }
       Color color = Colors.red;
       if (node.number == controller.selectedNumber && controller.typeIndex == 0) {
         color = Colors.red;
@@ -430,6 +452,41 @@ class FramePainter extends CustomPainter {
           paint.color = const Color.fromARGB(255, 86, 86, 86);
         }
         canvas.drawLine(camera.worldToScreen(pos1), camera.worldToScreen(pos2), paint);
+      }
+    }
+  }
+
+  // 要素番号
+  void _drawElemNumber(Canvas canvas, {bool isAfter = false}) {
+    // バグ対策
+    if (data.elemCount == 0) {
+      return;
+    }
+
+    for (int i = 0; i < data.elemCount; i++) {
+      Elem elem = data.getElem(i);
+      if (elem.getNode(0) != null && elem.getNode(1) != null) {
+        Offset pos;
+        if (!isAfter) {
+          pos = elem.getNode(0)!.pos + elem.getNode(1)!.pos;
+        } else {
+          pos = elem.getNode(0)!.afterPos + elem.getNode(1)!.afterPos;
+        }
+        pos = camera.worldToScreen(pos/2);
+
+        Color color = Colors.red;
+        if (elem.number == controller.selectedNumber && controller.typeIndex == 1) {
+          color = Colors.red;
+        } else {
+          color = Colors.black;
+        }
+        CanvasUtils.drawText(
+          canvas, 
+          Offset(pos.dx, pos.dy), 
+          "(${i+1})", 
+          alignment: Alignment.center, 
+          color: color,
+        );
       }
     }
   }
