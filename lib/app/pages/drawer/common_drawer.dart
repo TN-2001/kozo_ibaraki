@@ -113,8 +113,7 @@ class CommonDrawer extends StatelessWidget {
             }
           },
         ),
-
-        const Expanded(child: SizedBox()),
+        
         const BaseDivider(),
 
         ListTile(

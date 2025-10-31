@@ -2,7 +2,13 @@ import 'dart:math';
 
 class StringUtils {
   // doubleをStringにする
-  static String doubleToString(double value, int digit) {
+  static String doubleToString(double value, int digit, {double? minAbs}) {
+    if (minAbs != null) {
+      if (value.abs() < minAbs) {
+        value = 0.0;
+      }
+    }
+
     // 数字を桁数(digit)分を文字にする
     String text;
     if(value == 0.0) {

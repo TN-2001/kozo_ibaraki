@@ -39,6 +39,7 @@ class FemPainter extends CustomPainter {
     }
   }
 
+
   // カメラの初期化
   void _initCamera(Size size) {
     final double screenWidth = size.width;
@@ -414,7 +415,7 @@ class FemPainter extends CustomPainter {
       pos = pos / elem.nodeCount.toDouble();
       pos = camera.worldToScreen(pos);
 
-      CanvasUtils.drawText(canvas, pos, StringUtils.doubleToString(elem.getResult(controller.resultIndex), 3), alignment: Alignment.topCenter);
+      CanvasUtils.drawText(canvas, pos, StringUtils.doubleToString(elem.getResult(controller.resultIndex), 3, minAbs: Setting.minAbs), alignment: Alignment.topCenter);
     }
   }
 

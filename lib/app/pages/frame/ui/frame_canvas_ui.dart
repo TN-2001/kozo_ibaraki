@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/components/color_contour.dart';
+import 'package:kozo_ibaraki/app/models/setting.dart';
 import 'package:kozo_ibaraki/app/pages/frame/models/frame_controller.dart';
 import 'package:kozo_ibaraki/app/utils/common_painter.dart';
 import 'package:kozo_ibaraki/core/constants/constant.dart';
@@ -43,14 +44,14 @@ class _FrameCanvasUiState extends State<FrameCanvasUi> {
             if (_controller.isCalculated && _controller.resultIndex <= 1)...{
               if (orientation == Orientation.landscape)...{
                 ColorContour.landscape(
-                  maxText: StringUtils.doubleToString(_controller.resultMax, 3),
-                  minText: StringUtils.doubleToString(_controller.resultMin, 3),
+                  maxText: StringUtils.doubleToString(_controller.resultMax, 3, minAbs: Setting.minAbs),
+                  minText: StringUtils.doubleToString(_controller.resultMin, 3, minAbs: Setting.minAbs),
                 ),
               }
               else...{
                 ColorContour.portrait(
-                  maxText: StringUtils.doubleToString(_controller.resultMax, 3),
-                  minText: StringUtils.doubleToString(_controller.resultMin, 3),
+                  maxText: StringUtils.doubleToString(_controller.resultMax, 3, minAbs: Setting.minAbs),
+                  minText: StringUtils.doubleToString(_controller.resultMin, 3, minAbs: Setting.minAbs),
                 ),
               }
             }

@@ -64,7 +64,7 @@ class TrussPainter extends CustomPainter {
       if (Setting.isElemNumber) {
         _drawElemNumber(canvas, elems, isAfter: true); // 要素番号
       }
-      if (data.resultIndex <= 2 && Setting.isResultValue) {
+      if (data.resultIndex <= 2) {
         // 要素の結果
         _drawElemResultValue(canvas);
       }
@@ -74,22 +74,22 @@ class TrussPainter extends CustomPainter {
         for(int i = 0; i < data.nodeCount; i++){
           Node node = data.getNode(i);
           String text = "";
-          if (node.becPos.dx != 0) {
+          if (node.becPos.dx.abs() > Setting.minAbs) {
             text = "x：${StringUtils.doubleToString(node.becPos.dx, 3)}";
           }
-          if (node.becPos.dy != 0) {
+          if (node.becPos.dy.abs() > Setting.minAbs) {
             if (text.isNotEmpty) {
               text += "\n";
             }
             text += "y：${StringUtils.doubleToString(node.becPos.dy, 3)}";
           }
-          CanvasUtils.text(canvas, camera.worldToScreen(node.afterPos), text, 16, Colors.black, true, size.width);
+          CanvasUtils.drawText(canvas, camera.worldToScreen(node.afterPos), text);
         }
       } else if (data.resultIndex == 4) {
         // 反力
         for (int i = 0; i < data.nodeCount; i++) {
           Node node = data.getNode(i);
-          if (node.result[0] != 0) {
+          if (node.result[0].abs() > Setting.minAbs) {
             String text = StringUtils.doubleToString(node.result[0].abs(), 3);
             if (node.pos.dx <= data.rect.center.dx) {
               Offset left = camera.worldToScreen(Offset(node.afterPos.dx - data.nodeRadius * 8, node.afterPos.dy));
@@ -99,7 +99,7 @@ class TrussPainter extends CustomPainter {
               } else {
                 CanvasUtils.arrow(right, left, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
               }
-              CanvasUtils.text(canvas, left, text, 16, Colors.black, true, size.width, alignment: Alignment.centerRight);
+              CanvasUtils.drawText(canvas, left, text, alignment: Alignment.centerRight);
             } else {
               Offset left = camera.worldToScreen(Offset(node.afterPos.dx + data.nodeRadius * 3, node.afterPos.dy));
               Offset right = camera.worldToScreen(Offset(node.afterPos.dx + data.nodeRadius * 8, node.afterPos.dy));
@@ -108,11 +108,11 @@ class TrussPainter extends CustomPainter {
               } else {
                 CanvasUtils.arrow(right, left, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
               }
-              CanvasUtils.text(canvas, right, text, 16, Colors.black, true, size.width, alignment: Alignment.centerLeft);
+              CanvasUtils.drawText(canvas, right, text, alignment: Alignment.centerLeft);
             }
           }
 
-          if (node.result[1] != 0) {
+          if (node.result[1].abs() > Setting.minAbs) {
             String text = StringUtils.doubleToString(node.result[1].abs(), 3);
             if (node.pos.dy <= data.rect.center.dy) {
               Offset bottom = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy - data.nodeRadius * 8));
@@ -122,7 +122,7 @@ class TrussPainter extends CustomPainter {
               } else {
                 CanvasUtils.arrow(top, bottom, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
               }
-              CanvasUtils.text(canvas, bottom, text, 16, Colors.black, true, size.width, alignment: Alignment.topCenter);
+              CanvasUtils.drawText(canvas, bottom, text, alignment: Alignment.topCenter);
             } else {
               Offset bottom = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy + data.nodeRadius * 3));
               Offset top = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy + data.nodeRadius * 8));
@@ -131,7 +131,7 @@ class TrussPainter extends CustomPainter {
               } else {
                 CanvasUtils.arrow(top, bottom, data.nodeRadius * camera.scale * 0.5, const Color.fromARGB(255, 189, 53, 43), canvas);
               }
-              CanvasUtils.text(canvas, top, text, 16, Colors.black, true, size.width, alignment: Alignment.bottomCenter);
+              CanvasUtils.drawText(canvas, top, text, alignment: Alignment.bottomCenter);
             }
           }
         }
@@ -369,7 +369,7 @@ class TrussPainter extends CustomPainter {
         CanvasUtils.drawText(
           canvas, 
           camera.worldToScreen(Offset((pos1.dx+pos2.dx)/2, (pos1.dy+pos2.dy)/2)),
-          StringUtils.doubleToString(data.resultList[i], 3), 
+          StringUtils.doubleToString(data.resultList[i], 3, minAbs: Setting.minAbs), 
           alignment: Alignment.topCenter,
         );
       }

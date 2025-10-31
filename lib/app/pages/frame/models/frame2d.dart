@@ -376,7 +376,7 @@ Map<String, Object> frame2d(Map<String, Object> input) {
     double r0r0 = dotProduct(cgw1, cgw1);
     
     // CGM iteration
-    for (int kcg = 0; kcg < neq * 10; kcg++) {
+    for (int kcg = 0; kcg < neq * 40; kcg++) {
       // Matrix-vector multiplication
       cgw3.fillRange(0, neq, 0.0);
       for (int ie = 0; ie < nelx2; ie++) {
@@ -414,7 +414,7 @@ Map<String, Object> frame2d(Map<String, Object> input) {
       
       // print('${kcg + 1}) ${sqrt(rr / r0r0).toStringAsExponential(5)} ${r1r1.toStringAsExponential(5)}');
       
-      if (sqrt(rr / r0r0) < 1e-9) {
+      if (sqrt(rr / r0r0) < 1e-10) {
         for (int i = 0; i < neq; i++) {
           disp[i] *= diag[i];
           if (disp[i].abs() < 1e-9) disp[i] = 0.0;

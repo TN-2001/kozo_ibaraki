@@ -86,7 +86,7 @@ class _SettingPageState extends State<SettingPage> {
                             }
                           });
                         }, 
-                        title: const BaseText("節点の表示"),
+                        title: const BaseText("節点番号の表示"),
                       ),
                       SwitchListTile(
                         value: Setting.isElemNumber, 
@@ -98,7 +98,7 @@ class _SettingPageState extends State<SettingPage> {
                             }
                           });
                         }, 
-                        title: const BaseText("要素の表示"),
+                        title: const BaseText("要素番号の表示"),
                       ),
                       SwitchListTile(
                         value: Setting.isResultValue, 
@@ -110,7 +110,7 @@ class _SettingPageState extends State<SettingPage> {
                             }
                           });
                         }, 
-                        title: const BaseText("結果の値（要素）の表示"),
+                        title: const BaseText("要素の結果値の表示（FEM）"),
                       ),
                     ],
                   ),

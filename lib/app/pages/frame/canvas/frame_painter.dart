@@ -52,9 +52,6 @@ class FramePainter extends CustomPainter {
         if (Setting.isElemNumber) {
           _drawElemNumber(canvas); // 要素番号
         }
-        if (controller.resultIndex == 2 && Setting.isResultValue) {
-          _drawMomentText(canvas);
-        }
       } else {
         _drawResultElem(canvas, isNormalColor: true, isAfterPos: true);
         _drawConst(canvas, isAfter: true); // 節点拘束拘束
@@ -68,25 +65,15 @@ class FramePainter extends CustomPainter {
         }
       }
 
-      if (controller.resultIndex <= 2) {
-        // 要素の結果
-        // for(int i = 0; i < data.elemCount; i++){
-        //   Elem elem = data.getElem(i);
-        //   Offset pos1 = elem.getNode(0)!.afterPos;
-        //   Offset pos2 = elem.getNode(1)!.afterPos;
-        //   MyPainter.text(canvas, 
-        //     camera.worldToScreen(Offset((pos1.dx+pos2.dx)/2, (pos1.dy+pos2.dy)/2)),
-        //     MyPainter.doubleToString(elem.getResult(controller.resultIndex), 3), 14, Colors.black, true, size.width, alignment: Alignment.center);
-        // }
-      } else if (controller.resultIndex == 3) {
+      if (controller.resultIndex == 3) {
         // 変位
         for(int i = 0; i < data.nodeCount; i++){
           Node node = data.getNode(i);
           String text = "";
-          if (node.becPos.dx != 0) {
+          if (node.becPos.dx.abs() > Setting.minAbs) {
             text = "x：${StringUtils.doubleToString(node.becPos.dx, 3)}";
           }
-          if (node.becPos.dy != 0) {
+          if (node.becPos.dy.abs() > Setting.minAbs) {
             if (text.isNotEmpty) {
               text += "\n";
             }
@@ -94,7 +81,7 @@ class FramePainter extends CustomPainter {
           }
           // たわみ角
           Node resultNode = data.getResultNode(i);
-          if (resultNode.getResult(3) != 0) {
+          if (resultNode.getResult(3).abs() > Setting.minAbs) {
             if (text.isNotEmpty) {
               text += "\n";
             }
@@ -107,6 +94,7 @@ class FramePainter extends CustomPainter {
       }
     }
   }
+
 
   // カメラの初期化
   void _initCamera(Size size) {
@@ -611,23 +599,23 @@ class FramePainter extends CustomPainter {
   }
 
   // 曲げモーメントのテキスト
-  void _drawMomentText(Canvas canvas) {
-    for (int i = 0; i < data.nodeCount; i++) {
-      Node node = data.getResultNode(i);
-      double value = 0;
-      for (int j = 0; j < data.resultElemCount; j++) {
-        Elem elem = data.getResultElem(j);
-        if (elem.getNode(0)!.number == node.number || elem.getNode(1)!.number == node.number) {
-          value = max(elem.getResult(3).abs(), elem.getResult(4).abs());
-          break;
-        }
-      }
-      CanvasUtils.text(
-        canvas, camera.worldToScreen(node.pos),
-        StringUtils.doubleToString(value, 3), 
-        14, Colors.black, true, 1000, alignment: Alignment.center);
-    }
-  }
+  // void _drawMomentText(Canvas canvas) {
+  //   for (int i = 0; i < data.nodeCount; i++) {
+  //     Node node = data.getResultNode(i);
+  //     double value = 0;
+  //     for (int j = 0; j < data.resultElemCount; j++) {
+  //       Elem elem = data.getResultElem(j);
+  //       if (elem.getNode(0)!.number == node.number || elem.getNode(1)!.number == node.number) {
+  //         value = max(elem.getResult(3).abs(), elem.getResult(4).abs());
+  //         break;
+  //       }
+  //     }
+  //     CanvasUtils.text(
+  //       canvas, camera.worldToScreen(node.pos),
+  //       StringUtils.doubleToString(value, 3), 
+  //       14, Colors.black, true, 1000, alignment: Alignment.center);
+  //   }
+  // }
 
   // 反力
   void _drawReactionForce(Canvas canvas) {
@@ -641,7 +629,7 @@ class FramePainter extends CustomPainter {
       final Direction direction = nodeDirectionList[i];
 
       // 水平方向の反力
-      if (node.getResult(0) != 0) {
+      if (node.getResult(0).abs() > Setting.minAbs) {
         String text = StringUtils.doubleToString(node.getResult(0).abs(), 3);
         if (direction == Direction.left || node.pos.dx > data.rect.center.dx) {
           Offset left = camera.worldToScreen(Offset(node.afterPos.dx + data.nodeRadius * 3, node.afterPos.dy));
@@ -653,7 +641,7 @@ class FramePainter extends CustomPainter {
             CanvasUtils.drawArrow2(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
-          CanvasUtils.text(canvas, right, text, 16, Colors.black, true, 1000, alignment: Alignment.centerLeft);
+          CanvasUtils.drawText(canvas, right, text, alignment: Alignment.centerLeft);
         } else {
           Offset right = camera.worldToScreen(Offset(node.afterPos.dx - data.nodeRadius * 3, node.afterPos.dy));
           Offset left = Offset(right.dx - lineLength, right.dy);
@@ -664,12 +652,12 @@ class FramePainter extends CustomPainter {
             CanvasUtils.drawArrow2(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
-          CanvasUtils.text(canvas, left, text, 16, Colors.black, true, 1000, alignment: Alignment.centerRight);
+          CanvasUtils.drawText(canvas, left, text, alignment: Alignment.centerRight);
         }
       }
 
       // 鉛直方向の反力
-      if (node.getResult(1) != 0) {
+      if (node.getResult(1).abs() > Setting.minAbs) {
         String text = StringUtils.doubleToString(node.getResult(1).abs(), 3);
         if(direction == Direction.down || node.pos.dy > data.rect.center.dy) {
           Offset bottom = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy + data.nodeRadius * 3));
@@ -681,7 +669,7 @@ class FramePainter extends CustomPainter {
             CanvasUtils.drawArrow2(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
-          CanvasUtils.text(canvas, top, text, 16, Colors.black, true, 1000, alignment: Alignment.bottomCenter);
+          CanvasUtils.drawText(canvas, top, text, alignment: Alignment.bottomCenter);
         } else {
           Offset top = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy - data.nodeRadius * 3));
           Offset bottom = Offset(top.dx, top.dy + lineLength);
@@ -692,12 +680,12 @@ class FramePainter extends CustomPainter {
             CanvasUtils.drawArrow2(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
-          CanvasUtils.text(canvas, bottom, text, 16, Colors.black, true, 1000, alignment: Alignment.topCenter);
+          CanvasUtils.drawText(canvas, bottom, text, alignment: Alignment.topCenter);
         }
       }
 
       // モーメント反力
-      if (node.getResult(2) != 0) {
+      if (node.getResult(2).abs() > Setting.minAbs) {
         String text = StringUtils.doubleToString(node.getResult(2).abs(), 3);
 
         Offset vector = Offset(sin(nodeAngleList[i]), cos(nodeAngleList[i]));
@@ -728,13 +716,13 @@ class FramePainter extends CustomPainter {
         );
 
         if (vector.dy.abs() >= vector.dx.abs() + 0.001 && vector.dy <= 0) {
-          CanvasUtils.text(canvas, Offset(pos.dx + radius, pos.dy + radius), text, 16, Colors.black, true, 1000, alignment: Alignment.topCenter);
+          CanvasUtils.drawText(canvas, Offset(pos.dx + radius, pos.dy + radius), text, alignment: Alignment.topCenter);
         } else if (vector.dy.abs() + 0.001 >= vector.dx.abs() && vector.dy > 0) {
-          CanvasUtils.text(canvas, Offset(pos.dx - radius, pos.dy + radius), text, 16, Colors.black, true, 1000, alignment: Alignment.topCenter);
+          CanvasUtils.drawText(canvas, Offset(pos.dx - radius, pos.dy + radius), text, alignment: Alignment.topCenter);
         } else if (vector.dx >= 0) {
-          CanvasUtils.text(canvas, Offset(pos.dx - radius, pos.dy + radius), text, 16, Colors.black, true, 1000, alignment: Alignment.centerRight);
+          CanvasUtils.drawText(canvas, Offset(pos.dx - radius, pos.dy + radius), text, alignment: Alignment.centerRight);
         } else if (vector.dx < 0) {
-          CanvasUtils.text(canvas, Offset(pos.dx - radius, pos.dy - radius), text, 16, Colors.black, true, 1000, alignment: Alignment.centerRight);
+          CanvasUtils.drawText(canvas, Offset(pos.dx - radius, pos.dy - radius), text, alignment: Alignment.centerRight);
         }
       }
     }

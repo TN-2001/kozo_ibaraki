@@ -482,17 +482,17 @@ class BeamPainter extends CustomPainter {
       }
 
       // 結果の数値
-      String text = "Y=${StringUtils.doubleToString(data.resultNodeList[i].result[0], 3)}\n";
+      String text = "Y=${StringUtils.doubleToString(data.resultNodeList[i].result[0], 3, minAbs: Setting.minAbs)}\n";
       if(data.nodeList[i] == leftNodes[leftNodes.length-1]){
-        text += "θ=${StringUtils.doubleToString(data.resultNodeList[i].result[2], 3)}";
+        text += "θ=${StringUtils.doubleToString(data.resultNodeList[i].result[2], 3, minAbs: Setting.minAbs)}";
       }else if(data.nodeList[i] == leftNodes[0]){
-        text += "θ=${StringUtils.doubleToString(data.resultNodeList[i].result[1], 3)}";
+        text += "θ=${StringUtils.doubleToString(data.resultNodeList[i].result[1], 3, minAbs: Setting.minAbs)}";
       }else{
         if(data.nodeList[i].constXYR[3]){
-          text += "θ1=${StringUtils.doubleToString(data.resultNodeList[i].result[1], 3)}\n";
-          text += "θ2=${StringUtils.doubleToString(data.resultNodeList[i].result[2], 3)}";
+          text += "θ1=${StringUtils.doubleToString(data.resultNodeList[i].result[1], 3, minAbs: Setting.minAbs)}\n";
+          text += "θ2=${StringUtils.doubleToString(data.resultNodeList[i].result[2], 3, minAbs: Setting.minAbs)}";
         }else{
-          text += "θ=${StringUtils.doubleToString(data.resultNodeList[i].result[2], 3)}";
+          text += "θ=${StringUtils.doubleToString(data.resultNodeList[i].result[2], 3, minAbs: Setting.minAbs)}";
         }
       }
       CanvasUtils.text(canvas, Offset(cpos.dx-10, cpos.dy), text, 16, Colors.black, true, 1000, );
@@ -509,35 +509,35 @@ class BeamPainter extends CustomPainter {
     if(nodes.isNotEmpty){
       for(int i = 0; i < nodes.length; i++){
         Offset pos = nodes[i].canvasPos;
-        if(nodes[i].result[3] != 0.0){ // 反力V
-          if(nodes[i].result[3] < 0){
+        if (nodes[i].result[3].abs() > Setting.minAbs) { // 反力V
+          if (nodes[i].result[3] < 0) {
             CanvasUtils.arrow(Offset(pos.dx, pos.dy+30), Offset(pos.dx, pos.dy+75), 4, const Color.fromARGB(255, 196, 0, 0), canvas, lineWidth: 3.5);
-          }else{
+          } else {
             CanvasUtils.arrow(Offset(pos.dx, pos.dy+75), Offset(pos.dx, pos.dy+30), 4, const Color.fromARGB(255, 196, 0, 0), canvas, lineWidth: 3.5);
           }
           CanvasUtils.text(canvas, Offset(pos.dx-20, pos.dy+75), 
             StringUtils.doubleToString(data.nodeList[i].result[3].abs(), 3), 16, Colors.black, true, 1000,);
         }
 
-        if(nodes[i].result[4] != 0.0){ // 反力M
-          if(nodes[i].pos.dx < dataRect.center.dx) {
+        if (nodes[i].result[4].abs() > Setting.minAbs) { // 反力M
+          if (nodes[i].pos.dx < dataRect.center.dx) {
             paint.style = PaintingStyle.stroke;
             canvas.drawArc(Rect.fromCircle(center: pos, radius: 40), pi/3*2, pi/3*2, false, paint);
             paint.style = PaintingStyle.fill;
-            if(nodes[i].result[4] > 0.0){
+            if (nodes[i].result[4] > 0.0) {
               CanvasUtils.triangleEquilateral(Offset(pos.dx-17, pos.dy+40), 20, -pi/3*0.8, paint, canvas);
-            }else{
+            } else {
               CanvasUtils.triangleEquilateral(Offset(pos.dx-17, pos.dy-40), 20, pi/3*0.8, paint, canvas);
             }
             CanvasUtils.text(canvas, Offset(pos.dx-55, pos.dy-55), 
               StringUtils.doubleToString(data.nodeList[i].result[4].abs(), 3), 16, Colors.black, true, 1000,);
-          }else{
+          } else {
             paint.style = PaintingStyle.stroke;
             canvas.drawArc(Rect.fromCircle(center: pos, radius: 40), -pi/3, pi/3*2, false, paint);
             paint.style = PaintingStyle.fill;
-            if(nodes[i].result[4] > 0.0){
+            if (nodes[i].result[4] > 0.0) {
               CanvasUtils.triangleEquilateral(Offset(pos.dx+17, pos.dy-40), 20, pi/3*2.2, paint, canvas);
-            }else{
+            } else {
               CanvasUtils.triangleEquilateral(Offset(pos.dx+17, pos.dy+40), 20, -pi/3*2.2, paint, canvas);
             }
             CanvasUtils.text(canvas, Offset(pos.dx+10, pos.dy-55), 
