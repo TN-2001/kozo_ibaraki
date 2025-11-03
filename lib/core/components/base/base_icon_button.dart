@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/core/constants/constant.dart';
 
 class BaseIconButton extends StatelessWidget {
-  const BaseIconButton({ 
+  BaseIconButton({ 
     super.key, 
     required this.onPressed, 
     required this.icon, 
-    this.message = "",
-    this.width = 50,
-    this.height = 50,
+    this.tooltip = "",
+    this.width = BaseDimens.buttonWidth,
+    this.height = BaseDimens.buttonHeight,
     this.margin = EdgeInsets.zero,
-    this.borderRadius = BorderRadius.zero,
-    this.borderColor = Colors.black,
-    this.borderWidth = 1.0,
-  });
+    BorderRadius? borderRadius,
+    this.borderColor = BaseColors.buttonBorder,
+    this.borderWidth = BaseDimens.buttonBorderWidth,
+  }) : borderRadius = borderRadius ?? BaseDimens.buttonBorderRadius;
 
   final void Function() onPressed;
   final Widget icon;
-  final String message;
+  final String tooltip;
   final double width;
   final double height;
   final EdgeInsets margin;
@@ -32,24 +33,24 @@ class BaseIconButton extends StatelessWidget {
       height: height,
       margin: margin,
 
-      child: Tooltip(
-        message: message,
-        child: IconButton(
-          // デザイン
-          style: IconButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: borderRadius,
-              side: BorderSide(
-                color: borderColor,
-                width: borderWidth,
-              ),
+      
+      child: IconButton(
+        // デザイン
+        style: IconButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: borderRadius,
+            side: BorderSide(
+              color: borderColor,
+              width: borderWidth,
             ),
           ),
-          // イベント
-          onPressed: onPressed, 
-          // ウィジェット
-          icon: icon,
         ),
+
+        tooltip: tooltip,
+        // イベント
+        onPressed: onPressed, 
+        // ウィジェット
+        icon: icon,
       ),
     );
   }

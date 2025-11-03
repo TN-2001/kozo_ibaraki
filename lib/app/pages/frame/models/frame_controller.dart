@@ -186,8 +186,6 @@ class FrameController extends ChangeNotifier {
       'felm': felm,
     };
 
-    print(input);
-
     Map<String, Object> output = frame2d(input);
 
     final int nx2 = output['nx2'] as int;

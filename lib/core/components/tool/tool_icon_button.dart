@@ -19,7 +19,7 @@ class ToolIconButton extends StatelessWidget {
     return BaseIconButton(
       onPressed: onPressed, 
       icon: icon,
-      message: message,
+      tooltip: message,
       width: ToolDimens.buttonWidth,
       height: ToolDimens.buttonHeight,
       borderWidth: ToolDimens.buttonBorderWidth,

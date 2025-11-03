@@ -48,7 +48,9 @@ class BaseDimens {
   static const double buttonWidth = barWidth - barSpacing * 2;
   static const double buttonHeight = barHeight - barSpacing * 2;
   static const double buttonBorderWidth = 0.0;
-  static const double buttonBorderRadius = 0.0; // ボタンの角の丸み
+  static final BorderRadius buttonBorderRadius = BorderRadius.circular(10);
+
+  static final BorderRadius dialogBorderRadius = buttonBorderRadius;
 }
 
 class ToolDimens {

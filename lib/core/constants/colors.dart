@@ -22,6 +22,13 @@ class MyColors {
   static const Color canvasBackground = Color.fromARGB(255, 235, 235, 235);
 }
 
+class BaseColors {
+  static const Color buttonBackground = Colors.transparent;
+  static const Color buttonBorder = Colors.transparent;
+
+  static const Color dialogBackground = Colors.white;
+}
+
 class ToolColors {
   static const Color toolBarBackground = Color.fromARGB(255, 255, 255, 255);
   
