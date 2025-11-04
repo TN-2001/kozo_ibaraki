@@ -49,6 +49,7 @@ class BaseDimens {
   static const double buttonHeight = barHeight - barSpacing * 2;
   static const double buttonBorderWidth = 0.0;
   static final BorderRadius buttonBorderRadius = BorderRadius.circular(10);
+  static const EdgeInsets buttonTextPadding = EdgeInsets.only(left: 16, right: 16);
 
   static final BorderRadius dialogBorderRadius = buttonBorderRadius;
 }

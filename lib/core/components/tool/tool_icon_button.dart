@@ -21,7 +21,6 @@ class ToolIconButton extends StatelessWidget {
       icon: icon,
       tooltip: message,
       width: ToolDimens.buttonWidth,
-      height: ToolDimens.buttonHeight,
       borderWidth: ToolDimens.buttonBorderWidth,
       borderColor: ToolColors.buttonBorder,
     );

@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/core/constants/constant.dart';
 
-class BaseIconButton extends StatelessWidget {
-  BaseIconButton({ 
+class BaseOutlineButton extends StatelessWidget {
+  BaseOutlineButton({
     super.key, 
     required this.onPressed, 
-    required this.icon, 
-    this.tooltip = "",
-    this.width = BaseDimens.buttonWidth,
+    required this.label,
+    this.icon,
+    this.height = BaseDimens.buttonHeight,
+    this.constraints = const BoxConstraints(minWidth: double.infinity),
     this.margin = EdgeInsets.zero,
+    this.labelPadding = BaseDimens.buttonTextPadding,
     BorderRadius? borderRadius,
     this.borderWidth = BaseDimens.buttonBorderWidth,
     this.borderColor = BaseColors.buttonBorder,
     this.foregroundColor = BaseColors.buttonForegroundColor,
     this.overlayColor = BaseColors.buttonOverlayColor,
-  }) : borderRadius = borderRadius ?? BaseDimens.buttonBorderRadius;
+  }) : borderRadius = borderRadius ?? BaseDimens.buttonBorderRadius ;
 
   final void Function() onPressed;
-  final Widget icon;
-  final String tooltip;
-  final double width;
+  final Widget label;
+  final Widget? icon;
+  final double? height;
+  final BoxConstraints constraints;
   final EdgeInsets margin;
+  final EdgeInsets labelPadding;
   final BorderRadius borderRadius;
   final double borderWidth;
   final Color borderColor;
@@ -30,14 +34,13 @@ class BaseIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // デザイン
-      width: width,
-      height: width,
+      height: height,
       margin: margin,
+      constraints: constraints,
 
-      
-      child: IconButton(
-        // デザイン
+      child: OutlinedButton(
+        onPressed: onPressed,
+
         style: ButtonStyle(
           side: WidgetStatePropertyAll(
             BorderSide(
@@ -52,13 +55,28 @@ class BaseIconButton extends StatelessWidget {
           ),
           overlayColor: WidgetStatePropertyAll(overlayColor),
           foregroundColor: WidgetStatePropertyAll(foregroundColor),
-        ),
 
-        tooltip: tooltip,
-        // イベント
-        onPressed: onPressed, 
-        // ウィジェット
-        icon: icon,
+          alignment: Alignment.centerLeft,
+          padding: const WidgetStatePropertyAll(EdgeInsets.zero),
+        ), 
+
+        child: Row(
+          children: [
+            if (icon != null)
+            SizedBox(
+              width: height,
+              height: height,
+              child: icon!,
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                left: icon == null ? labelPadding.left : 0,
+                right: labelPadding.right,
+              ),
+              child: label,
+            ),
+          ],
+        ),
       ),
     );
   }

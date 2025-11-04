@@ -5,8 +5,9 @@ export 'base/base_text_button.dart';
 export 'base/base_text_field.dart';
 export 'base/base_checkbox.dart';
 export 'base/base_zoomable_widget.dart';
+export 'base/base_outline_button.dart';
 export 'base/base_icon_button.dart';
-export 'base/base_button.dart';
+export 'base/base_column.dart';
 
 export 'tool/tool_bar.dart';
 export 'tool/tool_bar_divider.dart';
