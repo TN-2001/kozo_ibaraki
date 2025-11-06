@@ -226,7 +226,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
         ),
 
         SettingItem(
-          label: "集中荷重",
+          label: "節点荷重",
           child: Row(
             children: [
               Expanded(
