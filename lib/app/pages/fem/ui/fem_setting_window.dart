@@ -150,6 +150,11 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                     onChanged: (value){
                       setState(() {
                         node.setConst(0, value!);
+                        if (value == true) {
+                          node.setLoad(2, 0);
+                        } else {
+                          node.setLoad(0, 0);
+                        }
                       });
                     },
                   ),
@@ -163,6 +168,11 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                     onChanged: (value){
                       setState(() {
                         node.setConst(1, value!);
+                        if (value == true) {
+                          node.setLoad(3, 0);
+                        } else {
+                          node.setLoad(1, 0);
+                        }
                       });
                     },
                   ),

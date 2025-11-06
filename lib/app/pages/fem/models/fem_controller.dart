@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/pages/fem/models/fem2d.dart';
 import 'package:kozo_ibaraki/app/pages/fem/models/fem_data.dart';
 import 'package:kozo_ibaraki/core/utils/math_utils.dart';
+import 'package:kozo_ibaraki/core/utils/string_utils.dart';
 export 'package:kozo_ibaraki/app/pages/fem/models/fem_data.dart';
 
 class FemController extends ChangeNotifier {
@@ -82,6 +83,14 @@ class FemController extends ChangeNotifier {
       for (int i = 0; i < data.elemCount; i++) {
         _resultMin = min(resultMin, data.getElem(i).getResult(resultIndex));
         _resultMax = max(resultMax, data.getElem(i).getResult(resultIndex));
+      }
+    }
+
+    if (StringUtils.doubleToString(_resultMax, 3) == StringUtils.doubleToString(_resultMin, 3)) {
+      // 最大値と最小値が同じ場合、結果を修正
+      double value = _resultMax;
+      for (int i = 0; i < data.elemCount; i++) {
+        data.getElem(i).setResult(resultIndex, value);
       }
     }
 

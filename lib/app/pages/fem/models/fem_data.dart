@@ -186,7 +186,7 @@ class Elem extends ChangeNotifier{
   int _number = 0;
   int _nodeCount = 3; // 三角形か四角形か
   final List<Node?> _nodes = [null, null, null, null];
-  final List<double> _rigids = [1.0, 0.5, 0.0, 0.0, 1.0]; // 0:ヤング率、1：ポアソン比, 物体力（2:bx, 3:by）,4:長さ 
+  final List<double> _rigids = [1.0, 0.3, 0.0, 0.0, 1.0]; // 0:ヤング率、1：ポアソン比, 物体力（2:bx, 3:by）,4:長さ 
   int _plane = 0; // 0=平面応力, 1=平面ひずみ
   // 応力（0:X方向、1:Y方向、2:せん断、3:Z方向、4:最大主、5:最小主、6:von-Mises相当）, ひずみ（7:X方向、8:Y方向、9:工学せん断、10:Z方向）
   final List<double> _results = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]; 
