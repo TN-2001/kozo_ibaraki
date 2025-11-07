@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kozo_ibaraki/app/utils/common_painter.dart';
+import 'package:kozo_ibaraki/app/utils/app_canvas_utils.dart';
 import 'package:kozo_ibaraki/core/constants/constant.dart';
 
 class BeamCanvasUi extends StatefulWidget {
@@ -47,7 +47,7 @@ class BeamCanvasPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // 座標系
-    CommonPainter.drawCoordinate(canvas);
+    AppCanvasUtils.drawCoordinate(canvas);
   }
 
   @override

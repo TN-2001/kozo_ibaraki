@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/models/setting.dart';
 import 'package:kozo_ibaraki/app/pages/frame/models/frame_controller.dart';
-import 'package:kozo_ibaraki/app/utils/common_painter.dart';
+import 'package:kozo_ibaraki/app/utils/app_canvas_utils.dart';
 import 'package:kozo_ibaraki/core/utils/camera.dart';
 import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
 import 'package:kozo_ibaraki/core/utils/string_utils.dart';
@@ -287,7 +287,7 @@ class FramePainter extends CustomPainter {
       }
 
       if (node.getConst(0) && node.getConst(1) && node.getConst(2)) {
-        CommonPainter.drawWallConst(
+        AppCanvasUtils.drawWallConst(
           canvas, 
           camera.worldToScreen(pos),
           size: data.nodeRadius * 15 * camera.scale,
@@ -295,7 +295,7 @@ class FramePainter extends CustomPainter {
         );
       }
       else if (node.getConst(0) && node.getConst(1)) {
-        CommonPainter.drawTriangleConst(
+        AppCanvasUtils.drawTriangleConst(
           canvas, 
           camera.worldToScreen(pos), 
           size: data.nodeRadius * 3 * camera.scale, 
@@ -306,7 +306,7 @@ class FramePainter extends CustomPainter {
       }
       else if (node.getConst(0)) {
         if (node.pos.dx < center.dx) {
-          CommonPainter.drawTriangleConst(
+          AppCanvasUtils.drawTriangleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: data.nodeRadius * 3 * camera.scale, 
@@ -315,7 +315,7 @@ class FramePainter extends CustomPainter {
             isLine: true
           );
         } else {
-          CommonPainter.drawTriangleConst(
+          AppCanvasUtils.drawTriangleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: data.nodeRadius * 3 * camera.scale, 
@@ -326,7 +326,7 @@ class FramePainter extends CustomPainter {
         }
       } else if (node.getConst(1)) {
         if (node.pos.dy <= center.dy) {
-          CommonPainter.drawTriangleConst(
+          AppCanvasUtils.drawTriangleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: data.nodeRadius * 3 * camera.scale, 
@@ -335,7 +335,7 @@ class FramePainter extends CustomPainter {
             isLine: true
           );
         } else {
-          CommonPainter.drawTriangleConst(
+          AppCanvasUtils.drawTriangleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: data.nodeRadius * 3 * camera.scale, 

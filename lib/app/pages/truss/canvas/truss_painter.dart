@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/models/setting.dart';
 import 'package:kozo_ibaraki/app/pages/truss/models/truss_data.dart';
-import 'package:kozo_ibaraki/app/utils/common_painter.dart';
+import 'package:kozo_ibaraki/app/utils/app_canvas_utils.dart';
 import 'package:kozo_ibaraki/core/utils/camera.dart';
 import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
 import 'package:kozo_ibaraki/core/utils/string_utils.dart';
@@ -222,7 +222,7 @@ class TrussPainter extends CustomPainter {
         }else{
           angle = pi / 2;
         }
-        CommonPainter.drawCircleConst(
+        AppCanvasUtils.drawCircleConst(
           canvas, 
           camera.worldToScreen(Offset(pos.dx, pos.dy)),
           padding: padding,
@@ -237,7 +237,7 @@ class TrussPainter extends CustomPainter {
         }else{
           angle = 0.0;
         }
-        CommonPainter.drawCircleConst(
+        AppCanvasUtils.drawCircleConst(
           canvas, 
           camera.worldToScreen(Offset(pos.dx, pos.dy)),
           padding: padding,

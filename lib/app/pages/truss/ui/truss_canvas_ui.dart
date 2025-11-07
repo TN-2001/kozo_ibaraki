@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/components/color_contour.dart';
 import 'package:kozo_ibaraki/app/models/setting.dart';
 import 'package:kozo_ibaraki/app/pages/truss/models/truss_data.dart';
-import 'package:kozo_ibaraki/app/utils/common_painter.dart';
+import 'package:kozo_ibaraki/app/utils/app_canvas_utils.dart';
 import 'package:kozo_ibaraki/core/constants/constant.dart';
 import 'package:kozo_ibaraki/core/utils/string_utils.dart';
 
@@ -67,7 +67,7 @@ class TrussCanvasPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // 座標系
-    CommonPainter.drawCoordinate(canvas, isEnableRotation: false);
+    AppCanvasUtils.drawCoordinate(canvas, isEnableRotation: false);
   }
 
   @override

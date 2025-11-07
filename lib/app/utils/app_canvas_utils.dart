@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
 
-class CommonPainter {
+class AppCanvasUtils {
   // 座標系
   static void drawCoordinate(Canvas canvas, {bool isEnableRotation = true}) {
     const double lineLength = 40;

@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/models/setting.dart';
 import 'package:kozo_ibaraki/app/pages/fem/models/fem_controller.dart';
-import 'package:kozo_ibaraki/app/utils/common_painter.dart';
+import 'package:kozo_ibaraki/app/utils/app_canvas_utils.dart';
 import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
 import 'package:kozo_ibaraki/core/utils/camera.dart';
 import 'package:kozo_ibaraki/core/utils/string_utils.dart';
@@ -235,7 +235,7 @@ class FemPainter extends CustomPainter {
 
       if (node.getConst(0)) {
         if (pos.dx <= center.dx) {
-          CommonPainter.drawCircleConst(
+          AppCanvasUtils.drawCircleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: nodeRadius * 1.5 * camera.scale, 
@@ -243,7 +243,7 @@ class FemPainter extends CustomPainter {
             angle: pi / 2, 
           );
         } else {
-          CommonPainter.drawCircleConst(
+          AppCanvasUtils.drawCircleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: nodeRadius * 1.5 * camera.scale, 
@@ -254,7 +254,7 @@ class FemPainter extends CustomPainter {
       }
       if (node.getConst(1)) {
         if (pos.dy <= center.dy) {
-          CommonPainter.drawCircleConst(
+          AppCanvasUtils.drawCircleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: nodeRadius * 1.5 * camera.scale, 
@@ -262,7 +262,7 @@ class FemPainter extends CustomPainter {
             angle: 0, 
           );
         } else {
-          CommonPainter.drawCircleConst(
+          AppCanvasUtils.drawCircleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: nodeRadius * 1.5 * camera.scale, 
