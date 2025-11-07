@@ -235,7 +235,6 @@ class FemPainter extends CustomPainter {
 
       if (node.getConst(0)) {
         if (pos.dx <= center.dx) {
-          CanvasUtils.roller(canvas, Offset(pos.dx - 10, pos.dy), pi/2, radius: 7.5);
           CommonPainter.drawCircleConst(
             canvas, 
             camera.worldToScreen(pos), 
@@ -328,9 +327,9 @@ class FemPainter extends CustomPainter {
         }
 
         if (loadX > 0) {
-          CanvasUtils.drawArrow2(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         } else {
-          CanvasUtils.drawArrow2(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         }
       }
       if (loadY != 0) {
@@ -351,9 +350,9 @@ class FemPainter extends CustomPainter {
         }
 
         if (loadY > 0) {
-          CanvasUtils.drawArrow2(canvas, bottom, top, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, bottom, top, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         } else {
-          CanvasUtils.drawArrow2(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         }
       }
     }

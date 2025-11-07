@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/models/setting.dart';
 import 'package:kozo_ibaraki/app/pages/frame/models/frame_controller.dart';
+import 'package:kozo_ibaraki/app/utils/common_painter.dart';
 import 'package:kozo_ibaraki/core/utils/camera.dart';
 import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
 import 'package:kozo_ibaraki/core/utils/string_utils.dart';
@@ -286,7 +287,7 @@ class FramePainter extends CustomPainter {
       }
 
       if (node.getConst(0) && node.getConst(1) && node.getConst(2)) {
-        CanvasUtils.drawWallConst(
+        CommonPainter.drawWallConst(
           canvas, 
           camera.worldToScreen(pos),
           size: data.nodeRadius * 15 * camera.scale,
@@ -294,7 +295,7 @@ class FramePainter extends CustomPainter {
         );
       }
       else if (node.getConst(0) && node.getConst(1)) {
-        CanvasUtils.drawTriangleConst(
+        CommonPainter.drawTriangleConst(
           canvas, 
           camera.worldToScreen(pos), 
           size: data.nodeRadius * 3 * camera.scale, 
@@ -305,7 +306,7 @@ class FramePainter extends CustomPainter {
       }
       else if (node.getConst(0)) {
         if (node.pos.dx < center.dx) {
-          CanvasUtils.drawTriangleConst(
+          CommonPainter.drawTriangleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: data.nodeRadius * 3 * camera.scale, 
@@ -314,7 +315,7 @@ class FramePainter extends CustomPainter {
             isLine: true
           );
         } else {
-          CanvasUtils.drawTriangleConst(
+          CommonPainter.drawTriangleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: data.nodeRadius * 3 * camera.scale, 
@@ -325,7 +326,7 @@ class FramePainter extends CustomPainter {
         }
       } else if (node.getConst(1)) {
         if (node.pos.dy <= center.dy) {
-          CanvasUtils.drawTriangleConst(
+          CommonPainter.drawTriangleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: data.nodeRadius * 3 * camera.scale, 
@@ -334,7 +335,7 @@ class FramePainter extends CustomPainter {
             isLine: true
           );
         } else {
-          CanvasUtils.drawTriangleConst(
+          CommonPainter.drawTriangleConst(
             canvas, 
             camera.worldToScreen(pos), 
             size: data.nodeRadius * 3 * camera.scale, 
@@ -373,12 +374,12 @@ class FramePainter extends CustomPainter {
           final Offset left = camera.worldToScreen(Offset(pos.dx + data.nodeRadius, pos.dy));
           final Offset right = Offset(left.dx + lineLength, left.dy);
 
-          CanvasUtils.drawArrow2(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         } else {
           final Offset right = camera.worldToScreen(Offset(pos.dx - data.nodeRadius, pos.dy));
           final Offset left = Offset(right.dx - lineLength, right.dy);
 
-          CanvasUtils.drawArrow2(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         }
       }
 
@@ -387,12 +388,12 @@ class FramePainter extends CustomPainter {
           final Offset end = camera.worldToScreen(Offset(pos.dx, pos.dy - data.nodeRadius));
           final Offset start = Offset(end.dx, end.dy + lineLength);
 
-          CanvasUtils.drawArrow2(canvas, start, end, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, start, end, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         } else {
           final Offset end = camera.worldToScreen(Offset(pos.dx, pos.dy + data.nodeRadius));
           final Offset start = Offset(end.dx, end.dy - lineLength);
 
-          CanvasUtils.drawArrow2(canvas, start, end, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, start, end, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         }
       }
 
@@ -636,9 +637,9 @@ class FramePainter extends CustomPainter {
           Offset right = Offset(left.dx + lineLength, left.dy);
 
           if (node.getResult(0) > 0) {
-            CanvasUtils.drawArrow2(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           } else {
-            CanvasUtils.drawArrow2(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
           CanvasUtils.drawText(canvas, right, text, alignment: Alignment.centerLeft);
@@ -647,9 +648,9 @@ class FramePainter extends CustomPainter {
           Offset left = Offset(right.dx - lineLength, right.dy);
 
           if (node.getResult(0) > 0) {
-            CanvasUtils.drawArrow2(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           } else {
-            CanvasUtils.drawArrow2(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
           CanvasUtils.drawText(canvas, left, text, alignment: Alignment.centerRight);
@@ -664,9 +665,9 @@ class FramePainter extends CustomPainter {
           Offset top = Offset(bottom.dx, bottom.dy - lineLength);
 
           if (node.getResult(1) > 0) {
-            CanvasUtils.drawArrow2(canvas, bottom, top, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, bottom, top, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           } else {
-            CanvasUtils.drawArrow2(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
           CanvasUtils.drawText(canvas, top, text, alignment: Alignment.bottomCenter);
@@ -675,9 +676,9 @@ class FramePainter extends CustomPainter {
           Offset bottom = Offset(top.dx, top.dy + lineLength);
           
           if (node.getResult(1) > 0) {
-            CanvasUtils.drawArrow2(canvas, bottom, top, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, bottom, top, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           } else {
-            CanvasUtils.drawArrow2(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
           CanvasUtils.drawText(canvas, bottom, text, alignment: Alignment.topCenter);

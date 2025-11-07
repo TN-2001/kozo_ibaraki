@@ -14,11 +14,13 @@ class CommonPainter {
     final Offset topPos = Offset(startPos.dx, startPos.dy - lineLength);
     final Offset rightPos = Offset(startPos.dx + lineLength, startPos.dy);
 
-    CanvasUtils.drawArrow2(
+    canvas.drawCircle(startPos, lineWidth / 2, Paint()..color = Colors.black..style = PaintingStyle.fill);
+
+    CanvasUtils.drawArrow(
       canvas, startPos, topPos, 
       headSize: headSize, lineWidth: lineWidth, color: arrowColor
     );
-    CanvasUtils.drawArrow2(
+    CanvasUtils.drawArrow(
       canvas, startPos, rightPos, 
       headSize: headSize, lineWidth: lineWidth, color: arrowColor
     );
@@ -76,6 +78,76 @@ class CommonPainter {
       );
     }
     
+    canvas.restore();
+  }
+
+  // 三角支点
+  static void drawTriangleConst(Canvas canvas, Offset pos, 
+    {double size = 10, double padding = 0, double angle = 0.0, bool isLine = false}) {
+
+    canvas.save();
+    canvas.translate(pos.dx, pos.dy);
+    canvas.rotate(angle);
+    canvas.translate(0, padding);
+
+    final double triangleSize = size;
+    final double lineSize = size * 2;
+
+    Paint paint = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+    
+    Paint paintTriangle = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill
+      ..strokeWidth = 1.0;
+
+    Path path = Path()
+      ..moveTo(0, 0)
+      ..lineTo(- triangleSize / 2, triangleSize / 2 * sqrt(2))
+      ..lineTo(  triangleSize / 2, triangleSize / 2 * sqrt(2))
+      ..close();
+    canvas.drawPath(path, paintTriangle);
+    canvas.drawPath(path, paint);
+
+    if (isLine) {
+      canvas.drawLine(
+        Offset(- lineSize / 2, triangleSize),
+        Offset(  lineSize / 2, triangleSize),
+        paint,
+      );
+    }
+    
+    canvas.restore();
+  }
+
+  // 壁支点
+  static void drawWallConst(Canvas canvas, Offset pos, 
+    {double size = 10, double angle = 0.0}) {
+
+    canvas.save();
+    canvas.translate(pos.dx, pos.dy);
+    canvas.rotate(angle);
+    
+    Color wallColor = Colors.grey;
+    Color lineColor = Colors.black;
+
+    Paint wallPaint = Paint()..color = wallColor;
+    Paint linePaint = Paint()
+      ..color = lineColor
+      ..strokeWidth = 2.0;
+
+    canvas.drawRect(
+      Rect.fromLTRB(- size / 2, 0, size / 2, size / 4),
+      wallPaint
+    );
+    canvas.drawLine(
+      Offset(- size / 2, 0),
+      Offset(  size / 2, 0),
+      linePaint
+    );
+
     canvas.restore();
   }
 }

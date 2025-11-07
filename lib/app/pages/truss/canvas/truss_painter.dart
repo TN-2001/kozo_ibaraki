@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/models/setting.dart';
 import 'package:kozo_ibaraki/app/pages/truss/models/truss_data.dart';
+import 'package:kozo_ibaraki/app/utils/common_painter.dart';
 import 'package:kozo_ibaraki/core/utils/camera.dart';
 import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
 import 'package:kozo_ibaraki/core/utils/string_utils.dart';
@@ -39,8 +42,8 @@ class TrussPainter extends CustomPainter {
 
     if (!data.isCalculation) {
       _drawElem(canvas, size, elems, false); // 要素
-      _drawConst(canvas, size, nodes, false); // 節点拘束拘束
       _drawPower(canvas, size, nodes, false); // 節点荷重
+      _drawConst(canvas, size, nodes, false); // 節点拘束拘束
       _drawNode(canvas, size, nodes, false); // 節点
       if (Setting.isNodeNumber) {
         _drawNodeNumber(canvas, nodes); // 節点番号
@@ -55,8 +58,8 @@ class TrussPainter extends CustomPainter {
       } else {
         _drawElem(canvas, size, elems, true, isNormalColor: true); // 要素（節点結果表示時）
       }
-      _drawConst(canvas, size, nodes, true); // 節点拘束拘束
       _drawPower(canvas, size, nodes, true); // 節点荷重
+      _drawConst(canvas, size, nodes, true); // 節点拘束拘束
       _drawNode(canvas, size, nodes, true); // 節点
       if (Setting.isNodeNumber) {
         _drawNodeNumber(canvas, nodes, isAfter: true); // 節点番号
@@ -204,12 +207,8 @@ class TrussPainter extends CustomPainter {
       return;
     }
 
-    final double lineLength = data.nodeRadius * 4;
-
-    Paint paint = Paint()
-      ..color = const Color.fromARGB(255, 0, 0, 0)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+    final double padding = data.nodeRadius * camera.scale;
+    final double size = data.nodeRadius * 1.5 * camera.scale;
 
     for(int i = 0; i < nodes.length; i++){
       Offset pos = nodes[i].pos;
@@ -217,38 +216,34 @@ class TrussPainter extends CustomPainter {
         pos = nodes[i].afterPos;
       }
       if(nodes[i].constXY[0]){
+        double angle;
         if(pos.dx > data.rect.center.dx){
-          canvas.drawCircle(camera.worldToScreen(Offset(pos.dx+data.nodeRadius*1.7, pos.dy)), data.nodeRadius * camera.scale * 0.75, paint);
-          canvas.drawLine(
-            camera.worldToScreen(Offset(pos.dx+data.nodeRadius * 2.5, pos.dy-lineLength/2)), 
-            camera.worldToScreen(Offset(pos.dx+data.nodeRadius * 2.5, pos.dy+lineLength/2)), 
-            paint
-          );
+          angle = - pi / 2;
         }else{
-          canvas.drawCircle(camera.worldToScreen(Offset(pos.dx-data.nodeRadius*1.75, pos.dy)), data.nodeRadius * camera.scale * 0.75, paint);
-          canvas.drawLine(
-            camera.worldToScreen(Offset(pos.dx-data.nodeRadius * 2.5, pos.dy-lineLength/2)), 
-            camera.worldToScreen(Offset(pos.dx-data.nodeRadius * 2.5, pos.dy+lineLength/2)), 
-            paint
-          );
+          angle = pi / 2;
         }
+        CommonPainter.drawCircleConst(
+          canvas, 
+          camera.worldToScreen(Offset(pos.dx, pos.dy)),
+          padding: padding,
+          size: size,
+          angle: angle,
+        );
       }
       if(nodes[i].constXY[1]){
+        double angle;
         if(pos.dy > data.rect.center.dy){
-          canvas.drawCircle(camera.worldToScreen(Offset(pos.dx, pos.dy+data.nodeRadius*1.75)), data.nodeRadius * camera.scale * 0.75, paint);
-          canvas.drawLine(
-            camera.worldToScreen(Offset(pos.dx-lineLength/2, pos.dy+data.nodeRadius * 2.5)), 
-            camera.worldToScreen(Offset(pos.dx+lineLength/2, pos.dy+data.nodeRadius * 2.5)), 
-            paint
-          );
+          angle = pi;
         }else{
-          canvas.drawCircle(camera.worldToScreen(Offset(pos.dx, pos.dy-data.nodeRadius*1.75)), data.nodeRadius * camera.scale * 0.75, paint);
-          canvas.drawLine(
-            camera.worldToScreen(Offset(pos.dx-lineLength/2, pos.dy-data.nodeRadius * 2.5)), 
-            camera.worldToScreen(Offset(pos.dx+lineLength/2, pos.dy-data.nodeRadius * 2.5)), 
-            paint
-          );
+          angle = 0.0;
         }
+        CommonPainter.drawCircleConst(
+          canvas, 
+          camera.worldToScreen(Offset(pos.dx, pos.dy)),
+          padding: padding,
+          size: size,
+          angle: angle,
+        );
       }
     }
   }
