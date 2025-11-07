@@ -207,7 +207,7 @@ class FemController extends ChangeNotifier {
       prop[i][0] = elem.getRigid(0);
       prop[i][1] = elem.getRigid(1);
       body[i][0] = elem.getRigid(2);
-      body[i][0] = elem.getRigid(3);
+      body[i][1] = elem.getRigid(3);
     }
 
     Map<String, Object> input = {
@@ -245,6 +245,8 @@ class FemController extends ChangeNotifier {
 
       maxBecPos = max(maxBecPos, ui.abs());
       maxBecPos = max(maxBecPos, vi.abs());
+
+      print("Node ${ix + 1}: u=$ui, v=$vi");
 
       node.setBecPos(Offset(ui, vi));
     }

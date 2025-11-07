@@ -54,6 +54,13 @@ class CommonPainter {
     final double lineSize = size * 2;
     Color color = Colors.black;
 
+    Paint circlePaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill
+      ..strokeWidth = 1.0;
+
+    canvas.drawCircle(Offset(0, radius), radius, circlePaint);
+
     Paint paint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke

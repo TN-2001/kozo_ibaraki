@@ -312,6 +312,7 @@ class BeamPainter extends CustomPainter {
         path.lineTo(cpos.dx-10, cpos.dy+25);
         path.lineTo(cpos.dx+10, cpos.dy+25);
         path.close();
+        canvas.drawPath(path, Paint()..style = PaintingStyle.fill..color = Colors.white);
         canvas.drawPath(path, paint);
 
         if (!nodes[i].constXYR[0]) { // 下線

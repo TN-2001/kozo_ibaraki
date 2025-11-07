@@ -21,8 +21,8 @@ class FemPainter extends CustomPainter {
 
     if (!controller.isCalculated) {
       _drawElem(canvas); // 要素
-      _drawConst(canvas); // 節点拘束
       _drawPower(canvas); // 荷重
+      _drawConst(canvas); // 節点拘束
       _drawNode(canvas); // 節点
       if (Setting.isNodeNumber) _drawNodeNumber(canvas); // 節点番号
       if (Setting.isElemNumber) _drawElemNumber(canvas); // 要素番号 
@@ -30,8 +30,8 @@ class FemPainter extends CustomPainter {
     else{
       // _drawElem(canvas); // 要素
       _drawElemResult(canvas);
-      _drawConst(canvas); // 節点拘束
       _drawPower(canvas); // 荷重
+      _drawConst(canvas); // 節点拘束
       _drawNode(canvas); // 節点
       if (Setting.isResultValue) _drawElemResultValue(canvas); // 要素の結果値
       if (Setting.isNodeNumber) _drawNodeNumber(canvas); // 節点番号
@@ -313,12 +313,18 @@ class FemPainter extends CustomPainter {
       if (loadX != 0) {
         Offset left;
         Offset right; 
+        double newPadding = padding;
+        double newLineLength = lineLength;
+        if (node.getConst(0)) {
+          newPadding += nodeRadius;
+          newLineLength -= nodeRadius * camera.scale;
+        }
         if (pos.dx <= center.dx) {
-          right = camera.worldToScreen(Offset(pos.dx - padding, pos.dy));
-          left = Offset(right.dx - lineLength, right.dy);
+          right = camera.worldToScreen(Offset(pos.dx - newPadding, pos.dy));
+          left = Offset(right.dx - newLineLength, right.dy);
         } else {
-          left = camera.worldToScreen(Offset(pos.dx + padding, pos.dy));
-          right = Offset(left.dx + lineLength, left.dy);
+          left = camera.worldToScreen(Offset(pos.dx + newPadding, pos.dy));
+          right = Offset(left.dx + newLineLength, left.dy);
         }
 
         if (loadX > 0) {
@@ -330,12 +336,18 @@ class FemPainter extends CustomPainter {
       if (loadY != 0) {
         final Offset bottom;
         final Offset top;
+        double newPadding = padding;
+        double newLineLength = lineLength;
+        if (node.getConst(1)) {
+          newPadding += nodeRadius;
+          newLineLength -= nodeRadius * camera.scale;
+        }
         if (pos.dy <= center.dy) {
-          top = camera.worldToScreen(Offset(pos.dx, pos.dy - padding));
-          bottom = Offset(top.dx, top.dy + lineLength);
+          top = camera.worldToScreen(Offset(pos.dx, pos.dy - newPadding));
+          bottom = Offset(top.dx, top.dy + newLineLength);
         } else {
-          bottom = camera.worldToScreen(Offset(pos.dx, pos.dy + padding));
-          top = Offset(bottom.dx, bottom.dy - lineLength);
+          bottom = camera.worldToScreen(Offset(pos.dx, pos.dy + newPadding));
+          top = Offset(bottom.dx, bottom.dy - newLineLength);
         }
 
         if (loadY > 0) {
