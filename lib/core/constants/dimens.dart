@@ -37,6 +37,9 @@ class MyDimens {
 
 class BaseDimens {
   static const double fontSize = 16.0;
+  static const double titleFontSize = 20.0;
+  static const double spacing = 8.0;
+  static const EdgeInsets padding = EdgeInsets.all(spacing);
 
   static const double barWidth = 52.0;
   static const double barHeight = 52.0;
@@ -51,6 +54,7 @@ class BaseDimens {
   static final BorderRadius buttonBorderRadius = BorderRadius.circular(10);
   static const EdgeInsets buttonTextPadding = EdgeInsets.only(left: 16, right: 16);
 
+  static const BoxConstraints dialogConstraints = BoxConstraints(maxWidth: 700, maxHeight: 600,);
   static final BorderRadius dialogBorderRadius = buttonBorderRadius;
 }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kozo_ibaraki/app/pages/beam/ui/beam_help.dart';
 import 'package:kozo_ibaraki/app/pages/drawer/common_drawer.dart';
 import 'package:kozo_ibaraki/app/pages/beam/canvas/beam_canvas.dart';
 import 'package:kozo_ibaraki/app/pages/beam/models/beam_data.dart';
@@ -7,7 +8,6 @@ import 'package:kozo_ibaraki/app/pages/beam/ui/beam_canvas_ui.dart';
 import 'package:kozo_ibaraki/app/pages/beam/ui/beam_setting_window.dart';
 import 'package:kozo_ibaraki/core/components/component.dart';
 import 'package:kozo_ibaraki/core/utils/status_bar.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 
 class BeamPage extends StatefulWidget {
@@ -74,31 +74,7 @@ class _BeamPageState extends State<BeamPage> {
           showDialog(
             context: context,
             builder: (context) {
-              return AlertDialog(
-                title: const Text("使い方（動画リンク）"),
-                content: SizedBox(
-                  width: MediaQuery.sizeOf(context).width / 1.5,
-                  height: MediaQuery.sizeOf(context).width / 1.5 /16*9,
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap: (){
-                        final url = Uri.parse('https://youtu.be/44JrBWd-lS4');
-                        launchUrl(url);
-                      },
-                      child: Image.asset(
-                        "assets/images/youtube/1.jpg",
-                      )
-                    ),
-                  ),
-                ),
-                actions: [
-                  TextButton(
-                    child: const Text("閉じる"),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              );
+              return const BeamHelp();
             },
           );
         },

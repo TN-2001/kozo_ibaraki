@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class BaseRow extends StatelessWidget {
-  const BaseRow({
+class BaseListView extends StatelessWidget {
+  const BaseListView({
     super.key,
     required this.children,
     this.margin = EdgeInsets.zero,
@@ -16,8 +16,8 @@ class BaseRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: margin,
-      padding: padding,
-      child: Row(
+      child: ListView(
+        padding: padding,
         children: children,
       ),
     );

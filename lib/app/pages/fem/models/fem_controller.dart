@@ -246,7 +246,7 @@ class FemController extends ChangeNotifier {
       maxBecPos = max(maxBecPos, ui.abs());
       maxBecPos = max(maxBecPos, vi.abs());
 
-      print("Node ${ix + 1}: u=$ui, v=$vi");
+      // print("Node ${ix + 1}: u=$ui, v=$vi");
 
       node.setBecPos(Offset(ui, vi));
     }

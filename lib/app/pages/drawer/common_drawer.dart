@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/pages/drawer/setting_page.dart';
-import 'package:kozo_ibaraki/core/components/base/base_row.dart';
 import 'package:kozo_ibaraki/core/components/component.dart';
 import 'package:kozo_ibaraki/core/constants/constant.dart';
 
@@ -17,7 +16,7 @@ class CommonDrawer extends StatelessWidget {
       child: Column(
         children: [
           BaseRow(
-            margin: const EdgeInsets.all(8),
+            margin: BaseDimens.padding,
             children: [
               BaseIconButton(
                 onPressed: (){
@@ -35,7 +34,7 @@ class CommonDrawer extends StatelessWidget {
           
           Expanded(
             child: ListView(
-              padding: const EdgeInsets.all(8),
+              padding: BaseDimens.padding,
               children: [
                 BaseOutlineButton(
                   label: const Text("ホーム"),
@@ -142,7 +141,7 @@ class CommonDrawer extends StatelessWidget {
           const BaseDivider(),
 
           BaseOutlineButton(
-            margin: const EdgeInsets.all(8),
+            margin: BaseDimens.padding,
             label: const Text("設定"),
             icon: const Icon(Icons.settings),
             onPressed: () {

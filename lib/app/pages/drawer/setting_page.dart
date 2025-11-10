@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/models/setting.dart';
 import 'package:kozo_ibaraki/core/components/component.dart';
-import 'package:kozo_ibaraki/core/constants/colors.dart';
+import 'package:kozo_ibaraki/core/constants/constant.dart';
 
 class SettingPage extends StatefulWidget {
   const SettingPage({super.key, this.onChangeValue});
@@ -24,98 +24,86 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      backgroundColor: MyColors.baseBackground,
-      child: page(),
-    );
-  }
-
-
-  Widget page() {
-    return Container(
-      constraints: const BoxConstraints(
-        maxHeight: 600,
-        maxWidth: 700,
-      ),
-
+    return BaseDialog(
       child: Column(
         children: [
-
-          ToolBar(
-            color: Colors.transparent,
+          BaseRow(
+            padding: const EdgeInsets.all(BaseDimens.spacing),
             children: [
               const BaseText(
                 "設定",
-                margin: EdgeInsets.only(left: 10),
-                fontSize: 20,
+                margin: EdgeInsets.only(left: BaseDimens.spacing),
+                fontSize: BaseDimens.titleFontSize,
               ),
 
               const Expanded(child: SizedBox()),
 
-              ToolIconButton(
+              BaseIconButton(
                 onPressed: () {
                   Navigator.pop(context);
                 }, 
                 icon: const Icon(Icons.close),
-                message: "閉じる",
+                tooltip: "閉じる",
               ),
             ]
           ),
 
-          const BaseDivider(
-            margin: EdgeInsets.only(left: 10, right: 10),
-          ),
+          const BaseDivider(margin: EdgeInsets.symmetric(horizontal: BaseDimens.spacing),),
 
           Expanded(
-            child: SingleChildScrollView(
-              child: Center(
-                child: Container(
-                  margin: const EdgeInsets.only(left: 10, right: 10),
-                  child: Column(
-                    children: [
-                      SwitchListTile(
-                        value: Setting.isNodeNumber, 
-                        onChanged: (value) {
-                          setState(() {
-                            Setting.setIsNodeNumber(value);
-                            if (onChangeValue != null) {
-                              onChangeValue!();
-                            }
-                          });
-                        }, 
-                        title: const BaseText("節点番号の表示"),
-                      ),
-                      SwitchListTile(
-                        value: Setting.isElemNumber, 
-                        onChanged: (value) {
-                          setState(() {
-                            Setting.setIsElemNumber(value);
-                            if (onChangeValue != null) {
-                              onChangeValue!();
-                            }
-                          });
-                        }, 
-                        title: const BaseText("要素番号の表示"),
-                      ),
-                      SwitchListTile(
-                        value: Setting.isResultValue, 
-                        onChanged: (value) {
-                          setState(() {
-                            Setting.setIsResultValue(value);
-                            if (onChangeValue != null) {
-                              onChangeValue!();
-                            }
-                          });
-                        }, 
-                        title: const BaseText("要素の結果値の表示（FEM）"),
-                      ),
-                    ],
+            child: BaseListView(
+              margin: const EdgeInsets.symmetric(vertical: BaseDimens.spacing),
+              padding: const EdgeInsets.symmetric(horizontal: BaseDimens.spacing),
+              children: [
+                SwitchListTile(
+                  value: Setting.isNodeNumber, 
+                  contentPadding: EdgeInsets.only(
+                    left: BaseDimens.padding.left,
+                    right: BaseDimens.padding.right,
                   ),
+                  onChanged: (value) {
+                    setState(() {
+                      Setting.setIsNodeNumber(value);
+                      if (onChangeValue != null) {
+                        onChangeValue!();
+                      }
+                    });
+                  }, 
+                  title: const BaseText("節点番号の表示"),
                 ),
-              ),
+                SwitchListTile(
+                  value: Setting.isElemNumber, 
+                  contentPadding: EdgeInsets.only(
+                    left: BaseDimens.padding.left,
+                    right: BaseDimens.padding.right,
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      Setting.setIsElemNumber(value);
+                      if (onChangeValue != null) {
+                        onChangeValue!();
+                      }
+                    });
+                  }, 
+                  title: const BaseText("要素番号の表示"),
+                ),
+                SwitchListTile(
+                  value: Setting.isResultValue, 
+                  contentPadding: EdgeInsets.only(
+                    left: BaseDimens.padding.left,
+                    right: BaseDimens.padding.right,
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      Setting.setIsResultValue(value);
+                      if (onChangeValue != null) {
+                        onChangeValue!();
+                      }
+                    });
+                  }, 
+                  title: const BaseText("要素の結果値の表示（FEM）"),
+                ),
+              ],
             ),
           ),
         ],
