@@ -48,10 +48,11 @@ class BaseDimens {
   static const double dividerWidth = 0.0;
   static const EdgeInsets dividerMargin = EdgeInsets.zero;
 
-  static const double buttonWidth = barWidth - barSpacing * 2;
-  static const double buttonHeight = barHeight - barSpacing * 2;
+  static const double buttonWidth = 44.0;
+  static const double buttonHeight = 44.0;
   static const double buttonBorderWidth = 0.0;
   static final BorderRadius buttonBorderRadius = BorderRadius.circular(10);
+  static const EdgeInsets buttonContentPadding = EdgeInsets.symmetric(horizontal: 12.0);
   static const EdgeInsets buttonTextPadding = EdgeInsets.only(left: 16, right: 16);
 
   static const BoxConstraints dialogConstraints = BoxConstraints(maxWidth: 700, maxHeight: 600,);

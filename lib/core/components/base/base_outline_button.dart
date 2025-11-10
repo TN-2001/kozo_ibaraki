@@ -7,6 +7,7 @@ class BaseOutlineButton extends StatelessWidget {
     required this.onPressed, 
     required this.label,
     this.icon,
+    this.enabled = true,
     this.height = BaseDimens.buttonHeight,
     this.constraints = const BoxConstraints(minWidth: double.infinity),
     this.margin = EdgeInsets.zero,
@@ -15,12 +16,14 @@ class BaseOutlineButton extends StatelessWidget {
     this.borderWidth = BaseDimens.buttonBorderWidth,
     this.borderColor = BaseColors.buttonBorder,
     this.foregroundColor = BaseColors.buttonForegroundColor,
+    this.backgroundColor = BaseColors.buttonBackground,
     this.overlayColor = BaseColors.buttonOverlayColor,
   }) : borderRadius = borderRadius ?? BaseDimens.buttonBorderRadius ;
 
   final void Function() onPressed;
   final Widget label;
   final Widget? icon;
+  final bool enabled;
   final double? height;
   final BoxConstraints constraints;
   final EdgeInsets margin;
@@ -29,6 +32,7 @@ class BaseOutlineButton extends StatelessWidget {
   final double borderWidth;
   final Color borderColor;
   final Color foregroundColor;
+  final Color backgroundColor;
   final Color overlayColor;
 
   @override
@@ -39,7 +43,7 @@ class BaseOutlineButton extends StatelessWidget {
       constraints: constraints,
 
       child: OutlinedButton(
-        onPressed: onPressed,
+        onPressed: enabled ? onPressed : null,
 
         style: ButtonStyle(
           side: WidgetStatePropertyAll(
@@ -53,7 +57,8 @@ class BaseOutlineButton extends StatelessWidget {
               borderRadius: borderRadius
             ),
           ),
-          overlayColor: WidgetStatePropertyAll(overlayColor),
+          backgroundColor: WidgetStatePropertyAll(enabled ? backgroundColor : overlayColor),
+          overlayColor: WidgetStatePropertyAll(enabled ? overlayColor : Colors.transparent),
           foregroundColor: WidgetStatePropertyAll(foregroundColor),
 
           alignment: Alignment.centerLeft,

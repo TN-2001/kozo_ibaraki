@@ -2,6 +2,7 @@ export 'base/base_text.dart';
 export 'base/base_divider.dart';
 export 'base/base_text_button.dart';
 export 'base/base_outline_button.dart';
+export 'base/base_list_tile.dart';
 export 'base/base_icon_button.dart';
 export 'base/base_checkbox.dart';
 export 'base/base_text_field.dart';

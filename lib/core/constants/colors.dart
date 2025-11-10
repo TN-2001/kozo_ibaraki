@@ -30,7 +30,7 @@ class BaseColors {
   static const Color buttonBackground = Colors.transparent;
   static const Color buttonBorder = Colors.transparent;
   static const Color buttonForegroundColor = Color.fromARGB(255, 75, 75, 75);
-  static const Color buttonOverlayColor = Color(0x14000000);
+  static const Color buttonOverlayColor = Color.fromARGB(10, 0, 0, 0);
 }
 
 class ToolColors {

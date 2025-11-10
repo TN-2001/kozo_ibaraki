@@ -12,6 +12,8 @@ class CommonDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
+
     return BaseDrawer(
       child: Column(
         children: [
@@ -34,13 +36,13 @@ class CommonDrawer extends StatelessWidget {
           
           Expanded(
             child: ListView(
-              padding: BaseDimens.padding,
-              children: [
-                BaseOutlineButton(
-                  label: const Text("ホーム"),
-                  icon: const Icon(Icons.home),
-                  onPressed: () {
-                    String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
+              padding: const EdgeInsets.all(BaseDimens.spacing),
+              children: [                
+                BaseListTile(
+                  title: const Text("ホーム"),
+                  leading: const Icon(Icons.home),
+                  selected: currentRoute == '/',
+                  onTap: () {
                     String targetRoute = '/';
 
                     Navigator.pop(context);
@@ -51,29 +53,24 @@ class CommonDrawer extends StatelessWidget {
                 ),
 
                 if (onPressedHelpButton != null)
-                BaseOutlineButton(
-                  label: const Text("ヘルプ"),
-                  icon: const Icon(Icons.help),
-                  onPressed: () {
+                BaseListTile(
+                  title: const Text("ヘルプ"),
+                  leading: const Icon(Icons.help),
+                  onTap: () {
                     Navigator.pop(context);
                     onPressedHelpButton!();
                   },
                 ),
 
-                Container(
-                  height: BaseDimens.buttonHeight,
-                  padding: BaseDimens.buttonTextPadding,
-                  alignment: Alignment.centerLeft,
-                  child: const Text(
-                    "アプリ",
-                    style: TextStyle(color: Colors.grey),
-                  ),
+                BaseListTile(
+                  title: const Text("アプリ"),
+                  enabled: false,
                 ),
 
-                BaseOutlineButton(
-                  label: const Text("はりの構造解析"),
-                  onPressed: () {
-                    String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
+                BaseListTile(
+                  title: const Text("はりの構造解析"),
+                  selected: currentRoute == '/beam',
+                  onTap: () {
                     String targetRoute = '/beam';
 
                     Navigator.pop(context);
@@ -83,10 +80,10 @@ class CommonDrawer extends StatelessWidget {
                   },
                 ),
 
-                BaseOutlineButton(
-                  label: const Text("トラスの構造解析"),
-                  onPressed: () {
-                    String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
+                BaseListTile(
+                  title: const Text("トラスの構造解析"),
+                  selected: currentRoute == '/truss',
+                  onTap: () {
                     String targetRoute = '/truss';
 
                     Navigator.pop(context);
@@ -96,10 +93,10 @@ class CommonDrawer extends StatelessWidget {
                   },
                 ),
 
-                BaseOutlineButton(
-                  label: const Text("ラーメンの構造解析"),
-                  onPressed: () {
-                    String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
+                BaseListTile(
+                  title: const Text("ラーメンの構造解析"),
+                  selected: currentRoute == '/frame',
+                  onTap: () {
                     String targetRoute = '/frame';
 
                     Navigator.pop(context);
@@ -109,10 +106,10 @@ class CommonDrawer extends StatelessWidget {
                   },
                 ),
 
-                BaseOutlineButton(
-                  label: const Text("有限要素解析"),
-                  onPressed: () {
-                    String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
+                BaseListTile(
+                  title: const Text("有限要素解析"),
+                  selected: currentRoute == '/fem',
+                  onTap: () {
                     String targetRoute = '/fem';
 
                     Navigator.pop(context);
@@ -122,10 +119,10 @@ class CommonDrawer extends StatelessWidget {
                   },
                 ),
 
-                BaseOutlineButton(
-                  label: const Text("橋づくりゲーム"),
-                  onPressed: () {
-                    String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
+                BaseListTile(
+                  title: const Text("橋づくりゲーム"),
+                  selected: currentRoute == '/bridgegame',
+                  onTap: () {
                     String targetRoute = '/bridgegame';
 
                     Navigator.pop(context);
@@ -140,11 +137,11 @@ class CommonDrawer extends StatelessWidget {
 
           const BaseDivider(),
 
-          BaseOutlineButton(
-            margin: BaseDimens.padding,
-            label: const Text("設定"),
-            icon: const Icon(Icons.settings),
-            onPressed: () {
+          BaseListTile(
+            margin: const EdgeInsets.all(BaseDimens.spacing),
+            title: const Text("設定"),
+            leading: const Icon(Icons.settings),
+            onTap: () {
               Navigator.pop(context);
               showDialog(
                 context: context,
