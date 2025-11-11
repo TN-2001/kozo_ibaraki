@@ -371,9 +371,18 @@ class FemPainter extends CustomPainter {
     double resultMax = controller.resultMax;
     double resultMin = controller.resultMin;
 
+    bool isCanGetColor = false;
+    if (controller.resultMax != 0 || controller.resultMin != 0) {
+      if (StringUtils.doubleToString(controller.resultMax, 3) == StringUtils.doubleToString(controller.resultMin, 3)) {
+        paint.color = CanvasUtils.getColor(50);
+      } else {
+        isCanGetColor = true;
+      }
+    }
+
     for (int i = 0; i < data.elemCount; i++) {
       Elem elem = data.getElem(i);
-      if (controller.resultMax != 0 || controller.resultMin != 0) {
+      if (isCanGetColor) {
         paint.color = CanvasUtils.getColor(
           (elem.getResult(resultIndex) - resultMin) / (resultMax - resultMin) * 100);
       }
