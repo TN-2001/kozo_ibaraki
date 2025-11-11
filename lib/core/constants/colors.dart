@@ -23,14 +23,17 @@ class MyColors {
 }
 
 class BaseColors {
+  static const Color font = Color.fromARGB(255, 75, 75, 75);
+  static const Color icon = Color.fromARGB(255, 75, 75, 75);
+
   static const Color drawerBackground = Colors.white;
 
   static const Color dialogBackground = Colors.white;
   
   static const Color buttonBackground = Colors.transparent;
   static const Color buttonBorder = Colors.transparent;
-  static const Color buttonForegroundColor = Color.fromARGB(255, 75, 75, 75);
-  static const Color buttonOverlayColor = Color.fromARGB(10, 0, 0, 0);
+  static const Color buttonContent = Color.fromARGB(255, 75, 75, 75);
+  static const Color buttonHover = Color.fromARGB(10, 0, 0, 0);
 }
 
 class ToolColors {

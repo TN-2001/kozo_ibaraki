@@ -18,10 +18,9 @@ class _BridgegameHelpState extends State<BridgegameHelp> {
           BaseRow(
             padding: const EdgeInsets.all(BaseDimens.spacing),
             children: [
-              const BaseText(
+              BaseText.title(
                 "使い方",
-                margin: EdgeInsets.only(left: BaseDimens.spacing),
-                fontSize: BaseDimens.titleFontSize,
+                margin: const EdgeInsets.only(left: BaseDimens.spacing),
               ),
 
               const Expanded(child: SizedBox()),

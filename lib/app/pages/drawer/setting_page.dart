@@ -30,10 +30,9 @@ class _SettingPageState extends State<SettingPage> {
           BaseRow(
             padding: const EdgeInsets.all(BaseDimens.spacing),
             children: [
-              const BaseText(
+              BaseText.title(
                 "設定",
-                margin: EdgeInsets.only(left: BaseDimens.spacing),
-                fontSize: BaseDimens.titleFontSize,
+                margin: const EdgeInsets.only(left: BaseDimens.spacing),
               ),
 
               const Expanded(child: SizedBox()),
@@ -55,53 +54,53 @@ class _SettingPageState extends State<SettingPage> {
               margin: const EdgeInsets.symmetric(vertical: BaseDimens.spacing),
               padding: const EdgeInsets.symmetric(horizontal: BaseDimens.spacing),
               children: [
-                SwitchListTile(
-                  value: Setting.isNodeNumber, 
-                  contentPadding: EdgeInsets.only(
-                    left: BaseDimens.padding.left,
-                    right: BaseDimens.padding.right,
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      Setting.setIsNodeNumber(value);
-                      if (onChangeValue != null) {
-                        onChangeValue!();
-                      }
-                    });
-                  }, 
+                BaseListTile(
                   title: const BaseText("節点番号の表示"),
-                ),
-                SwitchListTile(
-                  value: Setting.isElemNumber, 
-                  contentPadding: EdgeInsets.only(
-                    left: BaseDimens.padding.left,
-                    right: BaseDimens.padding.right,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: BaseDimens.spacing),
+                  trailing: Switch(
+                    value: Setting.isNodeNumber, 
+                    activeTrackColor: BaseColors.buttonContent,
+                    onChanged: (value) {
+                      setState(() {
+                        Setting.setIsNodeNumber(value);
+                        if (onChangeValue != null) {
+                          onChangeValue!();
+                        }
+                      });
+                    }
                   ),
-                  onChanged: (value) {
-                    setState(() {
-                      Setting.setIsElemNumber(value);
-                      if (onChangeValue != null) {
-                        onChangeValue!();
-                      }
-                    });
-                  }, 
+                ),
+                BaseListTile(
                   title: const BaseText("要素番号の表示"),
-                ),
-                SwitchListTile(
-                  value: Setting.isResultValue, 
-                  contentPadding: EdgeInsets.only(
-                    left: BaseDimens.padding.left,
-                    right: BaseDimens.padding.right,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: BaseDimens.spacing),
+                  trailing: Switch(
+                    value: Setting.isElemNumber, 
+                    activeTrackColor: BaseColors.buttonContent,
+                    onChanged: (value) {
+                      setState(() {
+                        Setting.setIsElemNumber(value);
+                        if (onChangeValue != null) {
+                          onChangeValue!();
+                        }
+                      });
+                    }
                   ),
-                  onChanged: (value) {
-                    setState(() {
-                      Setting.setIsResultValue(value);
-                      if (onChangeValue != null) {
-                        onChangeValue!();
-                      }
-                    });
-                  }, 
+                ),
+                BaseListTile(
                   title: const BaseText("要素の結果値の表示（FEM）"),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: BaseDimens.spacing),
+                  trailing: Switch(
+                    value: Setting.isResultValue, 
+                    activeTrackColor: BaseColors.buttonContent,
+                    onChanged: (value) {
+                      setState(() {
+                        Setting.setIsResultValue(value);
+                        if (onChangeValue != null) {
+                          onChangeValue!();
+                        }
+                      });
+                    }
+                  ),
                 ),
               ],
             ),

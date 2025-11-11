@@ -26,10 +26,9 @@ class CommonDrawer extends StatelessWidget {
                 }, 
                 icon: const Icon(Icons.menu),
               ),
-              const BaseText(
+              BaseText.title(
                 "Kozo App", 
-                margin: EdgeInsets.only(left: 16),
-                fontSize: 20,
+                margin: BaseDimens.buttonContentPadding,
               ),
             ]
           ),

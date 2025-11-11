@@ -37,7 +37,14 @@ class MyDimens {
 
 class BaseDimens {
   static const double fontSize = 16.0;
+  static const FontWeight fontWeight = FontWeight.w400;
+  static const double fontSpacing = 0.0;
   static const double titleFontSize = 20.0;
+  static const FontWeight titleFontWeight = FontWeight.w400;
+  static const double titleFontSpacing = 0.0;
+
+  static const double iconSize = 24.0;
+
   static const double spacing = 8.0;
   static const EdgeInsets padding = EdgeInsets.all(spacing);
 
@@ -48,12 +55,11 @@ class BaseDimens {
   static const double dividerWidth = 0.0;
   static const EdgeInsets dividerMargin = EdgeInsets.zero;
 
-  static const double buttonWidth = 44.0;
-  static const double buttonHeight = 44.0;
+  static const double buttonWidth = 48.0;
+  static const double buttonHeight = 48.0;
   static const double buttonBorderWidth = 0.0;
   static final BorderRadius buttonBorderRadius = BorderRadius.circular(10);
   static const EdgeInsets buttonContentPadding = EdgeInsets.symmetric(horizontal: 12.0);
-  static const EdgeInsets buttonTextPadding = EdgeInsets.only(left: 16, right: 16);
 
   static const BoxConstraints dialogConstraints = BoxConstraints(maxWidth: 700, maxHeight: 600,);
   static final BorderRadius dialogBorderRadius = buttonBorderRadius;

@@ -6,6 +6,7 @@ class BaseListTile extends StatelessWidget {
     super.key,
     this.leading,
     this.title,
+    this.trailing,
     this.onTap,
     this.enabled = true,
     this.selected = false,
@@ -13,17 +14,20 @@ class BaseListTile extends StatelessWidget {
     BorderRadius? borderRadius,
     this.borderWidth = BaseDimens.buttonBorderWidth,
     this.borderColor = BaseColors.buttonBorder,
+    this.contentPadding = BaseDimens.buttonContentPadding
   }) : borderRadius = borderRadius ?? BaseDimens.buttonBorderRadius;
 
   final Widget? leading;
   final Widget? title;
+  final Widget? trailing;
   final void Function()? onTap;
-  final bool enabled;
-  final bool selected;
-  final EdgeInsets margin;
-  final BorderRadius borderRadius;
-  final double borderWidth;
-  final Color borderColor;
+  final bool? enabled;
+  final bool? selected;
+  final EdgeInsets? margin;
+  final BorderRadius? borderRadius;
+  final double? borderWidth;
+  final Color? borderColor;
+  final EdgeInsets? contentPadding;
 
 
   @override
@@ -34,23 +38,30 @@ class BaseListTile extends StatelessWidget {
       child: ListTile(
         leading: leading,
         title: title,
+        trailing: trailing,
         onTap: onTap,
 
-        enabled: enabled,
-        selected: selected,
+        enabled: enabled!,
+        selected: selected!,
 
+        minTileHeight: BaseDimens.buttonHeight,
         shape: RoundedRectangleBorder(
           side: BorderSide(
-            color: borderColor,
-            width: borderWidth,
+            color: borderColor!,
+            width: borderWidth!,
           ),
-          borderRadius: borderRadius,
+          borderRadius: borderRadius!,
         ),
-        iconColor: BaseColors.buttonForegroundColor,
-        textColor: BaseColors.buttonForegroundColor,
-        selectedColor: BaseColors.buttonForegroundColor,
-        selectedTileColor: BaseColors.buttonOverlayColor,
-        contentPadding: BaseDimens.buttonContentPadding,
+        contentPadding: contentPadding,
+        titleTextStyle: const TextStyle(
+          fontSize: BaseDimens.fontSize,
+          fontWeight: BaseDimens.fontWeight,
+          letterSpacing: BaseDimens.fontSpacing,
+        ),
+        iconColor: BaseColors.buttonContent,
+        textColor: BaseColors.buttonContent,
+        selectedColor: BaseColors.buttonContent,
+        selectedTileColor: BaseColors.buttonHover,
       ),
     );
   }

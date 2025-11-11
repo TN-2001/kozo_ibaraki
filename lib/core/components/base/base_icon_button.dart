@@ -12,20 +12,20 @@ class BaseIconButton extends StatelessWidget {
     BorderRadius? borderRadius,
     this.borderWidth = BaseDimens.buttonBorderWidth,
     this.borderColor = BaseColors.buttonBorder,
-    this.foregroundColor = BaseColors.buttonForegroundColor,
-    this.overlayColor = BaseColors.buttonOverlayColor,
+    this.foregroundColor = BaseColors.buttonContent,
+    this.overlayColor = BaseColors.buttonHover,
   }) : borderRadius = borderRadius ?? BaseDimens.buttonBorderRadius;
 
   final void Function() onPressed;
   final Widget icon;
-  final String tooltip;
-  final double width;
-  final EdgeInsets margin;
-  final BorderRadius borderRadius;
-  final double borderWidth;
-  final Color borderColor;
-  final Color foregroundColor;
-  final Color overlayColor;
+  final String? tooltip;
+  final double? width;
+  final EdgeInsets? margin;
+  final BorderRadius? borderRadius;
+  final double? borderWidth;
+  final Color? borderColor;
+  final Color? foregroundColor;
+  final Color? overlayColor;
 
   @override
   Widget build(BuildContext context) {
@@ -41,15 +41,16 @@ class BaseIconButton extends StatelessWidget {
         style: ButtonStyle(
           side: WidgetStatePropertyAll(
             BorderSide(
-              color: borderColor,
-              width: borderWidth,
+              color: borderColor!,
+              width: borderWidth!,
             ),
           ),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
-              borderRadius: borderRadius
+              borderRadius: borderRadius!
             ),
           ),
+          iconSize: const WidgetStatePropertyAll(BaseDimens.iconSize),
           overlayColor: WidgetStatePropertyAll(overlayColor),
           foregroundColor: WidgetStatePropertyAll(foregroundColor),
         ),

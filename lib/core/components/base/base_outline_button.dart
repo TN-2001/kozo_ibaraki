@@ -11,13 +11,13 @@ class BaseOutlineButton extends StatelessWidget {
     this.height = BaseDimens.buttonHeight,
     this.constraints = const BoxConstraints(minWidth: double.infinity),
     this.margin = EdgeInsets.zero,
-    this.labelPadding = BaseDimens.buttonTextPadding,
+    this.labelPadding = BaseDimens.buttonContentPadding,
     BorderRadius? borderRadius,
     this.borderWidth = BaseDimens.buttonBorderWidth,
     this.borderColor = BaseColors.buttonBorder,
-    this.foregroundColor = BaseColors.buttonForegroundColor,
+    this.foregroundColor = BaseColors.buttonContent,
     this.backgroundColor = BaseColors.buttonBackground,
-    this.overlayColor = BaseColors.buttonOverlayColor,
+    this.overlayColor = BaseColors.buttonHover,
   }) : borderRadius = borderRadius ?? BaseDimens.buttonBorderRadius ;
 
   final void Function() onPressed;
