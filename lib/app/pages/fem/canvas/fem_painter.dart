@@ -28,12 +28,20 @@ class FemPainter extends CustomPainter {
       if (Setting.isElemNumber) _drawElemNumber(canvas); // 要素番号 
     }
     else{
-      // _drawElem(canvas); // 要素
-      _drawElemResult(canvas);
+      if (controller.resultIndex <= 10) {
+        _drawElemResult(canvas);
+      } else {
+        _drawElem(canvas);
+      }
       _drawPower(canvas); // 荷重
       _drawConst(canvas); // 節点拘束
       _drawNode(canvas); // 節点
-      if (Setting.isResultValue) _drawElemResultValue(canvas); // 要素の結果値
+      if (controller.resultIndex == 11) {
+        _drawNodeDisp(canvas); // 節点変位
+      }
+      if (controller.resultIndex <= 10) {
+        if (Setting.isResultValue) _drawElemResultValue(canvas); // 要素の結果値
+      }
       if (Setting.isNodeNumber) _drawNodeNumber(canvas); // 節点番号
       if (Setting.isElemNumber) _drawElemNumber(canvas); // 要素番号 
     }
@@ -436,6 +444,27 @@ class FemPainter extends CustomPainter {
       pos = camera.worldToScreen(pos);
 
       CanvasUtils.drawText(canvas, pos, StringUtils.doubleToString(elem.getResult(controller.resultIndex), 3, minAbs: Setting.minAbs), alignment: Alignment.topCenter);
+    }
+  }
+
+  // 節点変位の結果値
+  void _drawNodeDisp(Canvas canvas) {
+    if (data.nodeCount == 0) return;
+
+    // 変位
+    for(int i = 0; i < data.nodeCount; i++){
+      Node node = data.getNode(i);
+      String text = "";
+      if (node.becPos.dx.abs() > Setting.minAbs) {
+        text = "x：${StringUtils.doubleToString(node.becPos.dx, 3)}";
+      }
+      if (node.becPos.dy.abs() > Setting.minAbs) {
+        if (text.isNotEmpty) {
+          text += "\n";
+        }
+        text += "y：${StringUtils.doubleToString(node.becPos.dy, 3)}";
+      }
+      CanvasUtils.drawText(canvas, camera.worldToScreen(node.afterPos), text);
     }
   }
 

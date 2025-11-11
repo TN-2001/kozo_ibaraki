@@ -233,7 +233,7 @@ class _FemBarState extends State<FemBar> {
             onPressed: _onPressedResultDropdown, 
             items: const [
               "X方向応力", "Y方向応力", "せん断応力", "Z方向応力", "最大主応力", "最小主応力", "von-Miss相当応力",
-              "X方向ひずみ", "Y方向ひずみ", "工学せん断ひずみ", "Z方向ひずみ"],
+              "X方向ひずみ", "Y方向ひずみ", "工学せん断ひずみ", "Z方向ひずみ", "節点変位"],
           ),
 
           const ToolBarDivider(isVertivcal: true,),
