@@ -32,7 +32,7 @@ class _SettingPageState extends State<SettingPage> {
             children: [
               BaseText.title(
                 "設定",
-                margin: const EdgeInsets.only(left: BaseDimens.spacing),
+                margin: const EdgeInsets.only(left: BaseDimens.contentSpacing),
               ),
 
               const Expanded(child: SizedBox()),
@@ -47,7 +47,7 @@ class _SettingPageState extends State<SettingPage> {
             ]
           ),
 
-          const BaseDivider(margin: EdgeInsets.symmetric(horizontal: BaseDimens.spacing),),
+          const BaseDivider(margin: EdgeInsets.symmetric(horizontal: BaseDimens.spacing + BaseDimens.contentSpacing),),
 
           Expanded(
             child: BaseListView(
@@ -56,7 +56,6 @@ class _SettingPageState extends State<SettingPage> {
               children: [
                 BaseListTile(
                   title: const BaseText("節点番号の表示"),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: BaseDimens.spacing),
                   trailing: Switch(
                     value: Setting.isNodeNumber, 
                     activeTrackColor: BaseColors.buttonContent,
@@ -72,7 +71,6 @@ class _SettingPageState extends State<SettingPage> {
                 ),
                 BaseListTile(
                   title: const BaseText("要素番号の表示"),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: BaseDimens.spacing),
                   trailing: Switch(
                     value: Setting.isElemNumber, 
                     activeTrackColor: BaseColors.buttonContent,
@@ -88,7 +86,6 @@ class _SettingPageState extends State<SettingPage> {
                 ),
                 BaseListTile(
                   title: const BaseText("要素の結果値の表示（FEM）"),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: BaseDimens.spacing),
                   trailing: Switch(
                     value: Setting.isResultValue, 
                     activeTrackColor: BaseColors.buttonContent,

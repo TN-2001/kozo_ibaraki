@@ -21,7 +21,7 @@ class _TrussHelpState extends State<TrussHelp> {
             children: [
               BaseText.title(
                 "使い方",
-                margin: const EdgeInsets.only(left: BaseDimens.spacing),
+                margin: const EdgeInsets.only(left: BaseDimens.contentSpacing),
               ),
 
               const Expanded(child: SizedBox()),
@@ -36,11 +36,12 @@ class _TrussHelpState extends State<TrussHelp> {
             ],
           ),
 
-          const BaseDivider(margin: EdgeInsets.symmetric(horizontal: BaseDimens.spacing),),
+          const BaseDivider(margin: EdgeInsets.symmetric(horizontal: BaseDimens.spacing + BaseDimens.contentSpacing),),
 
           Expanded(
             child: Container(
-              padding: const EdgeInsets.all(BaseDimens.spacing),
+              margin: BaseDimens.padding,
+              padding: const EdgeInsets.symmetric(horizontal: BaseDimens.contentSpacing),
               alignment: Alignment.center,
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,

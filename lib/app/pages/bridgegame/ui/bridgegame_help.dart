@@ -20,7 +20,7 @@ class _BridgegameHelpState extends State<BridgegameHelp> {
             children: [
               BaseText.title(
                 "使い方",
-                margin: const EdgeInsets.only(left: BaseDimens.spacing),
+                margin: const EdgeInsets.only(left: BaseDimens.contentSpacing),
               ),
 
               const Expanded(child: SizedBox()),
@@ -35,12 +35,12 @@ class _BridgegameHelpState extends State<BridgegameHelp> {
             ],
           ),
 
-          const BaseDivider(margin: EdgeInsets.only(left: BaseDimens.spacing, right: BaseDimens.spacing),),
+          const BaseDivider(margin: EdgeInsets.symmetric(horizontal: BaseDimens.spacing + BaseDimens.contentSpacing),),
 
           Expanded(
             child: BaseListView(
               margin: const EdgeInsets.symmetric(vertical: BaseDimens.spacing),
-              padding: const EdgeInsets.symmetric(horizontal: BaseDimens.spacing),
+              padding: const EdgeInsets.symmetric(horizontal: BaseDimens.spacing + BaseDimens.contentSpacing),
               children: [
                 Image.asset("assets/images/help/help_01.png"),
                 const SizedBox(height: BaseDimens.spacing),

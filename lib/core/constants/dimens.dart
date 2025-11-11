@@ -47,6 +47,8 @@ class BaseDimens {
 
   static const double spacing = 8.0;
   static const EdgeInsets padding = EdgeInsets.all(spacing);
+  static const double contentSpacing = 12.0;
+  static const EdgeInsets contentPadding = EdgeInsets.all(contentSpacing);
 
   static const double barWidth = 52.0;
   static const double barHeight = 52.0;

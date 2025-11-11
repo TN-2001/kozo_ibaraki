@@ -28,7 +28,7 @@ class CommonDrawer extends StatelessWidget {
               ),
               BaseText.title(
                 "Kozo App", 
-                margin: BaseDimens.buttonContentPadding,
+                margin: BaseDimens.contentPadding,
               ),
             ]
           ),
