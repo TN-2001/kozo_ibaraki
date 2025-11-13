@@ -40,7 +40,6 @@ class FramePainter extends CustomPainter {
       if (controller.resultIndex <= 2) {
         if (controller.resultIndex == 2) {
           _drawMoment(canvas);
-          _drawResultElem(canvas, isNormalColor: true, isAfterPos: false);
         } else {
           _drawResultElem(canvas, isNormalColor: false, isAfterPos: false);
         }
@@ -568,10 +567,10 @@ class FramePainter extends CustomPainter {
 
       Offset wpos1 = camera.worldToScreen(pos1);
       Offset wpos2 = camera.worldToScreen(pos2);
-      double bx1 = - elem.getResult(3) * ox / resultMax * camera.scale * 0.2;
-      double by1 = elem.getResult(3) * oy / resultMax * camera.scale * 0.2;
-      double bx2 = - elem.getResult(4) * ox / resultMax * camera.scale * 0.2;
-      double by2 = elem.getResult(4) * oy / resultMax * camera.scale * 0.2;
+      double bx1 = - elem.getResult(3) * ox / resultMax * camera.scale * 0.3;
+      double by1 = elem.getResult(3) * oy / resultMax * camera.scale * 0.3;
+      double bx2 = - elem.getResult(4) * ox / resultMax * camera.scale * 0.3;
+      double by2 = elem.getResult(4) * oy / resultMax * camera.scale * 0.3;
 
       final Path path = Path();
       path.moveTo(wpos1.dx, wpos1.dy);
@@ -593,12 +592,19 @@ class FramePainter extends CustomPainter {
 
       Offset wpos1 = camera.worldToScreen(pos1);
       Offset wpos2 = camera.worldToScreen(pos2);
-      double bx1 = - elem.getResult(3) * ox / resultMax * camera.scale * 0.2;
-      double by1 = elem.getResult(3) * oy / resultMax * camera.scale * 0.2;
-      double bx2 = - elem.getResult(4) * ox / resultMax * camera.scale * 0.2;
-      double by2 = elem.getResult(4) * oy / resultMax * camera.scale * 0.2;
+      double bx1 = - elem.getResult(3) * ox / resultMax * camera.scale * 0.3;
+      double by1 = elem.getResult(3) * oy / resultMax * camera.scale * 0.3;
+      double bx2 = - elem.getResult(4) * ox / resultMax * camera.scale * 0.3;
+      double by2 = elem.getResult(4) * oy / resultMax * camera.scale * 0.3;
       
       canvas.drawLine(Offset(wpos2.dx + bx2, wpos2.dy + by2), Offset(wpos1.dx + bx1, wpos1.dy + by1), Paint());
+    }
+
+    for (int i = 0; i < data.elemCount; i++) {
+      Elem elem = data.getElem(i);
+      Offset pos1 = camera.worldToScreen(elem.getNode(0)!.pos);
+      Offset pos2 = camera.worldToScreen(elem.getNode(1)!.pos);
+      canvas.drawLine(pos1, pos2, Paint()..strokeWidth = 2);
     }
   }
 
@@ -607,8 +613,8 @@ class FramePainter extends CustomPainter {
     rect = Rect.fromLTWH(
       camera.worldToScreen(rect.centerRight).dx, 
       camera.worldToScreen(rect.center).dy - camera.scale * 0.1, 
-      camera.scale * 0.4, 
-      camera.scale * 0.2
+      camera.scale * 0.7, 
+      camera.scale * 0.3
     );
 
     double resultMax = max(controller.resultMax.abs(), controller.resultMin.abs());
