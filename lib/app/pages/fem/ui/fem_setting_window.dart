@@ -111,7 +111,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.setPos(Offset(double.parse(text), node.pos.dy));
-                      } else {
+                      } else if (text == "") {
                         node.setPos(Offset(0, node.pos.dy));
                       }
                     }, 
@@ -126,7 +126,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.setPos(Offset(node.pos.dx, double.parse(text)));
-                      } else {
+                      } else if (text == "") {
                         node.setPos(Offset(node.pos.dx, 0));
                       }
                     }, 
@@ -195,7 +195,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.setLoad(0, double.parse(text));
-                      } else {
+                      } else if (text == "") {
                         node.setLoad(0, 0);
                       }
                     }, 
@@ -213,7 +213,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.setLoad(1, double.parse(text));
-                      } else {
+                      } else if (text == "") {
                         node.setLoad(1, 0);
                       }
                     }, 
@@ -238,7 +238,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.setLoad(2, double.parse(text));
-                      } else {
+                      } else if (text == "") {
                         node.setLoad(2, 0);
                       }
                     }, 
@@ -256,7 +256,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.setLoad(3, double.parse(text));
-                      } else {
+                      } else if (text == "") {
                         node.setLoad(3, 0);
                       }
                     }, 
@@ -391,7 +391,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         } else {
                           elem.setNode(0, null);
                         }
-                      } else {
+                      } else if (text == "") {
                         elem.setNode(0, null);
                       }
                     }, 
@@ -414,7 +414,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         } else {
                           elem.setNode(1, null);
                         }
-                      } else {
+                      } else if (text == "") {
                         elem.setNode(1, null);
                       }
                     }, 
@@ -437,7 +437,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         } else {
                           elem.setNode(2, null);
                         }
-                      } else {
+                      } else if (text == "") {
                         elem.setNode(2, null);
                       }
                     }, 
@@ -461,7 +461,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         } else {
                           elem.setNode(3, null);
                         }
-                      } else {
+                      } else if (text == "") {
                         elem.setNode(3, null);
                       }
                     }, 
@@ -480,7 +480,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
               if (double.tryParse(text) != null) {
                 matElem.setRigid(0, double.parse(text));
                 elem.setRigid(0, double.parse(text));
-              } else {
+              } else if (text == "") {
                 matElem.setRigid(0, 0);
                 elem.setRigid(0, 0);
               }
@@ -496,7 +496,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
               if (double.tryParse(text) != null) {
                 matElem.setRigid(1, double.parse(text));
                 elem.setRigid(1, double.parse(text));
-              } else {
+              } else if (text == "") {
                 matElem.setRigid(1, 0);
                 elem.setRigid(1, 0);
               }
@@ -517,7 +517,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                       if (double.tryParse(text) != null) {
                         matElem.setRigid(2, double.parse(text));
                         elem.setRigid(2, double.parse(text));
-                      } else {
+                      } else if (text == "") {
                         matElem.setRigid(2, 0);
                         elem.setRigid(2, 0);
                       }
@@ -535,7 +535,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                       if (double.tryParse(text) != null) {
                         matElem.setRigid(3, double.parse(text));
                         elem.setRigid(3, double.parse(text));
-                      } else {
+                      } else if (text == "") {
                         matElem.setRigid(3, 0);
                         elem.setRigid(3, 0);
                       }
@@ -564,7 +564,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
             onChanged: (String text) {
               if (double.tryParse(text) != null) {
                 elem.setRigid(4, double.parse(text));
-              } else {
+              } else if (text == "") {
                 elem.setRigid(4, 0);
               }
             }, 

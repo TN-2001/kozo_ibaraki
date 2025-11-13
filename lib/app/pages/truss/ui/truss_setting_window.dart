@@ -113,7 +113,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.pos = Offset(double.parse(text), node.pos.dy);
-                      } else {
+                      } else if (text == "") {
                         node.pos = Offset(0, node.pos.dy);
                       }
                     }, 
@@ -129,7 +129,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.pos = Offset(node.pos.dx, double.parse(text));
-                      } else {
+                      } else if (text == "") {
                         node.pos = Offset(node.pos.dx, 0);
                       }
                     }, 
@@ -187,7 +187,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.loadXY[0] = double.parse(text);
-                      } else {
+                      } else if (text == "") {
                         node.loadXY[0] = 0;
                       }
                     }, 
@@ -204,7 +204,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.loadXY[1] = double.parse(text);
-                      } else {
+                      } else if (text == "") {
                         node.loadXY[1] = 0;
                       }
                     }, 
@@ -275,7 +275,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                         int value = int.parse(text);
                         if(0 <= value-1 && value-1 < _controller.nodeList.length){
                           elem.nodeList[0] = _controller.nodeList[value-1];
-                        } else {
+                        } else if (text == "") {
                           elem.nodeList[0] = null;
                         }
                       }
@@ -294,7 +294,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                         int value = int.parse(text);
                         if(0 <= value-1 && value-1 < _controller.nodeList.length){
                           elem.nodeList[1] = _controller.nodeList[value-1];
-                        } else {
+                        } else if (text == "") {
                           elem.nodeList[1] = null;
                         }
                       }
@@ -313,7 +313,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
             onChanged: (String text) {
               if (double.tryParse(text) != null) {
                 elem.e = double.parse(text);
-              } else {
+              } else if (text == "") {
                 elem.e = 0;
               }
             }, 
@@ -327,7 +327,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
             onChanged: (String text) {
               if (double.tryParse(text) != null) {
                 elem.v = double.parse(text);
-              } else {
+              } else if (text == "") {
                 elem.v = 0;
               }
             }, 

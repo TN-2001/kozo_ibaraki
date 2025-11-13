@@ -111,7 +111,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.changePos(Offset(double.parse(text), node.pos.dy));
-                      } else {
+                      } else if (text == "") {
                         node.changePos(Offset(0, node.pos.dy));
                       }
                     }, 
@@ -127,7 +127,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.changePos(Offset(node.pos.dx, double.parse(text)));
-                      } else {
+                      } else if (text == "") {
                         node.changePos(Offset(node.pos.dx, 0));
                       }
                     }, 
@@ -210,7 +210,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.changeLoad(0, double.parse(text));
-                      } else {
+                      } else if (text == "") {
                         node.changeLoad(0, 0.0);
                       }
                     }, 
@@ -226,7 +226,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                     onChanged: (String text) {
                       if (double.tryParse(text) != null) {
                         node.changeLoad(1, double.parse(text));
-                      } else {
+                      } else if (text == "") {
                         node.changeLoad(1, 0);
                       }
                     }, 
@@ -244,7 +244,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
             onChanged: (String text) {
               if (double.tryParse(text) != null) {
                 node.changeLoad(2, double.parse(text));
-              } else {
+              } else if (text == "") {
                 node.changeLoad(2, 0);
               }
             }, 
@@ -310,7 +310,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                         int value = int.parse(text);
                         if(0 <= value - 1 && value - 1 < _controller.data.nodeCount){
                           elem.changeNode(0, _controller.data.getNode(value - 1));
-                        } else {
+                        } else if (text == "") {
                           elem.changeNode(0, null);
                         }
                       }
@@ -328,7 +328,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                         int value = int.parse(text);
                         if(0 <= value - 1 && value - 1 < _controller.data.nodeCount){
                           elem.changeNode(1, _controller.data.getNode(value - 1));
-                        } else {
+                        } else if (text == "") {
                           elem.changeNode(1, null);
                         }
                       }
@@ -347,7 +347,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
             onChanged: (String text) {
               if (double.tryParse(text) != null) {
                 elem.changeLigid(0, double.parse(text));
-              } else {
+              } else if (text == "") {
                 elem.changeLigid(0, 0.0);
               }
             }, 
@@ -361,7 +361,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
             onChanged: (String text) {
               if (double.tryParse(text) != null) {
                 elem.changeLigid(1, double.parse(text));
-              } else {
+              } else if (text == "") {
                 elem.changeLigid(1, 0.0);
               }
             }, 
@@ -375,7 +375,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
             onChanged: (String text) {
               if (double.tryParse(text) != null) {
                 elem.changeLigid(2, double.parse(text));
-              } else {
+              } else if (text == "") {
                 elem.changeLigid(2, 0.0);
               }
             }, 
@@ -389,7 +389,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
             onChanged: (String text) {
               if (double.tryParse(text) != null) {
                 elem.changeLoad(double.parse(text));
-              } else {
+              } else if (text == "") {
                 elem.changeLoad(0.0);
               }
             }, 
