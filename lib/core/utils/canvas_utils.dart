@@ -209,8 +209,8 @@ class CanvasUtils {
   }
 
   static void drawText(Canvas canvas, Offset pos, String text, 
-  {Alignment alignment = Alignment.topLeft, Color color = Colors.black, double fontSize = 16}) {
-    CanvasUtils.text(canvas, pos, text, fontSize, color, true, 1000, alignment: alignment);
+  {Alignment alignment = Alignment.topLeft, Color color = Colors.black, double fontSize = 16, bool isOutline = true}) {
+    CanvasUtils.text(canvas, pos, text, fontSize, color, isOutline, 1000, alignment: alignment);
   }
 
   // 正三角形
@@ -225,7 +225,8 @@ class CanvasUtils {
   }
 
   // メモリ
-  static void memory(Canvas canvas, Rect rect, double max, double min, double value, bool isReverse) {
+  static void drawMemory(Canvas canvas, Rect rect, double max, double min, double value, bool isReverse,
+  {bool isDrawValueText = true}) {
     Paint paint = Paint();
 
     double diff = max - min; // 値の間隔
@@ -279,7 +280,9 @@ class CanvasUtils {
         label = StringUtils.doubleToString(value, 2);
       }
 
-      text(canvas, Offset(rect.center.dx + 10, p.dy-13), label, 16, Colors.black, false, 500);
+      if (isDrawValueText) {
+        drawText(canvas, Offset(rect.center.dx + 10, p.dy), label, alignment: Alignment.centerLeft);
+      }
     }
   }
 

@@ -16,12 +16,12 @@ class FrameCanvasUi extends StatefulWidget {
 }
 
 class _FrameCanvasUiState extends State<FrameCanvasUi> {
-  late FrameController _controller;
+  late FrameController controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller;
+    controller = widget.controller;
   }
 
   @override
@@ -38,20 +38,20 @@ class _FrameCanvasUiState extends State<FrameCanvasUi> {
             SizedBox(
               width: double.infinity,
               height: double.infinity,
-              child: CustomPaint(painter: FrameCanvasPainter()),
+              child: CustomPaint(painter: _FrameCanvasPainter(controller: controller)),
             ),
 
-            if (_controller.isCalculated && _controller.resultIndex <= 1)...{
+            if (controller.isCalculated && controller.resultIndex <= 1)...{
               if (orientation == Orientation.landscape)...{
                 ColorContour.landscape(
-                  maxText: StringUtils.doubleToString(_controller.resultMax, 3, minAbs: Setting.minAbs),
-                  minText: StringUtils.doubleToString(_controller.resultMin, 3, minAbs: Setting.minAbs),
+                  maxText: StringUtils.doubleToString(controller.resultMax, 3, minAbs: Setting.minAbs),
+                  minText: StringUtils.doubleToString(controller.resultMin, 3, minAbs: Setting.minAbs),
                 ),
               }
               else...{
                 ColorContour.portrait(
-                  maxText: StringUtils.doubleToString(_controller.resultMax, 3, minAbs: Setting.minAbs),
-                  minText: StringUtils.doubleToString(_controller.resultMin, 3, minAbs: Setting.minAbs),
+                  maxText: StringUtils.doubleToString(controller.resultMax, 3, minAbs: Setting.minAbs),
+                  minText: StringUtils.doubleToString(controller.resultMin, 3, minAbs: Setting.minAbs),
                 ),
               }
             }
@@ -62,7 +62,10 @@ class _FrameCanvasUiState extends State<FrameCanvasUi> {
   }
 }
 
-class FrameCanvasPainter extends CustomPainter {
+class _FrameCanvasPainter extends CustomPainter {
+  const _FrameCanvasPainter({required this.controller});
+
+  final FrameController controller;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -71,7 +74,7 @@ class FrameCanvasPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant FrameCanvasPainter oldDelegate) {
+  bool shouldRepaint(covariant _FrameCanvasPainter oldDelegate) {
     return false;
   }
 }

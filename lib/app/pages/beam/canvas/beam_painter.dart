@@ -107,7 +107,7 @@ class BeamPainter extends CustomPainter {
       }
       
       double a = rect.height < 300 ? rect.height/5+7.5 : 300/5+7.5;
-      CanvasUtils.memory(canvas, Rect.fromLTRB(rect.right+a, rect.top, rect.right+a, rect.bottom), memory.$2, memory.$3, memory.$4, memory.$5);
+      CanvasUtils.drawMemory(canvas, Rect.fromLTRB(rect.right+a, rect.top, rect.right+a, rect.bottom), memory.$2, memory.$3, memory.$4, memory.$5);
     }
     else {
       // キャンバスの広さ
@@ -154,7 +154,7 @@ class BeamPainter extends CustomPainter {
       _drawElem(data.elemList, false, elemWidth, canvas); // 辺
       canvas.drawLine(Offset(rect.left, rect.top), Offset(rect.left, rect.bottom), Paint());
       canvas.drawLine(Offset(rect.right, rect.top), Offset(rect.right, rect.bottom), Paint());
-      CanvasUtils.memory(canvas, Rect.fromLTRB(rect.right, rect.top, rect.right, rect.bottom), memory.$2, memory.$3, memory.$4, memory.$5);
+      CanvasUtils.drawMemory(canvas, Rect.fromLTRB(rect.right, rect.top, rect.right, rect.bottom), memory.$2, memory.$3, memory.$4, memory.$5);
 
       rect = Rect.fromLTRB((size.width-width)/2, size.height/6*5-heigh/2-25, size.width-(size.width-width)/2, size.height/6*5+heigh/2-25);
       data.updateCanvasPos(rect, nodeWidth, elemWidth);
@@ -163,7 +163,7 @@ class BeamPainter extends CustomPainter {
       _drawElem(data.elemList, false, elemWidth, canvas); // 辺
       canvas.drawLine(Offset(rect.left, rect.top), Offset(rect.left, rect.bottom), Paint());
       canvas.drawLine(Offset(rect.right, rect.top), Offset(rect.right, rect.bottom), Paint());
-      CanvasUtils.memory(canvas, Rect.fromLTRB(rect.right, rect.top, rect.right, rect.bottom), memory.$2, memory.$3, memory.$4, memory.$5);
+      CanvasUtils.drawMemory(canvas, Rect.fromLTRB(rect.right, rect.top, rect.right, rect.bottom), memory.$2, memory.$3, memory.$4, memory.$5);
     }
   }
 

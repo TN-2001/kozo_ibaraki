@@ -47,6 +47,9 @@ class FramePainter extends CustomPainter {
         _drawConst(canvas, isAfter: false); // 節点拘束拘束
         _drawPower(canvas, isAfter: false); // 節点荷重
         _drawNode(canvas, isAfter: false); // 節点
+        if (controller.resultIndex == 2) {
+          _drawMomentMemory(canvas);
+        }
         if (Setting.isNodeNumber) {
           _drawNodeNumber(canvas); // 節点番号
         }
@@ -597,6 +600,21 @@ class FramePainter extends CustomPainter {
       
       canvas.drawLine(Offset(wpos2.dx + bx2, wpos2.dy + by2), Offset(wpos1.dx + bx1, wpos1.dy + by1), Paint());
     }
+  }
+
+  void _drawMomentMemory(Canvas canvas) {
+    Rect rect = data.rect;
+    rect = Rect.fromLTWH(
+      camera.worldToScreen(rect.centerRight).dx, 
+      camera.worldToScreen(rect.center).dy - camera.scale * 0.1, 
+      camera.scale * 0.4, 
+      camera.scale * 0.2
+    );
+
+    double resultMax = max(controller.resultMax.abs(), controller.resultMin.abs());
+
+    CanvasUtils.drawMemory(canvas, rect, resultMax, 0, resultMax, false, isDrawValueText: false);
+    CanvasUtils.drawText(canvas, rect.center, StringUtils.doubleToString(resultMax, 3), alignment: Alignment.centerLeft, isOutline: false);
   }
 
   // 曲げモーメントのテキスト
