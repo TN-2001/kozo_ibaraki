@@ -117,6 +117,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                         node.pos = Offset(0, node.pos.dy);
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: '${node.pos.dx}',
                   ),
                 ),
@@ -133,6 +134,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                         node.pos = Offset(node.pos.dx, 0);
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: '${node.pos.dy}',
                   ),
                 ),
@@ -191,6 +193,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                         node.loadXY[0] = 0;
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: node.loadXY[0] != 0 ? "${node.loadXY[0]}" : "",
                   ),
                 ),
@@ -208,6 +211,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                         node.loadXY[1] = 0;
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: node.loadXY[1] != 0 ? "${node.loadXY[1]}" : "",
                   ),
                 ),
@@ -279,7 +283,8 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                           elem.nodeList[0] = null;
                         }
                       }
-                    }, 
+                    },
+                    onUnFocus: () => setState(() {}), 
                     text: elem.nodeList[0] != null ? "${elem.nodeList[0]!.number+1}" : "",
                   ),
                 )
@@ -299,6 +304,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                         }
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: elem.nodeList[1] != null ? "${elem.nodeList[1]!.number+1}" : "",
                   ),
                 ),
@@ -317,6 +323,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                 elem.e = 0;
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: "${elem.e}"
           ),
         ),
@@ -331,6 +338,7 @@ class _TrussSettingWindowState extends State<TrussSettingWindow> {
                 elem.v = 0;
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: "${elem.v}"
           ),
         ),

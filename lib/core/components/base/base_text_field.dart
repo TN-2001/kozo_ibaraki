@@ -3,63 +3,33 @@ import 'package:flutter/material.dart';
 import '../../constants/constant.dart';
 
 
-class BaseTextField extends StatefulWidget {
-  const BaseTextField({
+class BaseTextField extends StatelessWidget {
+  BaseTextField({
     super.key, 
     this.width, 
     required this.onChanged, 
     this.onSubmitted,
+    this.onUnFocus,
     required this.text,
     this.enabled = true,
     this.keyboardType = TextInputType.number,
-  });
-
-  final double? width;
-  final void Function(String text) onChanged;
-  final void Function(String text)? onSubmitted;
-  final String text;
-  final bool enabled;
-  final TextInputType? keyboardType;
-
-  @override
-  State<BaseTextField> createState() => _BaseTextFieldState();
-}
-
-class _BaseTextFieldState extends State<BaseTextField> {
-  late double? width;
-  late void Function(String text) onChanged;
-  late void Function(String text)? onSubmitted;
-  late String text;
-  late bool enabled;
-  late TextInputType? keyboardType;
-
-  final FocusNode focusNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-
-    width = widget.width;
-    onChanged = widget.onChanged;
-    onSubmitted = widget.onSubmitted;
-    text = widget.text;
-    enabled = widget.enabled;
-    keyboardType = widget.keyboardType;
-
+  }) {
     focusNode.addListener(() {
-      if (!focusNode.hasFocus) {
-        setState(() {
-          
-        });
+      if (!focusNode.hasFocus && onUnFocus != null) {
+        onUnFocus!();
       }
     });
   }
 
-  @override
-  void dispose() {
-    focusNode.dispose();
-    super.dispose();
-  }
+  final double? width;
+  final void Function(String text) onChanged;
+  final void Function(String text)? onSubmitted;
+  final void Function()? onUnFocus;
+  final String text;
+  final bool enabled;
+  final TextInputType? keyboardType;
+
+  final FocusNode focusNode = FocusNode();
 
 
   @override

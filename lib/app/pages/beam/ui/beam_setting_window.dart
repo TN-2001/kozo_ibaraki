@@ -113,6 +113,7 @@ class _BeamSettingWindowState extends State<BeamSettingWindow> {
                 node.pos = Offset(0, node.pos.dy);
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: '${node.pos.dx}',
           ),
         ),
@@ -190,6 +191,7 @@ class _BeamSettingWindowState extends State<BeamSettingWindow> {
                 node.loadXY[1] = 0;
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: node.loadXY[1] != 0 ? "${node.loadXY[1]}" : "",
           ),
         ),
@@ -204,6 +206,7 @@ class _BeamSettingWindowState extends State<BeamSettingWindow> {
                 node.loadXY[2] = 0;
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: node.loadXY[2] != 0 ? "${node.loadXY[2]}" : "",
           ),
         )
@@ -272,6 +275,7 @@ class _BeamSettingWindowState extends State<BeamSettingWindow> {
                         }
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: elem.nodeList[0] != null ? "${elem.nodeList[0]!.number+1}" : "",
                   ),
                 )
@@ -291,6 +295,7 @@ class _BeamSettingWindowState extends State<BeamSettingWindow> {
                         }
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: elem.nodeList[1] != null ? "${elem.nodeList[1]!.number+1}" : "",
                   ),
                 ),
@@ -309,6 +314,7 @@ class _BeamSettingWindowState extends State<BeamSettingWindow> {
                 elem.e = 0;
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: "${elem.e}"
           ),
         ),
@@ -323,6 +329,7 @@ class _BeamSettingWindowState extends State<BeamSettingWindow> {
                 elem.v = 0;
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: "${elem.v}"
           ),
         ),
@@ -337,6 +344,7 @@ class _BeamSettingWindowState extends State<BeamSettingWindow> {
                 elem.load = 0;
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: "${elem.load != 0 ? elem.load : ""}"
           ),
         ),

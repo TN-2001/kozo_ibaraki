@@ -115,6 +115,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         node.setPos(Offset(0, node.pos.dy));
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: '${node.pos.dx}',
                   ),
                 ),
@@ -130,6 +131,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         node.setPos(Offset(node.pos.dx, 0));
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: '${node.pos.dy}',
                   ),
                 ),
@@ -199,6 +201,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         node.setLoad(0, 0);
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: node.getLoad(0) != 0 ? "${node.getLoad(0)}" : "",
                   ),
                 ),
@@ -217,6 +220,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         node.setLoad(1, 0);
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: node.getLoad(1) != 0 ? "${node.getLoad(1)}" : "",
                   ),
                 ),
@@ -242,6 +246,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         node.setLoad(2, 0);
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: node.getLoad(2) != 0 ? "${node.getLoad(2)}" : "",
                   ),
                 ),
@@ -260,6 +265,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         node.setLoad(3, 0);
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: node.getLoad(3) != 0 ? "${node.getLoad(3)}" : "",
                   ),
                 ),
@@ -395,6 +401,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         elem.setNode(0, null);
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: elem.getNode(0) != null ? "${elem.getNode(0)!.number + 1}" : "",
                   ),
                 ),
@@ -418,6 +425,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         elem.setNode(1, null);
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: elem.getNode(1) != null ? "${elem.getNode(1)!.number + 1}" : "",
                   ),
                 ),
@@ -441,6 +449,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         elem.setNode(2, null);
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: elem.getNode(2) != null ? "${elem.getNode(2)!.number + 1}" : "",
                   ),
                 ),
@@ -465,6 +474,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         elem.setNode(3, null);
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: elem.getNode(3) != null ? "${elem.getNode(3)!.number + 1}" : "",
                   ),
                 ),
@@ -485,6 +495,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                 elem.setRigid(0, 0);
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: elem.getRigid(0).toString(),
           ),
         ),
@@ -501,6 +512,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                 elem.setRigid(1, 0);
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: elem.getRigid(1).toString(),
           ),
         ),
@@ -522,6 +534,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         elem.setRigid(2, 0);
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: elem.getRigid(2) != 0 ? elem.getRigid(2).toString() : "",
                   ),
                 ),
@@ -540,6 +553,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                         elem.setRigid(3, 0);
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: elem.getRigid(3) != 0 ? elem.getRigid(3).toString() : "",
                   ),
                 ),
@@ -568,6 +582,7 @@ class _FemSettingWindowState extends State<FemSettingWindow> {
                 elem.setRigid(4, 0);
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: elem.getRigid(4).toString(),
           ),
         ),

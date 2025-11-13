@@ -115,6 +115,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                         node.changePos(Offset(0, node.pos.dy));
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: '${node.pos.dx}',
                   ),
                 ),
@@ -131,6 +132,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                         node.changePos(Offset(node.pos.dx, 0));
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: '${node.pos.dy}',
                   ),
                 ),
@@ -214,6 +216,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                         node.changeLoad(0, 0.0);
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: node.getLoad(0) != 0 ? "${node.getLoad(0)}" : "",
                   ),
                 ),
@@ -230,6 +233,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                         node.changeLoad(1, 0);
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: node.getLoad(1) != 0 ? "${node.getLoad(1)}" : "",
                   ),
                 ),
@@ -248,6 +252,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                 node.changeLoad(2, 0);
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: node.getLoad(2) != 0 ? "${node.getLoad(2)}" : "",
           ),
         ),
@@ -315,6 +320,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                         }
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: elem.getNode(0) != null ? "${elem.getNode(0)!.number + 1}" : "",
                   ),
                 ),
@@ -333,6 +339,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                         }
                       }
                     }, 
+                    onUnFocus: () => setState(() {}),
                     text: elem.getNode(1) != null ? "${elem.getNode(1)!.number + 1}" : "",
                   ),
                 ),
@@ -351,6 +358,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                 elem.changeLigid(0, 0.0);
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: "${elem.getRigid(0)}"
           ),
         ),
@@ -365,6 +373,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                 elem.changeLigid(1, 0.0);
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: "${elem.getRigid(1)}"
           ),
         ),
@@ -379,6 +388,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                 elem.changeLigid(2, 0.0);
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: "${elem.getRigid(2)}"
           ),
         ),
@@ -393,6 +403,7 @@ class _FrameSettingWindowState extends State<FrameSettingWindow> {
                 elem.changeLoad(0.0);
               }
             }, 
+            onUnFocus: () => setState(() {}),
             text: "${elem.load != 0 ? elem.load : ""}"
           ),
         ),
