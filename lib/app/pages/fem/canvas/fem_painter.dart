@@ -14,7 +14,6 @@ class FemPainter extends CustomPainter {
   FemData get data => controller.data;
   final Camera camera; // カメラ
 
-
   @override
   void paint(Canvas canvas, Size size) {
     _initCamera(size); // カメラの初期化
@@ -25,9 +24,8 @@ class FemPainter extends CustomPainter {
       _drawConst(canvas); // 節点拘束
       _drawNode(canvas); // 節点
       if (Setting.isNodeNumber) _drawNodeNumber(canvas); // 節点番号
-      if (Setting.isElemNumber) _drawElemNumber(canvas); // 要素番号 
-    }
-    else{
+      if (Setting.isElemNumber) _drawElemNumber(canvas); // 要素番号
+    } else {
       if (controller.resultIndex <= 10) {
         _drawElemResult(canvas);
       } else {
@@ -43,10 +41,9 @@ class FemPainter extends CustomPainter {
         if (Setting.isResultValue) _drawElemResultValue(canvas); // 要素の結果値
       }
       if (Setting.isNodeNumber) _drawNodeNumber(canvas); // 節点番号
-      if (Setting.isElemNumber) _drawElemNumber(canvas); // 要素番号 
+      if (Setting.isElemNumber) _drawElemNumber(canvas); // 要素番号
     }
   }
-
 
   // カメラの初期化
   void _initCamera(Size size) {
@@ -73,7 +70,6 @@ class FemPainter extends CustomPainter {
     );
   }
 
-
   // 節点
   void _drawNode(Canvas canvas) {
     // バグ対策
@@ -81,8 +77,7 @@ class FemPainter extends CustomPainter {
 
     double nodeRadius = data.getNodeRadius() / 2.5;
 
-    Paint paint = Paint()
-      ..strokeWidth = 2;
+    Paint paint = Paint()..strokeWidth = 2;
 
     for (int i = 0; i < data.nodeCount; i++) {
       Node node = data.getNode(i);
@@ -96,16 +91,19 @@ class FemPainter extends CustomPainter {
       // 丸を描画
       paint.style = PaintingStyle.fill;
       paint.color = const Color.fromARGB(255, 79, 79, 79);
-      canvas.drawCircle(camera.worldToScreen(pos), nodeRadius * camera.scale, paint);
+      canvas.drawCircle(
+          camera.worldToScreen(pos), nodeRadius * camera.scale, paint);
 
       // 丸枠を描画
       paint.style = PaintingStyle.stroke;
-      if (node.number == controller.selectedNumber && controller.typeIndex == 0) {
+      if (node.number == controller.selectedNumber &&
+          controller.typeIndex == 0) {
         paint.color = Colors.red;
       } else {
         paint.color = const Color.fromARGB(255, 0, 0, 0);
       }
-      canvas.drawCircle(camera.worldToScreen(pos), nodeRadius * camera.scale, paint);
+      canvas.drawCircle(
+          camera.worldToScreen(pos), nodeRadius * camera.scale, paint);
     }
   }
 
@@ -113,7 +111,7 @@ class FemPainter extends CustomPainter {
   void _drawNodeNumber(Canvas canvas) {
     if (data.nodeCount == 0) return;
 
-    for(int i = 0; i < data.nodeCount; i++){
+    for (int i = 0; i < data.nodeCount; i++) {
       Node node = data.getNode(i);
       Offset pos;
       if (!controller.isCalculated) {
@@ -122,12 +120,14 @@ class FemPainter extends CustomPainter {
         pos = camera.worldToScreen(node.afterPos);
       }
       Color color;
-      if (node.number == controller.selectedNumber && controller.typeIndex == 0) {
+      if (node.number == controller.selectedNumber &&
+          controller.typeIndex == 0) {
         color = Colors.red;
       } else {
         color = Colors.black;
       }
-      CanvasUtils.text(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), 20, color, true, 100);
+      CanvasUtils.text(canvas, Offset(pos.dx - 30, pos.dy - 30),
+          (i + 1).toString(), 20, color, true, 100);
     }
   }
 
@@ -143,8 +143,15 @@ class FemPainter extends CustomPainter {
     // 面
     for (int i = 0; i < data.elemCount; i++) {
       Elem elem = data.getElem(i);
-      if ((elem.nodeCount == 3 && (elem.getNode(0) != null && elem.getNode(1) != null && elem.getNode(2) != null))
-        || (elem.nodeCount == 4 && (elem.getNode(0) != null && elem.getNode(1) != null && elem.getNode(2) != null && elem.getNode(3) != null))) {
+      if ((elem.nodeCount == 3 &&
+              (elem.getNode(0) != null &&
+                  elem.getNode(1) != null &&
+                  elem.getNode(2) != null)) ||
+          (elem.nodeCount == 4 &&
+              (elem.getNode(0) != null &&
+                  elem.getNode(1) != null &&
+                  elem.getNode(2) != null &&
+                  elem.getNode(3) != null))) {
         Path path = Path();
         for (int j = 0; j < elem.nodeCount; j++) {
           Offset pos;
@@ -167,19 +174,22 @@ class FemPainter extends CustomPainter {
     // 枠
     for (int i = 0; i < data.elemCount; i++) {
       Elem elem = data.getElem(i);
-      if (elem.number == controller.selectedNumber && controller.typeIndex == 1) {
+      if (elem.number == controller.selectedNumber &&
+          controller.typeIndex == 1) {
         paint.color = Colors.red;
       } else {
         paint.color = const Color.fromARGB(255, 55, 55, 55);
       }
-      for(int j = 0; j < elem.nodeCount; j++){
+      for (int j = 0; j < elem.nodeCount; j++) {
         int num1 = j;
-        int num2 = j < elem.nodeCount-1 ? j + 1 : 0;
-        if(elem.getNode(num1) != null && elem.getNode(num2) != null){
+        int num2 = j < elem.nodeCount - 1 ? j + 1 : 0;
+        if (elem.getNode(num1) != null && elem.getNode(num2) != null) {
           if (!controller.isCalculated) {
-            canvas.drawLine(camera.worldToScreen(elem.getNode(num1)!.pos), camera.worldToScreen(elem.getNode(num2)!.pos), paint);
+            canvas.drawLine(camera.worldToScreen(elem.getNode(num1)!.pos),
+                camera.worldToScreen(elem.getNode(num2)!.pos), paint);
           } else {
-            canvas.drawLine(camera.worldToScreen(elem.getNode(num1)!.afterPos), camera.worldToScreen(elem.getNode(num2)!.afterPos), paint);
+            canvas.drawLine(camera.worldToScreen(elem.getNode(num1)!.afterPos),
+                camera.worldToScreen(elem.getNode(num2)!.afterPos), paint);
           }
         }
       }
@@ -194,9 +204,16 @@ class FemPainter extends CustomPainter {
     for (int i = 0; i < data.elemCount; i++) {
       Elem elem = data.getElem(i);
 
-      if ((elem.nodeCount == 3 && (elem.getNode(0) == null || elem.getNode(1) == null || elem.getNode(2) == null))
-        || (elem.nodeCount == 4 && (elem.getNode(0) == null || elem.getNode(1) == null || elem.getNode(2) == null || elem.getNode(3) == null))) {
-          continue;
+      if ((elem.nodeCount == 3 &&
+              (elem.getNode(0) == null ||
+                  elem.getNode(1) == null ||
+                  elem.getNode(2) == null)) ||
+          (elem.nodeCount == 4 &&
+              (elem.getNode(0) == null ||
+                  elem.getNode(1) == null ||
+                  elem.getNode(2) == null ||
+                  elem.getNode(3) == null))) {
+        continue;
       }
 
       Offset pos = Offset.zero;
@@ -212,14 +229,16 @@ class FemPainter extends CustomPainter {
       pos = pos / elem.nodeCount.toDouble();
       pos = camera.worldToScreen(pos);
 
-      String text = "(${i+1})";
+      String text = "(${i + 1})";
       Color color;
-      if (elem.number == controller.selectedNumber && controller.typeIndex == 1) {
+      if (elem.number == controller.selectedNumber &&
+          controller.typeIndex == 1) {
         color = Colors.red;
       } else {
         color = Colors.black;
       }
-      CanvasUtils.drawText(canvas, pos, text, alignment: Alignment.bottomCenter, color: color);
+      CanvasUtils.drawText(canvas, pos, text,
+          alignment: Alignment.bottomCenter, color: color);
     }
   }
 
@@ -232,7 +251,7 @@ class FemPainter extends CustomPainter {
     double nodeRadius = data.getNodeRadius();
     double padding = nodeRadius * camera.scale / 2;
 
-    for(int i = 0; i < data.nodeCount; i++){
+    for (int i = 0; i < data.nodeCount; i++) {
       Node node = data.getNode(i);
       Offset pos;
       if (!controller.isCalculated) {
@@ -244,38 +263,38 @@ class FemPainter extends CustomPainter {
       if (node.getConst(0)) {
         if (pos.dx <= center.dx) {
           AppCanvasUtils.drawCircleConst(
-            canvas, 
-            camera.worldToScreen(pos), 
-            size: nodeRadius * 1.5 * camera.scale, 
-            padding: padding, 
-            angle: pi / 2, 
+            canvas,
+            camera.worldToScreen(pos),
+            size: nodeRadius * 1.5 * camera.scale,
+            padding: padding,
+            angle: pi / 2,
           );
         } else {
           AppCanvasUtils.drawCircleConst(
-            canvas, 
-            camera.worldToScreen(pos), 
-            size: nodeRadius * 1.5 * camera.scale, 
-            padding: padding, 
-            angle: - pi / 2, 
+            canvas,
+            camera.worldToScreen(pos),
+            size: nodeRadius * 1.5 * camera.scale,
+            padding: padding,
+            angle: -pi / 2,
           );
         }
       }
       if (node.getConst(1)) {
         if (pos.dy <= center.dy) {
           AppCanvasUtils.drawCircleConst(
-            canvas, 
-            camera.worldToScreen(pos), 
-            size: nodeRadius * 1.5 * camera.scale, 
-            padding: padding, 
-            angle: 0, 
+            canvas,
+            camera.worldToScreen(pos),
+            size: nodeRadius * 1.5 * camera.scale,
+            padding: padding,
+            angle: 0,
           );
         } else {
           AppCanvasUtils.drawCircleConst(
-            canvas, 
-            camera.worldToScreen(pos), 
-            size: nodeRadius * 1.5 * camera.scale, 
-            padding: padding, 
-            angle: pi, 
+            canvas,
+            camera.worldToScreen(pos),
+            size: nodeRadius * 1.5 * camera.scale,
+            padding: padding,
+            angle: pi,
           );
         }
       }
@@ -283,17 +302,17 @@ class FemPainter extends CustomPainter {
   }
 
   // 荷重
-  void _drawPower(Canvas canvas) {   
+  void _drawPower(Canvas canvas) {
     // バグ対策
     if (data.nodeCount == 0) return;
 
-    final Offset center = data.getRect().center;
+    // final Offset center = data.getRect().center;
     final double nodeRadius = data.getNodeRadius();
     const Color arrowColor = Color.fromARGB(255, 0, 63, 95);
     final double padding = nodeRadius / 2;
-    final double headSize = nodeRadius * 2.5 * camera.scale;
-    final double lineWidth = nodeRadius * 1 * camera.scale;
-    final double lineLength = nodeRadius * 8 * camera.scale;
+    final double headSize = nodeRadius * 1.5 * camera.scale;
+    final double lineWidth = nodeRadius * 0.5 * camera.scale;
+    final double lineLength = nodeRadius * 4 * camera.scale;
 
     for (int i = 0; i < data.nodeCount; i++) {
       Node node = data.getNode(i);
@@ -319,14 +338,10 @@ class FemPainter extends CustomPainter {
 
       if (loadX != 0) {
         Offset left;
-        Offset right; 
+        Offset right;
         double newPadding = padding;
         double newLineLength = lineLength;
-        if (node.getConst(0)) {
-          newPadding += nodeRadius;
-          newLineLength -= nodeRadius * camera.scale;
-        }
-        if (pos.dx <= center.dx) {
+        if (loadX < 0) {
           right = camera.worldToScreen(Offset(pos.dx - newPadding, pos.dy));
           left = Offset(right.dx - newLineLength, right.dy);
         } else {
@@ -335,9 +350,11 @@ class FemPainter extends CustomPainter {
         }
 
         if (loadX > 0) {
-          CanvasUtils.drawArrow(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, left, right,
+              headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         } else {
-          CanvasUtils.drawArrow(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, right, left,
+              headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         }
       }
       if (loadY != 0) {
@@ -345,11 +362,7 @@ class FemPainter extends CustomPainter {
         final Offset top;
         double newPadding = padding;
         double newLineLength = lineLength;
-        if (node.getConst(1)) {
-          newPadding += nodeRadius;
-          newLineLength -= nodeRadius * camera.scale;
-        }
-        if (pos.dy <= center.dy) {
+        if (loadY < 0) {
           top = camera.worldToScreen(Offset(pos.dx, pos.dy - newPadding));
           bottom = Offset(top.dx, top.dy + newLineLength);
         } else {
@@ -358,9 +371,11 @@ class FemPainter extends CustomPainter {
         }
 
         if (loadY > 0) {
-          CanvasUtils.drawArrow(canvas, bottom, top, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, bottom, top,
+              headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         } else {
-          CanvasUtils.drawArrow(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, top, bottom,
+              headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         }
       }
     }
@@ -372,8 +387,7 @@ class FemPainter extends CustomPainter {
       ..color = const Color.fromARGB(255, 225, 135, 135)
       ..style = PaintingStyle.fill;
     // 面
-    paint = Paint()
-      ..color = const Color.fromARGB(255, 194, 194, 194);
+    paint = Paint()..color = const Color.fromARGB(255, 194, 194, 194);
 
     int resultIndex = controller.resultIndex;
     double resultMax = controller.resultMax;
@@ -381,7 +395,8 @@ class FemPainter extends CustomPainter {
 
     bool isCanGetColor = false;
     if (controller.resultMax != 0 || controller.resultMin != 0) {
-      if (StringUtils.doubleToString(controller.resultMax, 3) == StringUtils.doubleToString(controller.resultMin, 3)) {
+      if (StringUtils.doubleToString(controller.resultMax, 3) ==
+          StringUtils.doubleToString(controller.resultMin, 3)) {
         paint.color = CanvasUtils.getColor(50);
       } else {
         isCanGetColor = true;
@@ -392,7 +407,9 @@ class FemPainter extends CustomPainter {
       Elem elem = data.getElem(i);
       if (isCanGetColor) {
         paint.color = CanvasUtils.getColor(
-          (elem.getResult(resultIndex) - resultMin) / (resultMax - resultMin) * 100);
+            (elem.getResult(resultIndex) - resultMin) /
+                (resultMax - resultMin) *
+                100);
       }
 
       final path = Path();
@@ -443,7 +460,12 @@ class FemPainter extends CustomPainter {
       pos = pos / elem.nodeCount.toDouble();
       pos = camera.worldToScreen(pos);
 
-      CanvasUtils.drawText(canvas, pos, StringUtils.doubleToString(elem.getResult(controller.resultIndex), 3, minAbs: Setting.minAbs), alignment: Alignment.topCenter);
+      CanvasUtils.drawText(
+          canvas,
+          pos,
+          StringUtils.doubleToString(elem.getResult(controller.resultIndex), 3,
+              minAbs: Setting.minAbs),
+          alignment: Alignment.topCenter);
     }
   }
 
@@ -452,7 +474,7 @@ class FemPainter extends CustomPainter {
     if (data.nodeCount == 0) return;
 
     // 変位
-    for(int i = 0; i < data.nodeCount; i++){
+    for (int i = 0; i < data.nodeCount; i++) {
       Node node = data.getNode(i);
       String text = "";
       if (node.becPos.dx.abs() > Setting.minAbs) {
@@ -467,7 +489,6 @@ class FemPainter extends CustomPainter {
       CanvasUtils.drawText(canvas, camera.worldToScreen(node.afterPos), text);
     }
   }
-
 
   @override
   bool shouldRepaint(covariant FemPainter oldDelegate) {
