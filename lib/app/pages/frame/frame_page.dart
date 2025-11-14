@@ -6,8 +6,8 @@ import 'package:kozo_ibaraki/app/pages/frame/ui/frame_bar.dart';
 import 'package:kozo_ibaraki/app/pages/frame/ui/frame_canvas_ui.dart';
 import 'package:kozo_ibaraki/app/pages/frame/ui/frame_setting_window.dart';
 import 'package:kozo_ibaraki/core/components/component.dart';
+import 'package:kozo_ibaraki/core/services/analytics_services.dart';
 import 'package:kozo_ibaraki/core/utils/status_bar.dart';
-
 
 class FramePage extends StatefulWidget {
   const FramePage({super.key});
@@ -17,17 +17,16 @@ class FramePage extends StatefulWidget {
 }
 
 class _FramePageState extends State<FramePage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); // メニュー用キー
+  final GlobalKey<ScaffoldState> _scaffoldKey =
+      GlobalKey<ScaffoldState>(); // メニュー用キー
   late FrameController _controller; // データ
   bool isSumaho = false;
-
 
   void _onUpdate() {
     setState(() {
       // 画面更新
     });
   }
-
 
   @override
   void initState() {
@@ -37,6 +36,7 @@ class _FramePageState extends State<FramePage> {
     _controller.addListener(_onUpdate);
 
     StatusBar.setStyle(isDarkBackground: true);
+    AnalyticsServices().logPageView("frame");
   }
 
   @override
@@ -49,11 +49,11 @@ class _FramePageState extends State<FramePage> {
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size; // 画面サイズ取得
-    if(size.height > size.width && isSumaho == false) {
+    if (size.height > size.width && isSumaho == false) {
       setState(() {
         isSumaho = true;
       });
-    }else if (size.height < size.width && isSumaho == true) {
+    } else if (size.height < size.width && isSumaho == true) {
       setState(() {
         isSumaho = false;
       });
@@ -62,31 +62,25 @@ class _FramePageState extends State<FramePage> {
     return Scaffold(
       backgroundColor: Colors.black,
       key: _scaffoldKey,
-
-      drawer: CommonDrawer(onChangeValue: _onUpdate,),
-
-
+      drawer: CommonDrawer(
+        onChangeValue: _onUpdate,
+      ),
       body: SafeArea(
         child: ClipRect(
-          child: Column(
-            children: [
-              FrameBar(controller: _controller, scaffoldKey: _scaffoldKey,),
-
-              const BaseDivider(),
-
-              Expanded(
-                child: Stack(
-                  children: [
-                    FrameCanvas(controller: _controller),
-
-                    FrameCanvasUi(controller: _controller),
-
-                    FrameSettingWindow(controller: _controller),
-                  ]
-                ),
-              ),
-            ]
-          ),
+          child: Column(children: [
+            FrameBar(
+              controller: _controller,
+              scaffoldKey: _scaffoldKey,
+            ),
+            const BaseDivider(),
+            Expanded(
+              child: Stack(children: [
+                FrameCanvas(controller: _controller),
+                FrameCanvasUi(controller: _controller),
+                FrameSettingWindow(controller: _controller),
+              ]),
+            ),
+          ]),
         ),
       ),
     );

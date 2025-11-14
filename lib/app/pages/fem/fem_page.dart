@@ -6,6 +6,7 @@ import 'package:kozo_ibaraki/app/pages/fem/ui/fem_bar.dart';
 import 'package:kozo_ibaraki/app/pages/fem/ui/fem_canvas_ui.dart';
 import 'package:kozo_ibaraki/app/pages/fem/ui/fem_setting_window.dart';
 import 'package:kozo_ibaraki/core/components/component.dart';
+import 'package:kozo_ibaraki/core/services/analytics_services.dart';
 import 'package:kozo_ibaraki/core/utils/status_bar.dart';
 
 class FemPage extends StatefulWidget {
@@ -16,18 +17,16 @@ class FemPage extends StatefulWidget {
 }
 
 class _FemPageState extends State<FemPage> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); // メニュー用キー
+  final GlobalKey<ScaffoldState> _scaffoldKey =
+      GlobalKey<ScaffoldState>(); // メニュー用キー
   late FemController _controller;
   bool isSumaho = false;
-
-
 
   void _onUpdate() {
     setState(() {
       // 画面更新
     });
   }
-
 
   @override
   void initState() {
@@ -37,6 +36,7 @@ class _FemPageState extends State<FemPage> {
     _controller.addListener(_onUpdate);
 
     StatusBar.setStyle(isDarkBackground: true);
+    AnalyticsServices().logPageView("fem");
   }
 
   @override
@@ -46,15 +46,14 @@ class _FemPageState extends State<FemPage> {
     StatusBar.setModeByOrientation(context);
   }
 
-
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size; // 画面サイズ取得
-    if(size.height > size.width && isSumaho == false) {
+    if (size.height > size.width && isSumaho == false) {
       setState(() {
         isSumaho = true;
       });
-    }else if (size.height < size.width && isSumaho == true) {
+    } else if (size.height < size.width && isSumaho == true) {
       setState(() {
         isSumaho = false;
       });
@@ -63,30 +62,22 @@ class _FemPageState extends State<FemPage> {
     return Scaffold(
       backgroundColor: Colors.black,
       key: _scaffoldKey,
-
-      drawer: CommonDrawer(onChangeValue: _onUpdate,),
-
+      drawer: CommonDrawer(
+        onChangeValue: _onUpdate,
+      ),
       body: SafeArea(
         child: ClipRect(
-          child: Column(
-            children: [
-              FemBar(controller: _controller, scaffoldKey: _scaffoldKey),
-
-              const BaseDivider(),
-
-              Expanded(
-                child: Stack(
-                  children: [
-                    FemCanvas(controller: _controller),
-
-                    FemCanvasUi(controller: _controller),
-
-                    FemSettingWindow(controller: _controller),
-                  ]
-                ),
-              ),
-            ]
-          ),
+          child: Column(children: [
+            FemBar(controller: _controller, scaffoldKey: _scaffoldKey),
+            const BaseDivider(),
+            Expanded(
+              child: Stack(children: [
+                FemCanvas(controller: _controller),
+                FemCanvasUi(controller: _controller),
+                FemSettingWindow(controller: _controller),
+              ]),
+            ),
+          ]),
         ),
       ),
     );

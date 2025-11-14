@@ -6,6 +6,7 @@ import 'package:kozo_ibaraki/app/pages/bridgegame/models/bridgegame_controller.d
 import 'package:kozo_ibaraki/app/pages/bridgegame/ui/bridgegame_bar.dart';
 import 'package:kozo_ibaraki/app/pages/bridgegame/ui/bridgegame_canvas_ui.dart';
 import 'package:kozo_ibaraki/core/components/component.dart';
+import 'package:kozo_ibaraki/core/services/analytics_services.dart';
 import 'package:kozo_ibaraki/core/utils/status_bar.dart';
 
 class BridgegamePage extends StatefulWidget {
@@ -21,7 +22,6 @@ class _BridgegamePageState extends State<BridgegamePage> {
 
   void _update() => setState(() {});
 
-
   @override
   void initState() {
     super.initState();
@@ -30,6 +30,7 @@ class _BridgegamePageState extends State<BridgegamePage> {
     controller.addListener(_update);
 
     StatusBar.setStyle(isDarkBackground: true);
+    AnalyticsServices().logPageView("bridgegame");
   }
 
   @override
@@ -44,7 +45,6 @@ class _BridgegamePageState extends State<BridgegamePage> {
     return Scaffold(
       backgroundColor: Colors.black,
       key: _scaffoldKey,
-
       drawer: CommonDrawer(
         onPressedHelpButton: () {
           showDialog(
@@ -55,19 +55,21 @@ class _BridgegamePageState extends State<BridgegamePage> {
           );
         },
       ),
-
       body: SafeArea(
         child: ClipRect(
           child: Column(
             children: [
-              BridgegameBar(controller: controller, scaffoldKey: _scaffoldKey,),
-
+              BridgegameBar(
+                controller: controller,
+                scaffoldKey: _scaffoldKey,
+              ),
               const BaseDivider(),
-
               Expanded(
                 child: Stack(
                   children: [
-                    BridgegameCanvas(controller: controller,),
+                    BridgegameCanvas(
+                      controller: controller,
+                    ),
                     BridgegameCanvasUi(controller: controller),
                   ],
                 ),
