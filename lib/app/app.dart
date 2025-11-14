@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/pages/beam/beam_page.dart';
@@ -25,6 +26,11 @@ void run() async {
   // Firebaseと接続
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
+  );
+  
+  // アプリを開いたらイベントを取得
+  await FirebaseAnalytics.instance.logEvent(
+    name: 'page_view',
   );
 
   runApp(const MyApp());
