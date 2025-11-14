@@ -1,27 +1,50 @@
 {
-  "hosting": {
-    "public": "build/web",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ],
-    "headers": [
-      {
-        "source": "/index.html",
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "kozo-ibaraki",
+                    "appId": "1:569087329804:android:48a8a9c425f6aafa185029",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "kozo-ibaraki",
+                    "configurations": {
+                        "android": "1:569087329804:android:48a8a9c425f6aafa185029",
+                        "ios": "1:569087329804:ios:504d5a68563ecd95185029",
+                        "macos": "1:569087329804:ios:504d5a68563ecd95185029",
+                        "web": "1:569087329804:web:3212b02a7b3ff0fd185029",
+                        "windows": "1:569087329804:web:ff9d7b286700f806185029"
+                    }
+                }
+            }
+        }
+    },
+    "hosting": {
+        "public": "build/web",
+        "ignore": [
+            "firebase.json",
+            "**/.*",
+            "**/node_modules/**"
+        ],
+        "rewrites": [
+            {
+                "source": "**",
+                "destination": "/index.html"
+            }
+        ],
         "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "no-cache"
-          }
+            {
+                "source": "/index.html",
+                "headers": [
+                    {
+                        "key": "Cache-Control",
+                        "value": "no-cache"
+                    }
+                ]
+            }
         ]
-      }
-    ]
-  }
+    }
 }

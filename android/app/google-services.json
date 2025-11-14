@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "569087329804",
+    "project_id": "kozo-ibaraki",
+    "storage_bucket": "kozo-ibaraki.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569087329804:android:48a8a9c425f6aafa185029",
+        "android_client_info": {
+          "package_name": "com.takahironakayama.kozo_ibaraki"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCa2XKZIe5Esu4fuErDeItzUbxQ-aDTgFk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -10,8 +10,10 @@ import 'package:kozo_ibaraki/app/pages/privacy/privacy_page.dart';
 import 'package:kozo_ibaraki/app/pages/truss/truss_page.dart';
 import 'package:kozo_ibaraki/core/configs/configure_nonweb.dart' 
   if (dart.library.html) 'package:kozo_ibaraki/core/configs/configure_web.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:kozo_ibaraki/firebase_options.dart';
 
-void run() {
+void run() async {
   // FlutterフレームワークとFlutterエンジンを結びつける
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -19,6 +21,11 @@ void run() {
   if (kIsWeb) {
     configureWeb();
   }
+
+  // Firebaseと接続
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   runApp(const MyApp());
 }
