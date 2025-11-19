@@ -6,7 +6,8 @@ import 'package:kozo_ibaraki/core/components/component.dart';
 import 'package:kozo_ibaraki/core/constants/constant.dart';
 
 class BridgegameBar extends StatefulWidget {
-  const BridgegameBar({super.key, required this.controller, required this.scaffoldKey});
+  const BridgegameBar(
+      {super.key, required this.controller, required this.scaffoldKey});
 
   final BridgegameController controller;
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -22,7 +23,6 @@ class _BridgegameBarState extends State<BridgegameBar> {
   int _toolIndex = 0;
   int _powerIndex = 0;
 
-
   void _onPressedMenuButton() {
     if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
       _scaffoldKey.currentState?.openDrawer();
@@ -33,23 +33,18 @@ class _BridgegameBarState extends State<BridgegameBar> {
         builder: (context) {
           return Dialog.fullscreen(
             backgroundColor: MyColors.baseBackground,
-
             child: Column(
               children: [
-                ToolBar(
-                  children: [
-                    ToolIconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      }, 
-                      icon: const Icon(Icons.keyboard_arrow_left_sharp),
-                      message: "戻る",
-                    ),
-                  ]
-                ),
-
+                ToolBar(children: [
+                  ToolIconButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.keyboard_arrow_left_sharp),
+                    message: "戻る",
+                  ),
+                ]),
                 const BaseDivider(),
-
                 Expanded(
                   child: SingleChildScrollView(
                     child: Center(
@@ -107,27 +102,28 @@ class _BridgegameBarState extends State<BridgegameBar> {
     widget.controller.changePowerIndex(_powerIndex);
   }
 
-  Future<void> _onPressedAnalysisButton() async{    
+  Future<void> _onPressedAnalysisButton() async {
     showDialog(
       context: context,
       barrierDismissible: false,
       barrierColor: Colors.black54, // 背景を暗く
       builder: (BuildContext context) {
         return const Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white), // インジケーターを白く
-            ),
-            SizedBox(height: 20), // インジケーターとテキストの間にスペースを追加
-            Text("解析中", 
-              style: TextStyle(
-                color: Colors.white, // テキストを白く
-                fontSize: 20,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(Colors.white), // インジケーターを白く
               ),
-            ),
-          ]
-        );
+              SizedBox(height: 20), // インジケーターとテキストの間にスペースを追加
+              Text(
+                "解析中",
+                style: TextStyle(
+                  color: Colors.white, // テキストを白く
+                  fontSize: 20,
+                ),
+              ),
+            ]);
       },
     );
 
@@ -137,7 +133,7 @@ class _BridgegameBarState extends State<BridgegameBar> {
     // ダイアログを閉じる
     if (!mounted) return;
     Navigator.of(context).pop();
-    
+
     if (widget.controller.isCalculation) {
       setState(() {
         state = 1;
@@ -158,15 +154,13 @@ class _BridgegameBarState extends State<BridgegameBar> {
     widget.controller.resetCalculation();
   }
 
-
   Widget _menuButton() {
     return ToolIconButton(
-      onPressed: _onPressedMenuButton, 
+      onPressed: _onPressedMenuButton,
       icon: const Icon(Icons.menu),
       message: "メニュー",
     );
   }
-
 
   @override
   void initState() {
@@ -184,7 +178,9 @@ class _BridgegameBarState extends State<BridgegameBar> {
         children: [
           _menuButton(),
 
-          const ToolBarDivider(isVertivcal: true,),
+          const ToolBarDivider(
+            isVertivcal: true,
+          ),
 
           // BridgegameToolBar(controller: widget.controller),
 
@@ -198,40 +194,48 @@ class _BridgegameBarState extends State<BridgegameBar> {
             messages: const ["ペン", "消しゴム"],
           ),
 
-          const ToolBarDivider(isVertivcal: true,),
+          const ToolBarDivider(
+            isVertivcal: true,
+          ),
 
           // ToolIconButton(
           //   onPressed: _onPressedUndoButton,
-          //   icon: const Icon(Icons.undo), 
-          //   message: "戻る", 
+          //   icon: const Icon(Icons.undo),
+          //   message: "戻る",
           // ),
           // ToolIconButton(
           //   onPressed: _onPressedRedoButton,
-          //   icon: const Icon(Icons.redo), 
-          //   message: "進む", 
+          //   icon: const Icon(Icons.redo),
+          //   message: "進む",
           // ),
           ToolIconButton(
-            onPressed: _onPressedMirrorButton, 
+            onPressed: _onPressedMirrorButton,
             icon: const Icon(Icons.switch_right),
             message: "対称化（左を右にコピー）",
           ),
           ToolIconButton(
             onPressed: _onPressedClearButton,
-            icon: const Icon(Icons.clear), 
-            message: "クリア", 
+            icon: const Icon(Icons.clear),
+            message: "クリア",
           ),
 
-          const ToolBarDivider(isVertivcal: true,),
+          const ToolBarDivider(
+            isVertivcal: true,
+          ),
           const Expanded(child: SizedBox()),
-          const ToolBarDivider(isVertivcal: true,),
+          const ToolBarDivider(
+            isVertivcal: true,
+          ),
 
           ToolDropdownButton(
             selectedIndex: _powerIndex,
             onPressed: _onPressedPowerDropdown,
-            items: const ["荷重1", "荷重2", "自重"], 
+            items: const ["荷重1", "荷重2", "自重"],
           ),
 
-          const ToolBarDivider(isVertivcal: true,),
+          const ToolBarDivider(
+            isVertivcal: true,
+          ),
 
           ToolIconButton(
             onPressed: _onPressedAnalysisButton,
@@ -240,16 +244,17 @@ class _BridgegameBarState extends State<BridgegameBar> {
           ),
         ],
       );
-    }
-    else {
+    } else {
       return ToolBar(
         children: [
           _menuButton(),
-
-          const ToolBarDivider(isVertivcal: true,),
+          const ToolBarDivider(
+            isVertivcal: true,
+          ),
           const Expanded(child: SizedBox()),
-          const ToolBarDivider(isVertivcal: true,),
-
+          const ToolBarDivider(
+            isVertivcal: true,
+          ),
           ToolIconButton(
             onPressed: _onPressedEditButton,
             icon: const Icon(Icons.restart_alt),

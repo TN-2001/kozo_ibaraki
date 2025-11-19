@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_analytics/firebase_analytics.dart';
 
 class AnalyticsServices {
@@ -9,6 +11,9 @@ class AnalyticsServices {
   final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
 
   Future<void> logPageView(String pageName) async {
+    if (Platform.isWindows) {
+      return;
+    }
     await _analytics.logEvent(
       name: '${pageName}_page_view',
       parameters: {'page': pageName},
