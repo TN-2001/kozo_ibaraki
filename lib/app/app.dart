@@ -28,7 +28,7 @@ void run() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   // アプリを開いたらイベントを取得
-  await AnalyticsServices().logPageView("app");
+  AnalyticsServices().logPageView("app");
 
   runApp(const MyApp());
 }
