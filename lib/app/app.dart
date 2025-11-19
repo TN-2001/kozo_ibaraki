@@ -27,7 +27,6 @@ void run() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   // アプリを開いたらイベントを取得
   await AnalyticsServices().logPageView("app");
 
