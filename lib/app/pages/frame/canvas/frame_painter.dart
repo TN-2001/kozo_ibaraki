@@ -8,13 +8,12 @@ import 'package:kozo_ibaraki/core/utils/camera.dart';
 import 'package:kozo_ibaraki/core/utils/canvas_utils.dart';
 import 'package:kozo_ibaraki/core/utils/string_utils.dart';
 
-
 class FramePainter extends CustomPainter {
   FramePainter({required this.controller, required this.camera});
 
   final FrameController controller;
   final Camera camera;
-  DataManager get data => controller.data; 
+  DataManager get data => controller.data;
   List<Direction> nodeDirectionList = []; // 要素による節点の向き
   List<double> nodeAngleList = [];
 
@@ -35,8 +34,7 @@ class FramePainter extends CustomPainter {
       if (Setting.isElemNumber) {
         _drawElemNumber(canvas); // 要素番号
       }
-    }
-    else {
+    } else {
       if (controller.resultIndex <= 2) {
         if (controller.resultIndex == 2) {
           _drawMoment(canvas);
@@ -70,7 +68,7 @@ class FramePainter extends CustomPainter {
 
       if (controller.resultIndex == 3) {
         // 変位
-        for(int i = 0; i < data.nodeCount; i++){
+        for (int i = 0; i < data.nodeCount; i++) {
           Node node = data.getNode(i);
           String text = "";
           if (node.becPos.dx.abs() > Setting.minAbs) {
@@ -88,16 +86,17 @@ class FramePainter extends CustomPainter {
             if (text.isNotEmpty) {
               text += "\n";
             }
-            text += "θ：${StringUtils.doubleToString(resultNode.getResult(3), 3)}";
+            text +=
+                "θ：${StringUtils.doubleToString(resultNode.getResult(3), 3)}";
           }
-          CanvasUtils.text(canvas, camera.worldToScreen(node.afterPos), text, 16, Colors.black, true, size.width);
+          CanvasUtils.text(canvas, camera.worldToScreen(node.afterPos), text,
+              16, Colors.black, true, size.width);
         }
       } else if (controller.resultIndex == 4) {
         _drawReactionForce(canvas); // 反力
       }
     }
   }
-
 
   // カメラの初期化
   void _initCamera(Size size) {
@@ -127,7 +126,6 @@ class FramePainter extends CustomPainter {
   void _initNodeDirection() {
     nodeAngleList = List.generate(data.nodeCount, (_) => 0.0);
     nodeDirectionList = List.generate(data.nodeCount, (_) => Direction.up);
-
 
     for (int i = 0; i < data.nodeCount; i++) {
       Node node = data.getNode(i);
@@ -197,14 +195,13 @@ class FramePainter extends CustomPainter {
         vx = -vx;
         vy = -vy;
       } else {
-        vx =  0.0;
+        vx = 0.0;
         vy = -1.0;
       }
       // atan2で角度（ラジアン）
       nodeAngleList[i] = atan2(vx, vy);
     }
   }
-
 
   // 節点
   void _drawNode(Canvas canvas, {bool isAfter = false}) {
@@ -213,8 +210,7 @@ class FramePainter extends CustomPainter {
       return;
     }
 
-    Paint paint = Paint()
-      ..strokeWidth = 2;
+    Paint paint = Paint()..strokeWidth = 2;
 
     for (int i = 0; i < data.nodeCount; i++) {
       Node node = data.getNode(i);
@@ -232,16 +228,19 @@ class FramePainter extends CustomPainter {
       } else {
         paint.color = const Color.fromARGB(255, 79, 79, 79);
       }
-      canvas.drawCircle(camera.worldToScreen(pos), data.nodeRadius * camera.scale, paint);
+      canvas.drawCircle(
+          camera.worldToScreen(pos), data.nodeRadius * camera.scale, paint);
 
       // 丸枠を描画
       paint.style = PaintingStyle.stroke;
-      if (node.number == controller.selectedNumber && controller.typeIndex == 0) {
+      if (node.number == controller.selectedNumber &&
+          controller.typeIndex == 0) {
         paint.color = Colors.red;
       } else {
         paint.color = const Color.fromARGB(255, 0, 0, 0);
       }
-      canvas.drawCircle(camera.worldToScreen(pos), data.nodeRadius * camera.scale, paint);
+      canvas.drawCircle(
+          camera.worldToScreen(pos), data.nodeRadius * camera.scale, paint);
     }
   }
 
@@ -261,19 +260,21 @@ class FramePainter extends CustomPainter {
         pos = camera.worldToScreen(node.afterPos);
       }
       Color color = Colors.red;
-      if (node.number == controller.selectedNumber && controller.typeIndex == 0) {
+      if (node.number == controller.selectedNumber &&
+          controller.typeIndex == 0) {
         color = Colors.red;
       } else {
         color = Colors.black;
       }
-      CanvasUtils.text(canvas, Offset(pos.dx - 30, pos.dy - 30), (i+1).toString(), 20, color, true, 100);
+      CanvasUtils.text(canvas, Offset(pos.dx - 30, pos.dy - 30),
+          (i + 1).toString(), 20, color, true, 100);
     }
   }
 
   // 節点拘束
   void _drawConst(Canvas canvas, {bool isAfter = false}) {
     // バグ対策
-    if(data.nodeCount == 0){
+    if (data.nodeCount == 0) {
       return;
     }
 
@@ -290,70 +291,53 @@ class FramePainter extends CustomPainter {
 
       if (node.getConst(0) && node.getConst(1) && node.getConst(2)) {
         AppCanvasUtils.drawWallConst(
-          canvas, 
+          canvas,
           camera.worldToScreen(pos),
           size: data.nodeRadius * 15 * camera.scale,
           angle: nodeAngleList[i] - pi,
         );
-      }
-      else if (node.getConst(0) && node.getConst(1)) {
-        AppCanvasUtils.drawTriangleConst(
-          canvas, 
-          camera.worldToScreen(pos), 
-          size: data.nodeRadius * 3 * camera.scale, 
-          padding: data.nodeRadius * camera.scale, 
-          angle: nodeAngleList[i] - pi, 
-          isLine: false
-        );
-      }
-      else if (node.getConst(0)) {
+      } else if (node.getConst(0) && node.getConst(1)) {
+        AppCanvasUtils.drawTriangleConst(canvas, camera.worldToScreen(pos),
+            size: data.nodeRadius * 3 * camera.scale,
+            padding: data.nodeRadius * camera.scale,
+            angle: nodeAngleList[i] - pi,
+            isLine: false);
+      } else if (node.getConst(0)) {
         if (node.pos.dx < center.dx) {
-          AppCanvasUtils.drawTriangleConst(
-            canvas, 
-            camera.worldToScreen(pos), 
-            size: data.nodeRadius * 3 * camera.scale, 
-            padding: data.nodeRadius * camera.scale, 
-            angle: pi * 0.5, 
-            isLine: true
-          );
+          AppCanvasUtils.drawTriangleConst(canvas, camera.worldToScreen(pos),
+              size: data.nodeRadius * 3 * camera.scale,
+              padding: data.nodeRadius * camera.scale,
+              angle: pi * 0.5,
+              isLine: true);
         } else {
-          AppCanvasUtils.drawTriangleConst(
-            canvas, 
-            camera.worldToScreen(pos), 
-            size: data.nodeRadius * 3 * camera.scale, 
-            padding: data.nodeRadius * camera.scale, 
-            angle: pi * 1.5, 
-            isLine: true
-          );
+          AppCanvasUtils.drawTriangleConst(canvas, camera.worldToScreen(pos),
+              size: data.nodeRadius * 3 * camera.scale,
+              padding: data.nodeRadius * camera.scale,
+              angle: pi * 1.5,
+              isLine: true);
         }
       } else if (node.getConst(1)) {
         if (node.pos.dy <= center.dy) {
-          AppCanvasUtils.drawTriangleConst(
-            canvas, 
-            camera.worldToScreen(pos), 
-            size: data.nodeRadius * 3 * camera.scale, 
-            padding: data.nodeRadius * camera.scale, 
-            angle: 0, 
-            isLine: true
-          );
+          AppCanvasUtils.drawTriangleConst(canvas, camera.worldToScreen(pos),
+              size: data.nodeRadius * 3 * camera.scale,
+              padding: data.nodeRadius * camera.scale,
+              angle: 0,
+              isLine: true);
         } else {
-          AppCanvasUtils.drawTriangleConst(
-            canvas, 
-            camera.worldToScreen(pos), 
-            size: data.nodeRadius * 3 * camera.scale, 
-            padding: data.nodeRadius * camera.scale, 
-            angle: pi, 
-            isLine: true
-          );
+          AppCanvasUtils.drawTriangleConst(canvas, camera.worldToScreen(pos),
+              size: data.nodeRadius * 3 * camera.scale,
+              padding: data.nodeRadius * camera.scale,
+              angle: pi,
+              isLine: true);
         }
       }
     }
   }
 
   // 節点荷重
-  void _drawPower(Canvas canvas, {bool isAfter = false}) {  
+  void _drawPower(Canvas canvas, {bool isAfter = false}) {
     // バグ対策
-    if(data.nodeCount == 0){
+    if (data.nodeCount == 0) {
       return;
     }
 
@@ -361,7 +345,7 @@ class FramePainter extends CustomPainter {
     final double headSize = data.nodeRadius * 2.5 * camera.scale;
     final double lineWidth = data.nodeRadius * 1 * camera.scale;
     final double lineLength = data.nodeRadius * 8 * camera.scale;
-  
+
     for (int i = 0; i < data.nodeCount; i++) {
       Node node = data.getNode(i);
       Offset pos;
@@ -373,29 +357,37 @@ class FramePainter extends CustomPainter {
 
       if (node.getLoad(0) != 0) {
         if (node.getLoad(0) < 0) {
-          final Offset left = camera.worldToScreen(Offset(pos.dx + data.nodeRadius, pos.dy));
+          final Offset left =
+              camera.worldToScreen(Offset(pos.dx + data.nodeRadius, pos.dy));
           final Offset right = Offset(left.dx + lineLength, left.dy);
 
-          CanvasUtils.drawArrow(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, right, left,
+              headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         } else {
-          final Offset right = camera.worldToScreen(Offset(pos.dx - data.nodeRadius, pos.dy));
+          final Offset right =
+              camera.worldToScreen(Offset(pos.dx - data.nodeRadius, pos.dy));
           final Offset left = Offset(right.dx - lineLength, right.dy);
 
-          CanvasUtils.drawArrow(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, left, right,
+              headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         }
       }
 
       if (node.getLoad(1) != 0) {
         if (node.getLoad(1) > 0) {
-          final Offset end = camera.worldToScreen(Offset(pos.dx, pos.dy - data.nodeRadius));
+          final Offset end =
+              camera.worldToScreen(Offset(pos.dx, pos.dy - data.nodeRadius));
           final Offset start = Offset(end.dx, end.dy + lineLength);
 
-          CanvasUtils.drawArrow(canvas, start, end, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, start, end,
+              headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         } else {
-          final Offset end = camera.worldToScreen(Offset(pos.dx, pos.dy + data.nodeRadius));
+          final Offset end =
+              camera.worldToScreen(Offset(pos.dx, pos.dy + data.nodeRadius));
           final Offset start = Offset(end.dx, end.dy - lineLength);
 
-          CanvasUtils.drawArrow(canvas, start, end, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+          CanvasUtils.drawArrow(canvas, start, end,
+              headSize: headSize, lineWidth: lineWidth, color: arrowColor);
         }
       }
 
@@ -407,9 +399,9 @@ class FramePainter extends CustomPainter {
           isCounterclockwise = true;
         }
         CanvasUtils.drawCircleArrow2(
-          canvas, 
-          pos, 
-          radius, 
+          canvas,
+          pos,
+          radius,
           headSize: headSize,
           lineWidth: lineWidth,
           color: arrowColor,
@@ -437,12 +429,14 @@ class FramePainter extends CustomPainter {
       if (elem.getNode(0) != null && elem.getNode(1) != null) {
         Offset pos1 = elem.getNode(0)!.pos;
         Offset pos2 = elem.getNode(1)!.pos;
-        if (elem.number == controller.selectedNumber && controller.typeIndex == 1) {
+        if (elem.number == controller.selectedNumber &&
+            controller.typeIndex == 1) {
           paint.color = Colors.red;
         } else {
           paint.color = const Color.fromARGB(255, 86, 86, 86);
         }
-        canvas.drawLine(camera.worldToScreen(pos1), camera.worldToScreen(pos2), paint);
+        canvas.drawLine(
+            camera.worldToScreen(pos1), camera.worldToScreen(pos2), paint);
       }
     }
   }
@@ -463,19 +457,20 @@ class FramePainter extends CustomPainter {
         } else {
           pos = elem.getNode(0)!.afterPos + elem.getNode(1)!.afterPos;
         }
-        pos = camera.worldToScreen(pos/2);
+        pos = camera.worldToScreen(pos / 2);
 
         Color color = Colors.red;
-        if (elem.number == controller.selectedNumber && controller.typeIndex == 1) {
+        if (elem.number == controller.selectedNumber &&
+            controller.typeIndex == 1) {
           color = Colors.red;
         } else {
           color = Colors.black;
         }
         CanvasUtils.drawText(
-          canvas, 
-          Offset(pos.dx, pos.dy), 
-          "(${i+1})", 
-          alignment: Alignment.center, 
+          canvas,
+          Offset(pos.dx, pos.dy),
+          "(${i + 1})",
+          alignment: Alignment.center,
           color: color,
         );
       }
@@ -495,7 +490,9 @@ class FramePainter extends CustomPainter {
 
     for (int i = 0; i < data.elemCount; i++) {
       final Elem elem = data.getElem(i);
-      if (elem.load != 0.0 && elem.getNode(0) != null && elem.getNode(1) != null) {
+      if (elem.load != 0.0 &&
+          elem.getNode(0) != null &&
+          elem.getNode(1) != null) {
         final Offset pos1 = camera.worldToScreen(elem.getNode(0)!.pos);
         final Offset pos2 = camera.worldToScreen(elem.getNode(1)!.pos);
 
@@ -511,16 +508,25 @@ class FramePainter extends CustomPainter {
         // }
 
         if (elem.load > 0) {
-          CanvasUtils.drawDistributionArrows(canvas, start, end, headSize: headSize, lineWidth: lineWidth, lineLength: lineLength, color: arrowColor);
+          CanvasUtils.drawDistributionArrows(canvas, start, end,
+              headSize: headSize,
+              lineWidth: lineWidth,
+              lineLength: lineLength,
+              color: arrowColor);
         } else {
-          CanvasUtils.drawDistributionArrows(canvas, end, start, headSize: headSize, lineWidth: lineWidth, lineLength: lineLength, color: arrowColor);
+          CanvasUtils.drawDistributionArrows(canvas, end, start,
+              headSize: headSize,
+              lineWidth: lineWidth,
+              lineLength: lineLength,
+              color: arrowColor);
         }
       }
     }
   }
 
   // 結果の要素
-  void _drawResultElem(Canvas canvas, {bool isNormalColor = false, bool isAfterPos = true}) {
+  void _drawResultElem(Canvas canvas,
+      {bool isNormalColor = false, bool isAfterPos = true}) {
     Paint paint = Paint()
       ..color = const Color.fromARGB(255, 99, 99, 99)
       ..style = PaintingStyle.stroke
@@ -536,13 +542,16 @@ class FramePainter extends CustomPainter {
       } else {
         pos1 = elem.getNode(0)!.pos;
         pos2 = elem.getNode(1)!.pos;
-        
       }
-    
+
       if (!isNormalColor) {
-        paint.color = CanvasUtils.getColor((elem.getResult(controller.resultIndex) - controller.resultMin) / (controller.resultMax - controller.resultMin) * 100);
+        paint.color = CanvasUtils.getColor(
+            (elem.getResult(controller.resultIndex) - controller.resultMin) /
+                (controller.resultMax - controller.resultMin) *
+                100);
       }
-      canvas.drawLine(camera.worldToScreen(pos1), camera.worldToScreen(pos2), paint);
+      canvas.drawLine(
+          camera.worldToScreen(pos1), camera.worldToScreen(pos2), paint);
       // if (!isNormalColor && (i == 0 || i == 56)) {
       //   MyPainter.drawText(canvas, camera.worldToScreen(pos1), elem.getResult(controller.resultIndex).toString(), alignment: Alignment.bottomLeft);
       // }
@@ -555,7 +564,8 @@ class FramePainter extends CustomPainter {
       ..color = const Color.fromARGB(255, 222, 171, 167)
       ..style = PaintingStyle.fill;
 
-    double resultMax = max(controller.resultMax.abs(), controller.resultMin.abs());
+    double resultMax =
+        max(controller.resultMax.abs(), controller.resultMin.abs());
 
     for (int i = 0; i < data.resultElemCount; i++) {
       Elem elem = data.getResultElem(i);
@@ -567,9 +577,9 @@ class FramePainter extends CustomPainter {
 
       Offset wpos1 = camera.worldToScreen(pos1);
       Offset wpos2 = camera.worldToScreen(pos2);
-      double bx1 = - elem.getResult(3) * ox / resultMax * camera.scale * 0.3;
+      double bx1 = -elem.getResult(3) * ox / resultMax * camera.scale * 0.3;
       double by1 = elem.getResult(3) * oy / resultMax * camera.scale * 0.3;
-      double bx2 = - elem.getResult(4) * ox / resultMax * camera.scale * 0.3;
+      double bx2 = -elem.getResult(4) * ox / resultMax * camera.scale * 0.3;
       double by2 = elem.getResult(4) * oy / resultMax * camera.scale * 0.3;
 
       final Path path = Path();
@@ -579,7 +589,6 @@ class FramePainter extends CustomPainter {
       path.lineTo(wpos1.dx + bx1, wpos1.dy + by1);
       path.close();
       canvas.drawPath(path, paint);
-      
     }
 
     for (int i = 0; i < data.resultElemCount; i++) {
@@ -592,12 +601,13 @@ class FramePainter extends CustomPainter {
 
       Offset wpos1 = camera.worldToScreen(pos1);
       Offset wpos2 = camera.worldToScreen(pos2);
-      double bx1 = - elem.getResult(3) * ox / resultMax * camera.scale * 0.3;
+      double bx1 = -elem.getResult(3) * ox / resultMax * camera.scale * 0.3;
       double by1 = elem.getResult(3) * oy / resultMax * camera.scale * 0.3;
-      double bx2 = - elem.getResult(4) * ox / resultMax * camera.scale * 0.3;
+      double bx2 = -elem.getResult(4) * ox / resultMax * camera.scale * 0.3;
       double by2 = elem.getResult(4) * oy / resultMax * camera.scale * 0.3;
-      
-      canvas.drawLine(Offset(wpos2.dx + bx2, wpos2.dy + by2), Offset(wpos1.dx + bx1, wpos1.dy + by1), Paint());
+
+      canvas.drawLine(Offset(wpos2.dx + bx2, wpos2.dy + by2),
+          Offset(wpos1.dx + bx1, wpos1.dy + by1), Paint());
     }
 
     for (int i = 0; i < data.elemCount; i++) {
@@ -611,16 +621,27 @@ class FramePainter extends CustomPainter {
   void _drawMomentMemory(Canvas canvas) {
     Rect rect = data.rect;
     rect = Rect.fromLTWH(
-      camera.worldToScreen(rect.centerRight).dx, 
-      camera.worldToScreen(rect.center).dy - camera.scale * 0.1, 
-      camera.scale * 0.7, 
-      camera.scale * 0.3
-    );
+        camera.worldToScreen(rect.centerRight).dx,
+        camera.worldToScreen(rect.center).dy - camera.scale * 0.1,
+        camera.scale * 0.7,
+        camera.scale * 0.3);
 
-    double resultMax = max(controller.resultMax.abs(), controller.resultMin.abs());
+    double resultMax =
+        max(controller.resultMax.abs(), controller.resultMin.abs());
 
-    CanvasUtils.drawMemory(canvas, rect, resultMax, 0, resultMax, false, isDrawValueText: false);
-    CanvasUtils.drawText(canvas, rect.center, StringUtils.doubleToString(resultMax, 3), alignment: Alignment.centerLeft, isOutline: false);
+    canvas.drawLine(
+        rect.topCenter,
+        rect.bottomCenter,
+        Paint()
+          ..color = const Color.fromARGB(255, 222, 171, 167)
+          ..strokeWidth = 4);
+    canvas.drawLine(Offset(rect.center.dx - 5, rect.top),
+        Offset(rect.center.dx + 5, rect.top), Paint());
+    canvas.drawLine(Offset(rect.center.dx - 5, rect.bottom),
+        Offset(rect.center.dx + 5, rect.bottom), Paint());
+    CanvasUtils.drawText(
+        canvas, rect.center, StringUtils.doubleToString(resultMax, 3),
+        alignment: Alignment.centerLeft, isOutline: false);
   }
 
   // 曲げモーメントのテキスト
@@ -637,7 +658,7 @@ class FramePainter extends CustomPainter {
   //     }
   //     CanvasUtils.text(
   //       canvas, camera.worldToScreen(node.pos),
-  //       StringUtils.doubleToString(value, 3), 
+  //       StringUtils.doubleToString(value, 3),
   //       14, Colors.black, true, 1000, alignment: Alignment.center);
   //   }
   // }
@@ -657,55 +678,71 @@ class FramePainter extends CustomPainter {
       if (node.getResult(0).abs() > Setting.minAbs) {
         String text = StringUtils.doubleToString(node.getResult(0).abs(), 3);
         if (direction == Direction.left || node.pos.dx > data.rect.center.dx) {
-          Offset left = camera.worldToScreen(Offset(node.afterPos.dx + data.nodeRadius * 3, node.afterPos.dy));
+          Offset left = camera.worldToScreen(
+              Offset(node.afterPos.dx + data.nodeRadius * 3, node.afterPos.dy));
           Offset right = Offset(left.dx + lineLength, left.dy);
 
           if (node.getResult(0) > 0) {
-            CanvasUtils.drawArrow(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, left, right,
+                headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           } else {
-            CanvasUtils.drawArrow(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, right, left,
+                headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
-          CanvasUtils.drawText(canvas, right, text, alignment: Alignment.centerLeft);
+          CanvasUtils.drawText(canvas, right, text,
+              alignment: Alignment.centerLeft);
         } else {
-          Offset right = camera.worldToScreen(Offset(node.afterPos.dx - data.nodeRadius * 3, node.afterPos.dy));
+          Offset right = camera.worldToScreen(
+              Offset(node.afterPos.dx - data.nodeRadius * 3, node.afterPos.dy));
           Offset left = Offset(right.dx - lineLength, right.dy);
 
           if (node.getResult(0) > 0) {
-            CanvasUtils.drawArrow(canvas, left, right, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, left, right,
+                headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           } else {
-            CanvasUtils.drawArrow(canvas, right, left, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, right, left,
+                headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
-          CanvasUtils.drawText(canvas, left, text, alignment: Alignment.centerRight);
+          CanvasUtils.drawText(canvas, left, text,
+              alignment: Alignment.centerRight);
         }
       }
 
       // 鉛直方向の反力
       if (node.getResult(1).abs() > Setting.minAbs) {
         String text = StringUtils.doubleToString(node.getResult(1).abs(), 3);
-        if(direction == Direction.down || node.pos.dy > data.rect.center.dy) {
-          Offset bottom = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy + data.nodeRadius * 3));
+        if (direction == Direction.down || node.pos.dy > data.rect.center.dy) {
+          Offset bottom = camera.worldToScreen(
+              Offset(node.afterPos.dx, node.afterPos.dy + data.nodeRadius * 3));
           Offset top = Offset(bottom.dx, bottom.dy - lineLength);
 
           if (node.getResult(1) > 0) {
-            CanvasUtils.drawArrow(canvas, bottom, top, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, bottom, top,
+                headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           } else {
-            CanvasUtils.drawArrow(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, top, bottom,
+                headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
-          CanvasUtils.drawText(canvas, top, text, alignment: Alignment.bottomCenter);
+          CanvasUtils.drawText(canvas, top, text,
+              alignment: Alignment.bottomCenter);
         } else {
-          Offset top = camera.worldToScreen(Offset(node.afterPos.dx, node.afterPos.dy - data.nodeRadius * 3));
+          Offset top = camera.worldToScreen(
+              Offset(node.afterPos.dx, node.afterPos.dy - data.nodeRadius * 3));
           Offset bottom = Offset(top.dx, top.dy + lineLength);
-          
+
           if (node.getResult(1) > 0) {
-            CanvasUtils.drawArrow(canvas, bottom, top, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, bottom, top,
+                headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           } else {
-            CanvasUtils.drawArrow(canvas, top, bottom, headSize: headSize, lineWidth: lineWidth, color: arrowColor);
+            CanvasUtils.drawArrow(canvas, top, bottom,
+                headSize: headSize, lineWidth: lineWidth, color: arrowColor);
           }
 
-          CanvasUtils.drawText(canvas, bottom, text, alignment: Alignment.topCenter);
+          CanvasUtils.drawText(canvas, bottom, text,
+              alignment: Alignment.topCenter);
         }
       }
 
@@ -718,21 +755,24 @@ class FramePainter extends CustomPainter {
         double posDistance = data.nodeRadius * 2 * camera.scale;
         if (vector.dy.abs() + 0.001 >= vector.dx.abs() && vector.dy <= 0) {
           pos = Offset(pos.dx, pos.dy + posDistance);
-        } else if (vector.dy.abs() + 0.001 >= vector.dx.abs() && vector.dy > 0) {
+        } else if (vector.dy.abs() + 0.001 >= vector.dx.abs() &&
+            vector.dy > 0) {
           pos = Offset(pos.dx, pos.dy - posDistance);
         } else if (vector.dx >= 0) {
           pos = Offset(pos.dx + posDistance, pos.dy);
         } else if (vector.dx < 0) {
           pos = Offset(pos.dx - posDistance, pos.dy);
         }
-        
+
         double radius = data.nodeRadius * 5 * camera.scale;
         bool isCounterclockwise = false;
         if (node.getResult(2) > 0) {
           isCounterclockwise = true;
         }
         CanvasUtils.drawCircleArrow(
-          canvas, pos, radius, 
+          canvas,
+          pos,
+          radius,
           headSize: headSize,
           lineWidth: lineWidth,
           color: arrowColor,
@@ -741,18 +781,26 @@ class FramePainter extends CustomPainter {
         );
 
         if (vector.dy.abs() >= vector.dx.abs() + 0.001 && vector.dy <= 0) {
-          CanvasUtils.drawText(canvas, Offset(pos.dx + radius, pos.dy + radius), text, alignment: Alignment.topCenter);
-        } else if (vector.dy.abs() + 0.001 >= vector.dx.abs() && vector.dy > 0) {
-          CanvasUtils.drawText(canvas, Offset(pos.dx - radius, pos.dy + radius), text, alignment: Alignment.topCenter);
+          CanvasUtils.drawText(
+              canvas, Offset(pos.dx + radius, pos.dy + radius), text,
+              alignment: Alignment.topCenter);
+        } else if (vector.dy.abs() + 0.001 >= vector.dx.abs() &&
+            vector.dy > 0) {
+          CanvasUtils.drawText(
+              canvas, Offset(pos.dx - radius, pos.dy + radius), text,
+              alignment: Alignment.topCenter);
         } else if (vector.dx >= 0) {
-          CanvasUtils.drawText(canvas, Offset(pos.dx - radius, pos.dy + radius), text, alignment: Alignment.centerRight);
+          CanvasUtils.drawText(
+              canvas, Offset(pos.dx - radius, pos.dy + radius), text,
+              alignment: Alignment.centerRight);
         } else if (vector.dx < 0) {
-          CanvasUtils.drawText(canvas, Offset(pos.dx - radius, pos.dy - radius), text, alignment: Alignment.centerRight);
+          CanvasUtils.drawText(
+              canvas, Offset(pos.dx - radius, pos.dy - radius), text,
+              alignment: Alignment.centerRight);
         }
       }
     }
   }
-
 
   @override
   bool shouldRepaint(covariant FramePainter oldDelegate) {
