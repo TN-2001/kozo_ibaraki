@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/core/constants/constant.dart';
+import 'package:kozo_ibaraki/core/services/navigator_services.dart';
 
 class HomeAppList extends StatefulWidget {
   const HomeAppList({super.key});
@@ -9,26 +10,20 @@ class HomeAppList extends StatefulWidget {
 }
 
 class _HomeAppListState extends State<HomeAppList> {
-  
   Widget titleText(String text) {
     return Text(
-      text, 
+      text,
       style: const TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.bold,
       ),
     );
   }
-  
+
   Widget button(String label, String targetRoute) {
     return TextButton(
       onPressed: () {
-        String currentRoute = ModalRoute.of(context)?.settings.name ?? '/';
-
-        Navigator.pop(context);
-        if (currentRoute != targetRoute) {
-          Navigator.pushNamed(context, targetRoute);
-        }
+        NavigatorServices.handleNavigation(context, targetRoute);
       },
       style: TextButton.styleFrom(
         side: const BorderSide(color: MyColors.baseBorder),
@@ -47,35 +42,33 @@ class _HomeAppListState extends State<HomeAppList> {
     const double itemHeight = 50;
     const double itemSpacing = 10;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        int crossAxisCount = 2;
-        double width = constraints.maxWidth;
+    return LayoutBuilder(builder: (context, constraints) {
+      int crossAxisCount = 2;
+      double width = constraints.maxWidth;
 
-        if (width > 900) {
-          crossAxisCount = 4;
-        } else if (width > 600) {
-          crossAxisCount = 3;
-        }
-
-        // ボタンの高さを固定するために、childAspectRatio を計算
-        // 幅 / 高さ = childAspectRatio
-        double itemWidth = width / crossAxisCount - itemSpacing * (crossAxisCount - 1) / crossAxisCount;
-        double aspectRatio = itemWidth / itemHeight;
-
-        return GridView.count(
-          crossAxisCount: crossAxisCount,
-          crossAxisSpacing: itemSpacing,
-          mainAxisSpacing: itemSpacing,
-          childAspectRatio: aspectRatio,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          children: children,
-        );
+      if (width > 900) {
+        crossAxisCount = 4;
+      } else if (width > 600) {
+        crossAxisCount = 3;
       }
-    );
-  }
 
+      // ボタンの高さを固定するために、childAspectRatio を計算
+      // 幅 / 高さ = childAspectRatio
+      double itemWidth = width / crossAxisCount -
+          itemSpacing * (crossAxisCount - 1) / crossAxisCount;
+      double aspectRatio = itemWidth / itemHeight;
+
+      return GridView.count(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: itemSpacing,
+        mainAxisSpacing: itemSpacing,
+        childAspectRatio: aspectRatio,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        children: children,
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,19 +77,15 @@ class _HomeAppListState extends State<HomeAppList> {
       children: [
         titleText("構造解析アプリ"),
         const SizedBox(height: 10),
-
         buttonGrid([
           button("はり", "/beam"),
           button("トラス", "/truss"),
           button("ラーメン", "/frame"),
           button("有限要素解析", "/fem"),
         ]),
-
         const SizedBox(height: 30),
-
         titleText("ゲームアプリ"),
         const SizedBox(height: 10),
-
         buttonGrid([
           button("橋づくりゲーム", "/bridgegame"),
         ]),
