@@ -230,7 +230,9 @@ class _BridgegameBarState extends State<BridgegameBar> {
           ToolDropdownButton(
             selectedIndex: _powerIndex,
             onPressed: _onPressedPowerDropdown,
-            items: const ["荷重1", "荷重2", "自重"],
+            items: _controller.gridWidth == 70
+                ? const ["荷重1", "荷重2", "自重"]
+                : const ["自重"],
           ),
 
           const ToolBarDivider(

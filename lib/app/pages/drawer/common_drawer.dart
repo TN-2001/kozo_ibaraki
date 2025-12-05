@@ -89,10 +89,19 @@ class CommonDrawer extends StatelessWidget {
                 },
               ),
               BaseListTile(
-                title: const Text("橋づくりゲーム"),
+                title: const Text("橋づくりゲーム 簡単"),
                 selected: currentRoute == '/bridgegame',
                 onTap: () async {
                   String targetRoute = '/bridgegame';
+
+                  NavigatorServices.handleNavigation(context, targetRoute);
+                },
+              ),
+              BaseListTile(
+                title: const Text("橋づくりゲーム 難しい"),
+                selected: currentRoute == '/bridgegame/stage2',
+                onTap: () async {
+                  String targetRoute = '/bridgegame/stage2';
 
                   NavigatorServices.handleNavigation(context, targetRoute);
                 },

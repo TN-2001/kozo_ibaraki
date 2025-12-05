@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kozo_ibaraki/app/pages/beam/beam_page.dart';
 import 'package:kozo_ibaraki/app/pages/bridgegame/bridgegame_page.dart';
+import 'package:kozo_ibaraki/app/pages/bridgegame_free/bridgegame_free_page.dart';
 import 'package:kozo_ibaraki/app/pages/fem/fem_page.dart';
 import 'package:kozo_ibaraki/app/pages/frame/frame_page.dart';
 import 'package:kozo_ibaraki/app/pages/home/home_page.dart';
@@ -67,6 +68,10 @@ class MyApp extends StatelessWidget {
         GoRoute(
           path: '/bridgegame',
           builder: (context, state) => const BridgegamePage(),
+        ),
+        GoRoute(
+          path: '/bridgegame/stage2',
+          builder: (context, state) => const BridgegameFreePage(),
         ),
         GoRoute(
           path: '/privacy',

@@ -87,7 +87,8 @@ class _HomeAppListState extends State<HomeAppList> {
         titleText("ゲームアプリ"),
         const SizedBox(height: 10),
         buttonGrid([
-          button("橋づくりゲーム", "/bridgegame"),
+          button("橋づくりゲーム 簡単", "/bridgegame"),
+          button("橋づくりゲーム 難しい", "/bridgegame/stage2"),
         ]),
       ],
     );

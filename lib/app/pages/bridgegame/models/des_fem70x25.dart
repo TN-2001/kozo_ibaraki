@@ -1,7 +1,10 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
+
 // 橋の解析
-(List<double>, List<List<List<double>>>, List<List<List<double>>>) desFEM70x25(List<List<int>> zeroOneList, int powerType) {
+(List<double>, List<List<List<double>>>, List<List<List<double>>>) desFEM70x25(
+    List<List<int>> zeroOneList, int powerType) {
   // zeroOneList=要素の有無、powerType=荷重条件（0:集中荷重、1:分布荷重、2:自重）
   int npx1 = zeroOneList.length; // 横の要素数
   int npx2 = zeroOneList[0].length; // 縦の要素数
@@ -11,13 +14,19 @@ import 'dart:math';
   int neq = nx * nd; // 節点数x次元数(xとy方向あるから)
 
   List<List<int>> mpxl = zeroOneList;
-  List<List<List<int>>> ijke = List.generate(npx1, (_) => List.generate(npx2, (_) => List.filled(4, 0)));
+  List<List<List<int>>> ijke =
+      List.generate(npx1, (_) => List.generate(npx2, (_) => List.filled(4, 0)));
   List<int> mdof = List.filled(neq, 0); // 節点拘束（0:拘束、1:拘束でない、荷重がかかっているかは関係ない）
   List<double> fext = List.filled(neq, 0.0); // 節点荷重
   List<double> disp = List.filled(neq, 0.0);
-  List<List<List<double>>> stn = List.generate(npx1, (_) => List.generate(npx2, (_) => List.filled(9, 0.0)));
-  List<List<List<double>>> sts = List.generate(npx1, (_) => List.generate(npx2, (_) => List.filled(9, 0.0)));
-  List<List<List<List<double>>>> vske = List.generate(npx1, (_) => List.generate(npx2, (_) => List.generate(8, (_) => List.filled(8, 0.0))));
+  List<List<List<double>>> stn = List.generate(
+      npx1, (_) => List.generate(npx2, (_) => List.filled(9, 0.0)));
+  List<List<List<double>>> sts = List.generate(
+      npx1, (_) => List.generate(npx2, (_) => List.filled(9, 0.0)));
+  List<List<List<List<double>>>> vske = List.generate(
+      npx1,
+      (_) => List.generate(
+          npx2, (_) => List.generate(8, (_) => List.filled(8, 0.0))));
   List<double> diag = List.filled(neq, 0.0);
   List<double> cgw1 = List.filled(neq, 0.0);
   List<double> cgw2 = List.filled(neq, 0.0);
@@ -41,7 +50,10 @@ import 'dart:math';
   const double e0 = 1.0;
   const double v0 = 0.0;
 
-  vske = List.generate(npx1, (_) => List.generate(npx2, (_) => List.generate(8, (_) => List.filled(8, 0.0))));
+  vske = List.generate(
+      npx1,
+      (_) => List.generate(
+          npx2, (_) => List.generate(8, (_) => List.filled(8, 0.0))));
 
   for (int n2 = 0; n2 < npx2; n2++) {
     for (int n1 = 0; n1 < npx1; n1++) {
@@ -88,11 +100,12 @@ import 'dart:math';
 
         double detw = 1.0;
 
-        for (int i1 = 0; i1 < nd*node; i1++) {
-          for (int i2 = 0; i2 < nd*node; i2++) {
+        for (int i1 = 0; i1 < nd * node; i1++) {
+          for (int i2 = 0; i2 < nd * node; i2++) {
             for (int k = 0; k < 3; k++) {
               for (int l = 0; l < 3; l++) {
-                vske[n1][n2][i1][i2] += bbb[k][i1] * ccc[k][l] * bbb[l][i2] * detw;
+                vske[n1][n2][i1][i2] +=
+                    bbb[k][i1] * ccc[k][l] * bbb[l][i2] * detw;
               }
             }
           }
@@ -102,14 +115,16 @@ import 'dart:math';
   }
 
   // Force vector (p = 1) 外力ベクトル（荷重）の設定
-  if(powerType == 0){ // 3点曲げ
+  if (powerType == 0) {
+    // 3点曲げ
     int n1 = (npx1 + 1) * npx2 + (npx1 / 2).round() - 1;
     int n2 = (npx1 + 1) * npx2 + (npx1 / 2).round();
     int n3 = (npx1 + 1) * npx2 + (npx1 / 2).round() + 1;
     fext[nd * n1 + 1] = -1.0;
     fext[nd * n2 + 1] = -2.0;
     fext[nd * n3 + 1] = -1.0;
-  }else if(powerType == 1){ // 4点曲げ
+  } else if (powerType == 1) {
+    // 4点曲げ
     int n1 = (npx1 + 1) * npx2 + 22;
     int n2 = (npx1 + 1) * npx2 + 23;
     int n3 = (npx1 + 1) * npx2 + 24;
@@ -122,13 +137,14 @@ import 'dart:math';
     fext[nd * n1 + 1] = -1.0;
     fext[nd * n2 + 1] = -2.0;
     fext[nd * n3 + 1] = -1.0;
-  }else if(powerType == 2){ // 自重
-    for(int n2 = 0; n2 < npx2; n2++){
-      for(int n1 = 0; n1 < npx1; n1++){
-        if(mpxl[n1][n2] == 1){
-          for(int i = 0; i < 4; i++){
+  } else if (powerType == 2) {
+    // 自重
+    for (int n2 = 0; n2 < npx2; n2++) {
+      for (int n1 = 0; n1 < npx1; n1++) {
+        if (mpxl[n1][n2] == 1) {
+          for (int i = 0; i < 4; i++) {
             int ni = ijke[n1][n2][i];
-            int nj = nd*ni + 1;
+            int nj = nd * ni + 1;
             if (n2 == 0 || n2 == 1) {
               fext[nj] -= 0.06;
             } else {
@@ -144,27 +160,27 @@ import 'dart:math';
   for (int i = 0; i < neq; i++) {
     mdof[i] = 1;
   }
-  int n1 = (npx1+1)*npx2 + 1;
-  int n2 = (npx1+1)*npx2 + 2;
-  int n3 = (npx1+1)*npx2 + 3;
-  int n4 = (npx1+1)*npx2 + npx1 - 1;
-  int n5 = (npx1+1)*npx2 + npx1;
-  int n6 = (npx1+1)*npx2 + npx1 + 1;
+  int n1 = (npx1 + 1) * npx2 + 1;
+  int n2 = (npx1 + 1) * npx2 + 2;
+  int n3 = (npx1 + 1) * npx2 + 3;
+  int n4 = (npx1 + 1) * npx2 + npx1 - 1;
+  int n5 = (npx1 + 1) * npx2 + npx1;
+  int n6 = (npx1 + 1) * npx2 + npx1 + 1;
   // 要素が多いとき用
-  int n7 = (npx1+1)*npx2 + 4;
-  int n8 = (npx1+1)*npx2 + npx1 - 2;
+  // int n7 = (npx1 + 1) * npx2 + 4;
+  // int n8 = (npx1 + 1) * npx2 + npx1 - 2;
   for (int k = 0; k < nd; k++) {
-    mdof[nd*(n1-1)+k] = 0;
-    mdof[nd*(n2-1)+k] = 0;
-    mdof[nd*(n3-1)+k] = 0;
-    mdof[nd*(n4-1)+k] = 0;
-    mdof[nd*(n5-1)+k] = 0;
-    mdof[nd*(n6-1)+k] = 0;
+    mdof[nd * (n1 - 1) + k] = 0;
+    mdof[nd * (n2 - 1) + k] = 0;
+    mdof[nd * (n3 - 1) + k] = 0;
+    mdof[nd * (n4 - 1) + k] = 0;
+    mdof[nd * (n5 - 1) + k] = 0;
+    mdof[nd * (n6 - 1) + k] = 0;
     // 要素が多いとき用
-    if (npx1 > 80) {
-      mdof[nd*(n7-1)+k] = 0;
-      mdof[nd*(n8-1)+k] = 0;
-    }
+    // if (npx1 > 80) {
+    //   mdof[nd * (n7 - 1) + k] = 0;
+    //   mdof[nd * (n8 - 1) + k] = 0;
+    // }
   }
 
   // Diagonal component
@@ -173,8 +189,8 @@ import 'dart:math';
       for (int io = 0; io < node; io++) {
         int ic = ijke[n1][n2][io];
         for (int id = 0; id < nd; id++) {
-          int ii = nd*io + id;
-          int ig = nd*ic + id;
+          int ii = nd * io + id;
+          int ig = nd * ic + id;
           diag[ig] += vske[n1][n2][ii][ii];
         }
       }
@@ -249,7 +265,9 @@ import 'dart:math';
       for (int i = 0; i < neq; i++) {
         disp[i] *= diag[i];
       }
-      // print('Convergence achieved at iteration $kcg');
+      if (kDebugMode) {
+        print('Convergence achieved at iteration $kcg');
+      }
       break;
     } else {
       double beta = r1r1 / rr;
@@ -320,8 +338,10 @@ import 'dart:math';
         txy += ccc[2][0] * exx + ccc[2][1] * eyy + ccc[2][2] * rxy;
       }
 
-      double smax = (sxx + syy) / 2.0 + sqrt(pow((sxx - syy) / 2.0, 2) + pow(txy, 2));
-      double smin = (sxx + syy) / 2.0 - sqrt(pow((sxx - syy) / 2.0, 2) + pow(txy, 2));
+      double smax =
+          (sxx + syy) / 2.0 + sqrt(pow((sxx - syy) / 2.0, 2) + pow(txy, 2));
+      double smin =
+          (sxx + syy) / 2.0 - sqrt(pow((sxx - syy) / 2.0, 2) + pow(txy, 2));
 
       // 保存
       stn[n1][n2][0] = exx; // X方向ひずみ
