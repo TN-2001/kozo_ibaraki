@@ -72,16 +72,6 @@ class BridgegamePainter extends CustomPainter {
         }
       }
     } else {
-      if (data.powerIndex == 0) {
-        data.dispScale = 90.0; // 3点曲げの変位倍率
-        // data.dispScale = 3;
-      } else if (data.powerIndex == 1) {
-        data.dispScale = 100.0; // 4点曲げの変位倍率
-      } else {
-        data.dispScale = 100.0; // その他の変位倍率
-      }
-      data.dispScale /= (data.vvar * data.onElemListLength);
-
       // 要素
       _drawElem(true, canvas); // 要素
       _drawElemEdge(true, canvas); // 要素の辺

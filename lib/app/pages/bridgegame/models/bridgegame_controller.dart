@@ -25,6 +25,7 @@ class BridgegameController extends ChangeNotifier {
 
   bool isCalculation = false; // 解析したかどうか
 
+  final List<double> sigmoidList = [2.79, 3.13, 2.27]; // シグモイド関数係数リスト
   double dispScale = 1.0; // 変位倍率
 
   double vvar = 0; // 荷重中央たわみ/体積（基準モデル）
@@ -261,17 +262,25 @@ class BridgegameController extends ChangeNotifier {
     }
     // print(ss);
 
-    // 点数
-    double maxBecPos = _nodeList[35].becPos.dy.abs();
-    // print(maxBecPos);
-    int elemLength = onElemListLength;
+    vvar = newton3p2(onElemListLength, powerIndex);
 
-    // シグモイド関数
-    // vvar = 125446.5437*pow(elemLength,-3.4227461);
+    dispScale = elemListLength / vvar / 20;
 
-    double a = 3.25;
-    // ニュートン補間
+    double vvvar = ss - vvar;
+    _resultPoint = 100 *
+        (1 - 1 / (1 + (pow(e, -sigmoidList[powerIndex] * (vvvar) / vvar))));
+    selectResult(3);
+
+    initSelect();
+    isCalculation = true;
+    notifyListeners();
+  }
+
+  // ニュートン補間
+  double newton3p2(int elemLength, int powerIndex) {
     double b0, b1, b2;
+    double vvar;
+
     if (powerIndex == 0) {
       // 3点曲げ
       if (elemLength >= 70 && elemLength < 140) {
@@ -331,8 +340,6 @@ class BridgegameController extends ChangeNotifier {
             b1 * (elemLength - 910) +
             b2 * (elemLength - 910) * (elemLength - 980);
       }
-      a = 2.79;
-      maxBecPos = ss; // 体積を基準にする
     } else if (powerIndex == 1) {
       // 4点曲げ
       if (elemLength >= 70 && elemLength < 140) {
@@ -392,147 +399,66 @@ class BridgegameController extends ChangeNotifier {
             b1 * (elemLength - 910) +
             b2 * (elemLength - 910) * (elemLength - 980);
       }
-      a = 3.13;
-      maxBecPos = ss; // 体積を基準にする
     } else {
       // 自重
-      // if (elemLength >= 70 && elemLength < 140) {
-      //   b0 = 8.33226515366013E+01;
-      //   b1 = -8.09218615331466E-01;
-      //   b2 = 4.97838360573298E-03;
-      //   vvar = b0 +
-      //       b1 * (elemLength - 70) +
-      //       b2 * (elemLength - 70) * (elemLength - 105);
-      // } else if (elemLength >= 140 && elemLength < 210) {
-      //   b0 = 3.88743882974445E+01;
-      //   b1 = -2.82125379926986E-01;
-      //   b2 = 1.57740787186547E-03;
-      //   vvar = b0 +
-      //       b1 * (elemLength - 140) +
-      //       b2 * (elemLength - 140) * (elemLength - 175);
-      // } else if (elemLength >= 210 && elemLength < 350) {
-      //   b0 = 2.29902609886259E+01;
-      //   b1 = -9.27268061060814E-02;
-      //   b2 = 2.81100949420674E-04;
-      //   vvar = b0 +
-      //       b1 * (elemLength - 210) +
-      //       b2 * (elemLength - 210) * (elemLength - 280);
-      // } else if (elemLength >= 350 && elemLength < 490) {
-      //   b0 = 1.27632974380971E+01;
-      //   b1 = -3.73390866924414E-02;
-      //   b2 = 6.98389962465673E-05;
-      //   vvar = b0 +
-      //       b1 * (elemLength - 350) +
-      //       b2 * (elemLength - 350) * (elemLength - 420);
-      // } else if (elemLength >= 490 && elemLength < 630) {
-      //   b0 = 8.22024746437166E+00;
-      //   b1 = -2.05701004427023E-02;
-      //   b2 = 3.64498927922009E-05;
-      //   vvar = b0 +
-      //       b1 * (elemLength - 490) +
-      //       b2 * (elemLength - 490) * (elemLength - 560);
-      // } else if (elemLength >= 630 && elemLength < 770) {
-      //   b0 = 5.69764235175691E+00;
-      //   b1 = -1.17497724276513E-02;
-      //   b2 = 1.94089794928541E-05;
-      //   vvar = b0 +
-      //       b1 * (elemLength - 630) +
-      //       b2 * (elemLength - 630) * (elemLength - 700);
-      // } else if (elemLength >= 770 && elemLength < 910) {
-      //   b0 = 4.24288221091570E+00;
-      //   b1 = -7.02637280466071E-03;
-      //   b2 = 1.07265644494510E-05;
-      //   vvar = b0 +
-      //       b1 * (elemLength - 770) +
-      //       b2 * (elemLength - 770) * (elemLength - 840);
-      // } else {
-      //   b0 = 3.36431034986782E+00;
-      //   b1 = -4.38305983819901E-03;
-      //   b2 = 6.29674005598068E-06;
-      //   vvar = b0 +
-      //       b1 * (elemLength - 910) +
-      //       b2 * (elemLength - 910) * (elemLength - 980);
-      // }
-      vvar = newton3p2Prudence(elemLength);
-      a = 2.27;
-      maxBecPos = ss; // 自重のときは体積を基準にする
+      if (elemLength >= 70 && elemLength < 140) {
+        b0 = 8.33226515366013E+01;
+        b1 = -8.09218615331466E-01;
+        b2 = 4.97838360573298E-03;
+        vvar = b0 +
+            b1 * (elemLength - 70) +
+            b2 * (elemLength - 70) * (elemLength - 105);
+      } else if (elemLength >= 140 && elemLength < 210) {
+        b0 = 3.88743882974445E+01;
+        b1 = -2.82125379926986E-01;
+        b2 = 1.57740787186547E-03;
+        vvar = b0 +
+            b1 * (elemLength - 140) +
+            b2 * (elemLength - 140) * (elemLength - 175);
+      } else if (elemLength >= 210 && elemLength < 350) {
+        b0 = 2.29902609886259E+01;
+        b1 = -9.27268061060814E-02;
+        b2 = 2.81100949420674E-04;
+        vvar = b0 +
+            b1 * (elemLength - 210) +
+            b2 * (elemLength - 210) * (elemLength - 280);
+      } else if (elemLength >= 350 && elemLength < 490) {
+        b0 = 1.27632974380971E+01;
+        b1 = -3.73390866924414E-02;
+        b2 = 6.98389962465673E-05;
+        vvar = b0 +
+            b1 * (elemLength - 350) +
+            b2 * (elemLength - 350) * (elemLength - 420);
+      } else if (elemLength >= 490 && elemLength < 630) {
+        b0 = 8.22024746437166E+00;
+        b1 = -2.05701004427023E-02;
+        b2 = 3.64498927922009E-05;
+        vvar = b0 +
+            b1 * (elemLength - 490) +
+            b2 * (elemLength - 490) * (elemLength - 560);
+      } else if (elemLength >= 630 && elemLength < 770) {
+        b0 = 5.69764235175691E+00;
+        b1 = -1.17497724276513E-02;
+        b2 = 1.94089794928541E-05;
+        vvar = b0 +
+            b1 * (elemLength - 630) +
+            b2 * (elemLength - 630) * (elemLength - 700);
+      } else if (elemLength >= 770 && elemLength < 910) {
+        b0 = 4.24288221091570E+00;
+        b1 = -7.02637280466071E-03;
+        b2 = 1.07265644494510E-05;
+        vvar = b0 +
+            b1 * (elemLength - 770) +
+            b2 * (elemLength - 770) * (elemLength - 840);
+      } else {
+        b0 = 3.36431034986782E+00;
+        b1 = -4.38305983819901E-03;
+        b2 = 6.29674005598068E-06;
+        vvar = b0 +
+            b1 * (elemLength - 910) +
+            b2 * (elemLength - 910) * (elemLength - 980);
+      }
     }
-    vvar = vvar / elemLength;
-
-    double vvvar = maxBecPos / elemLength - vvar;
-    // if(vvvar > 0){
-    //   a = 0.5;
-    // }
-    _resultPoint = 100 * (1 - 1 / (1 + (pow(e, -a * (vvvar) / vvar))));
-    selectResult(3);
-
-    initSelect();
-    isCalculation = true;
-    notifyListeners();
-  }
-
-  double newton3p2Prudence(int elemLength) {
-    double b0, b1, b2;
-    double vvar;
-
-    if (elemLength >= 70 && elemLength < 140) {
-      b0 = 8.33226515366013E+01;
-      b1 = -8.09218615331466E-01;
-      b2 = 4.97838360573298E-03;
-      vvar = b0 +
-          b1 * (elemLength - 70) +
-          b2 * (elemLength - 70) * (elemLength - 105);
-    } else if (elemLength >= 140 && elemLength < 210) {
-      b0 = 3.88743882974445E+01;
-      b1 = -2.82125379926986E-01;
-      b2 = 1.57740787186547E-03;
-      vvar = b0 +
-          b1 * (elemLength - 140) +
-          b2 * (elemLength - 140) * (elemLength - 175);
-    } else if (elemLength >= 210 && elemLength < 350) {
-      b0 = 2.29902609886259E+01;
-      b1 = -9.27268061060814E-02;
-      b2 = 2.81100949420674E-04;
-      vvar = b0 +
-          b1 * (elemLength - 210) +
-          b2 * (elemLength - 210) * (elemLength - 280);
-    } else if (elemLength >= 350 && elemLength < 490) {
-      b0 = 1.27632974380971E+01;
-      b1 = -3.73390866924414E-02;
-      b2 = 6.98389962465673E-05;
-      vvar = b0 +
-          b1 * (elemLength - 350) +
-          b2 * (elemLength - 350) * (elemLength - 420);
-    } else if (elemLength >= 490 && elemLength < 630) {
-      b0 = 8.22024746437166E+00;
-      b1 = -2.05701004427023E-02;
-      b2 = 3.64498927922009E-05;
-      vvar = b0 +
-          b1 * (elemLength - 490) +
-          b2 * (elemLength - 490) * (elemLength - 560);
-    } else if (elemLength >= 630 && elemLength < 770) {
-      b0 = 5.69764235175691E+00;
-      b1 = -1.17497724276513E-02;
-      b2 = 1.94089794928541E-05;
-      vvar = b0 +
-          b1 * (elemLength - 630) +
-          b2 * (elemLength - 630) * (elemLength - 700);
-    } else if (elemLength >= 770 && elemLength < 910) {
-      b0 = 4.24288221091570E+00;
-      b1 = -7.02637280466071E-03;
-      b2 = 1.07265644494510E-05;
-      vvar = b0 +
-          b1 * (elemLength - 770) +
-          b2 * (elemLength - 770) * (elemLength - 840);
-    } else {
-      b0 = 3.36431034986782E+00;
-      b1 = -4.38305983819901E-03;
-      b2 = 6.29674005598068E-06;
-      vvar = b0 +
-          b1 * (elemLength - 910) +
-          b2 * (elemLength - 910) * (elemLength - 980);
-    }
-
     return vvar;
   }
 

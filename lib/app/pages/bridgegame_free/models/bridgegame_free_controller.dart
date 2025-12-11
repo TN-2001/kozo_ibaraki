@@ -9,6 +9,8 @@ class BridgegameFreeController extends BridgegameController {
   final int _gridWidth = 100; // グリッド幅
   final int _gridHeight = 36; // グリッド高さ
   final int _powerIndex = 2;
+  @override
+  List<double> get sigmoidList => [2, 2, 2]; // シグモイド関数係数リスト
 
   /*
     ゲッター
@@ -24,7 +26,7 @@ class BridgegameFreeController extends BridgegameController {
     関数
   */
   @override
-  double newton3p2Prudence(int elemLength) {
+  double newton3p2(int elemLength, int powerIndex) {
     double b0, b1, b2;
     double vvar;
 
