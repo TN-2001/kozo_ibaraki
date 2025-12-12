@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 class BaseZoomableWidget extends StatefulWidget {
   /// 表示するコンテンツ
   final Widget child;
-  
+
   /// 最小スケール
   final double minScale;
-  
+
   /// 最大スケール
   final double maxScale;
-  
+
   /// 初期スケール
   final double initialScale;
-  
+
   /// マウスホイールの感度
   final double scrollSensitivity;
 
@@ -33,7 +33,7 @@ class BaseZoomableWidget extends StatefulWidget {
 
 class _ZoomableWidgetState extends State<BaseZoomableWidget> {
   late TransformationController _transformationController;
-  
+
   @override
   void initState() {
     super.initState();
@@ -54,30 +54,30 @@ class _ZoomableWidgetState extends State<BaseZoomableWidget> {
   void _handlePointerSignal(PointerSignalEvent event) {
     if (event is PointerScrollEvent) {
       final delta = event.scrollDelta.dy;
-      
+
       // 現在の変換行列を取得
       final matrix = _transformationController.value.clone();
-      
+
       // 現在のスケールを取得
       final currentScale = matrix.getMaxScaleOnAxis();
-      
+
       // 新しいスケールを計算
       final newScale = (currentScale - delta * widget.scrollSensitivity)
           .clamp(widget.minScale, widget.maxScale);
-      
+
       // スケール変更の比率
       final scaleDelta = newScale / currentScale;
-      
+
       // マウス位置を中心にズーム
       final focalPoint = event.localPosition;
-      
+
       // 変換行列を更新
       final updatedMatrix = _calculateZoomMatrix(
         matrix,
         scaleDelta,
         focalPoint,
       );
-      
+
       setState(() {
         _transformationController.value = updatedMatrix;
       });
@@ -92,7 +92,7 @@ class _ZoomableWidgetState extends State<BaseZoomableWidget> {
   ) {
     final double px = focalPoint.dx;
     final double py = focalPoint.dy;
-    
+
     // フォーカルポイントを原点に移動 → スケール → 元に戻す
     return Matrix4.identity()
       ..translate(px, py)

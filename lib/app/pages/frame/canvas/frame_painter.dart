@@ -106,12 +106,12 @@ class FramePainter extends CustomPainter {
     final double worldHeight = data.rect.height;
 
     double scale = 1.0;
-    if (screenWidth / (worldWidth * 2.0) < screenHeight / (worldHeight * 2)) {
+    if (screenWidth / (worldWidth * 2.0) < screenHeight / (worldHeight * 2.5)) {
       // 横幅に合わせる
       scale = screenWidth / (worldWidth * 2.0);
     } else {
       // 高さに合わせる
-      scale = screenHeight / (worldHeight * 2);
+      scale = screenHeight / (worldHeight * 2.5);
     }
 
     // カメラの初期化
@@ -484,9 +484,9 @@ class FramePainter extends CustomPainter {
     }
 
     const Color arrowColor = Color.fromARGB(255, 0, 63, 95);
-    final double headSize = data.nodeRadius * 2.5 * camera.scale;
-    final double lineWidth = data.nodeRadius * 1 * camera.scale;
-    final double lineLength = data.nodeRadius * 8 * camera.scale;
+    final double headSize = data.nodeRadius * 2 * camera.scale;
+    final double lineWidth = data.nodeRadius * 0.75 * camera.scale;
+    final double lineLength = data.nodeRadius * 5 * camera.scale;
 
     for (int i = 0; i < data.elemCount; i++) {
       final Elem elem = data.getElem(i);
@@ -512,12 +512,14 @@ class FramePainter extends CustomPainter {
               headSize: headSize,
               lineWidth: lineWidth,
               lineLength: lineLength,
+              padding: data.nodeRadius * camera.scale,
               color: arrowColor);
         } else {
           CanvasUtils.drawDistributionArrows(canvas, end, start,
               headSize: headSize,
               lineWidth: lineWidth,
               lineLength: lineLength,
+              padding: data.nodeRadius * camera.scale,
               color: arrowColor);
         }
       }
@@ -577,10 +579,10 @@ class FramePainter extends CustomPainter {
 
       Offset wpos1 = camera.worldToScreen(pos1);
       Offset wpos2 = camera.worldToScreen(pos2);
-      double bx1 = -elem.getResult(3) * ox / resultMax * camera.scale * 0.3;
-      double by1 = elem.getResult(3) * oy / resultMax * camera.scale * 0.3;
-      double bx2 = -elem.getResult(4) * ox / resultMax * camera.scale * 0.3;
-      double by2 = elem.getResult(4) * oy / resultMax * camera.scale * 0.3;
+      double bx1 = -elem.getResult(3) * ox / resultMax * camera.scale * 0.2;
+      double by1 = elem.getResult(3) * oy / resultMax * camera.scale * 0.2;
+      double bx2 = -elem.getResult(4) * ox / resultMax * camera.scale * 0.2;
+      double by2 = elem.getResult(4) * oy / resultMax * camera.scale * 0.2;
 
       final Path path = Path();
       path.moveTo(wpos1.dx, wpos1.dy);
@@ -601,10 +603,10 @@ class FramePainter extends CustomPainter {
 
       Offset wpos1 = camera.worldToScreen(pos1);
       Offset wpos2 = camera.worldToScreen(pos2);
-      double bx1 = -elem.getResult(3) * ox / resultMax * camera.scale * 0.3;
-      double by1 = elem.getResult(3) * oy / resultMax * camera.scale * 0.3;
-      double bx2 = -elem.getResult(4) * ox / resultMax * camera.scale * 0.3;
-      double by2 = elem.getResult(4) * oy / resultMax * camera.scale * 0.3;
+      double bx1 = -elem.getResult(3) * ox / resultMax * camera.scale * 0.2;
+      double by1 = elem.getResult(3) * oy / resultMax * camera.scale * 0.2;
+      double bx2 = -elem.getResult(4) * ox / resultMax * camera.scale * 0.2;
+      double by2 = elem.getResult(4) * oy / resultMax * camera.scale * 0.2;
 
       canvas.drawLine(Offset(wpos2.dx + bx2, wpos2.dy + by2),
           Offset(wpos1.dx + bx1, wpos1.dy + by1), Paint());
@@ -624,7 +626,7 @@ class FramePainter extends CustomPainter {
         camera.worldToScreen(rect.centerRight).dx,
         camera.worldToScreen(rect.center).dy - camera.scale * 0.1,
         camera.scale * 0.7,
-        camera.scale * 0.3);
+        camera.scale * 0.2);
 
     double resultMax =
         max(controller.resultMax.abs(), controller.resultMin.abs());
