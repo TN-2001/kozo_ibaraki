@@ -54,9 +54,9 @@ class FemPainter extends CustomPainter {
     final double worldHeight = rect.height;
 
     double scale = 1.0;
-    if (screenWidth / (worldWidth * 2.0) < screenHeight / (worldHeight * 2)) {
+    if (screenWidth / (worldWidth * 2.25) < screenHeight / (worldHeight * 2)) {
       // 横幅に合わせる
-      scale = screenWidth / (worldWidth * 2.0);
+      scale = screenWidth / (worldWidth * 2.25);
     } else {
       // 高さに合わせる
       scale = screenHeight / (worldHeight * 2);
@@ -126,8 +126,8 @@ class FemPainter extends CustomPainter {
       } else {
         color = Colors.black;
       }
-      CanvasUtils.text(canvas, Offset(pos.dx - 30, pos.dy - 30),
-          (i + 1).toString(), 20, color, true, 100);
+      CanvasUtils.drawText(canvas, Offset(pos.dx - 30, pos.dy - 30),
+          (i + 1).toString(), color: color, fontSize: 16);
     }
   }
 

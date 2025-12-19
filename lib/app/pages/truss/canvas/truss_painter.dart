@@ -184,9 +184,10 @@ class TrussPainter extends CustomPainter {
     final double worldHeight = data.rect.height;
 
     double scale = 1.0;
-    if (screenWidth / (worldWidth * 2.0) < screenHeight / (worldHeight * 2.5)) {
+    if (screenWidth / (worldWidth * 2.25) <
+        screenHeight / (worldHeight * 2.5)) {
       // 横幅に合わせる
-      scale = screenWidth / (worldWidth * 2.0);
+      scale = screenWidth / (worldWidth * 2.25);
     } else {
       // 高さに合わせる
       scale = screenHeight / (worldHeight * 2.5);
@@ -257,7 +258,7 @@ class TrussPainter extends CustomPainter {
       }
       CanvasUtils.drawText(
           canvas, Offset(pos.dx - 30, pos.dy - 30), (i + 1).toString(),
-          color: color, fontSize: 20);
+          color: color, fontSize: 16);
     }
   }
 

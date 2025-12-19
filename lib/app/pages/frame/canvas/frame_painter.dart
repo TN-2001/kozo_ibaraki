@@ -89,8 +89,11 @@ class FramePainter extends CustomPainter {
             text +=
                 "θ：${StringUtils.doubleToString(resultNode.getResult(3), 3)}";
           }
-          CanvasUtils.text(canvas, camera.worldToScreen(node.afterPos), text,
-              16, Colors.black, true, size.width);
+          CanvasUtils.drawText(
+            canvas,
+            camera.worldToScreen(node.afterPos),
+            text,
+          );
         }
       } else if (controller.resultIndex == 4) {
         _drawReactionForce(canvas); // 反力
@@ -106,9 +109,10 @@ class FramePainter extends CustomPainter {
     final double worldHeight = data.rect.height;
 
     double scale = 1.0;
-    if (screenWidth / (worldWidth * 2.0) < screenHeight / (worldHeight * 2.5)) {
+    if (screenWidth / (worldWidth * 2.25) <
+        screenHeight / (worldHeight * 2.5)) {
       // 横幅に合わせる
-      scale = screenWidth / (worldWidth * 2.0);
+      scale = screenWidth / (worldWidth * 2.25);
     } else {
       // 高さに合わせる
       scale = screenHeight / (worldHeight * 2.5);
@@ -266,8 +270,9 @@ class FramePainter extends CustomPainter {
       } else {
         color = Colors.black;
       }
-      CanvasUtils.text(canvas, Offset(pos.dx - 30, pos.dy - 30),
-          (i + 1).toString(), 20, color, true, 100);
+      CanvasUtils.drawText(
+          canvas, Offset(pos.dx - 30, pos.dy - 30), (i + 1).toString(),
+          color: color, fontSize: 16);
     }
   }
 
@@ -625,7 +630,7 @@ class FramePainter extends CustomPainter {
     rect = Rect.fromLTWH(
         camera.worldToScreen(rect.centerRight).dx,
         camera.worldToScreen(rect.center).dy - camera.scale * 0.1,
-        camera.scale * 0.7,
+        camera.scale * 0.5,
         camera.scale * 0.2);
 
     double resultMax =
@@ -645,25 +650,6 @@ class FramePainter extends CustomPainter {
         canvas, rect.center, StringUtils.doubleToString(resultMax, 3),
         alignment: Alignment.centerLeft, isOutline: false);
   }
-
-  // 曲げモーメントのテキスト
-  // void _drawMomentText(Canvas canvas) {
-  //   for (int i = 0; i < data.nodeCount; i++) {
-  //     Node node = data.getResultNode(i);
-  //     double value = 0;
-  //     for (int j = 0; j < data.resultElemCount; j++) {
-  //       Elem elem = data.getResultElem(j);
-  //       if (elem.getNode(0)!.number == node.number || elem.getNode(1)!.number == node.number) {
-  //         value = max(elem.getResult(3).abs(), elem.getResult(4).abs());
-  //         break;
-  //       }
-  //     }
-  //     CanvasUtils.text(
-  //       canvas, camera.worldToScreen(node.pos),
-  //       StringUtils.doubleToString(value, 3),
-  //       14, Colors.black, true, 1000, alignment: Alignment.center);
-  //   }
-  // }
 
   // 反力
   void _drawReactionForce(Canvas canvas) {
@@ -782,23 +768,25 @@ class FramePainter extends CustomPainter {
           isCounterclockwise: isCounterclockwise,
         );
 
-        if (vector.dy.abs() >= vector.dx.abs() + 0.001 && vector.dy <= 0) {
-          CanvasUtils.drawText(
-              canvas, Offset(pos.dx + radius, pos.dy + radius), text,
-              alignment: Alignment.topCenter);
-        } else if (vector.dy.abs() + 0.001 >= vector.dx.abs() &&
-            vector.dy > 0) {
-          CanvasUtils.drawText(
-              canvas, Offset(pos.dx - radius, pos.dy + radius), text,
-              alignment: Alignment.topCenter);
-        } else if (vector.dx >= 0) {
-          CanvasUtils.drawText(
-              canvas, Offset(pos.dx - radius, pos.dy + radius), text,
-              alignment: Alignment.centerRight);
-        } else if (vector.dx < 0) {
-          CanvasUtils.drawText(
-              canvas, Offset(pos.dx - radius, pos.dy - radius), text,
-              alignment: Alignment.centerRight);
+        if (vector.dy.abs() >= vector.dx.abs()) {
+          Offset tpos;
+          if (vector.dy <= 0) {
+            tpos = Offset(pos.dx + radius, pos.dy + radius);
+          } else {
+            tpos = Offset(pos.dx + radius, pos.dy - radius);
+          }
+          CanvasUtils.drawText(canvas, tpos, text,
+              alignment: Alignment.centerLeft);
+        } else {
+          if (vector.dx >= 0) {
+            CanvasUtils.drawText(
+                canvas, Offset(pos.dx + radius, pos.dy + radius), text,
+                alignment: Alignment.topLeft);
+          } else {
+            CanvasUtils.drawText(
+                canvas, Offset(pos.dx - radius, pos.dy + radius), text,
+                alignment: Alignment.topRight);
+          }
         }
       }
     }

@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:kozo_ibaraki/app/pages/frame/models/data_manager.dart';
 import 'package:kozo_ibaraki/app/pages/frame/models/frame2d.dart';
+import 'package:kozo_ibaraki/core/utils/camera.dart';
 import 'package:kozo_ibaraki/core/utils/math_utils.dart';
 export 'package:kozo_ibaraki/app/pages/frame/models/data_manager.dart';
 
@@ -23,6 +24,7 @@ class FrameController extends ChangeNotifier {
   double _resultMax = 0;
 
   static const double minValue = 10e-13; // 最小値
+  Camera camera = Camera(1, Offset.zero, Offset.zero);
 
   // ゲッター
   int get typeIndex => _typeIndex;
@@ -33,7 +35,6 @@ class FrameController extends ChangeNotifier {
 
   double get resultMin => _resultMin;
   double get resultMax => _resultMax;
-
 
   // 関数
   // 選択されたタイプとツールのインデックスを変更
@@ -47,6 +48,7 @@ class FrameController extends ChangeNotifier {
     }
     initSelect();
   }
+
   void _changeTypeAndToolIndex() {
     if (_typeIndex == 0 && _toolIndex == 0) {
       data.addNode();
@@ -55,6 +57,7 @@ class FrameController extends ChangeNotifier {
     }
     initSelect();
   }
+
   void changeTypeIndex(int index) {
     _removeTemporaryData();
     _typeIndex = index;
@@ -62,6 +65,7 @@ class FrameController extends ChangeNotifier {
 
     notifyListeners();
   }
+
   void changeToolIndex(int index) {
     _removeTemporaryData();
     _toolIndex = index;
@@ -78,8 +82,10 @@ class FrameController extends ChangeNotifier {
       _resultMin = data.getResultElem(0).getResult(resultIndex);
       _resultMax = data.getResultElem(0).getResult(resultIndex);
       for (int i = 0; i < data.resultElemCount; i++) {
-        _resultMin = min(resultMin, data.getResultElem(i).getResult(resultIndex));
-        _resultMax = max(resultMax, data.getResultElem(i).getResult(resultIndex));
+        _resultMin =
+            min(resultMin, data.getResultElem(i).getResult(resultIndex));
+        _resultMax =
+            max(resultMax, data.getResultElem(i).getResult(resultIndex));
       }
     }
 
@@ -97,6 +103,7 @@ class FrameController extends ChangeNotifier {
 
     notifyListeners();
   }
+
   void selectNode(Offset pos) {
     initSelect();
 
@@ -110,6 +117,7 @@ class FrameController extends ChangeNotifier {
 
     notifyListeners();
   }
+
   void selectElem(Offset pos) {
     initSelect();
 
@@ -119,9 +127,10 @@ class FrameController extends ChangeNotifier {
         nodePosList.add(data.getElem(i).getNode(j)!.pos);
       }
 
-      List<Offset> p = MathUtils.getRectanglePoints(nodePosList[0], nodePosList[1], data.elemWidth * 3);
+      List<Offset> p = MathUtils.getRectanglePoints(
+          nodePosList[0], nodePosList[1], data.elemWidth * 3);
 
-      if(MathUtils.isPointInRectangle(pos, p[0], p[1], p[2], p[3])){
+      if (MathUtils.isPointInRectangle(pos, p[0], p[1], p[2], p[3])) {
         _selectedNumber = i;
         break;
       }
@@ -129,7 +138,7 @@ class FrameController extends ChangeNotifier {
 
     notifyListeners();
   }
-  
+
   // 計算
   void calculation() {
     try {
@@ -138,18 +147,22 @@ class FrameController extends ChangeNotifier {
       _selectedNumber = -1; // 選択番号をリセット
       _isCalculated = true;
       changeResultIndex(resultIndex); // 結果のインデックスを変更
-    } catch(e) {
+    } catch (e) {
       _changeTypeAndToolIndex();
     }
   }
+
   void _calculationFrame2d() {
     final int nx = data.nodeCount; // 節点数
-    final List<List<double>> xyz0 = List.generate(nx, (_) => List.filled(2, 0.0));
+    final List<List<double>> xyz0 =
+        List.generate(nx, (_) => List.filled(2, 0.0));
     final List<List<int>> mfix = List.generate(nx, (_) => List.filled(4, 0));
-    final List<List<double>> fnod = List.generate(nx, (_) => List.filled(3, 0.0));
+    final List<List<double>> fnod =
+        List.generate(nx, (_) => List.filled(3, 0.0));
     final int nelx = data.elemCount; // 要素数
     final List<List<int>> ijk0 = List.generate(nelx, (_) => List.filled(2, 0));
-    final List<List<double>> prp0 = List.generate(nelx, (_) => List.filled(3, 0.0));
+    final List<List<double>> prp0 =
+        List.generate(nelx, (_) => List.filled(3, 0.0));
     final List<double> felm = List<double>.filled(nelx, 0.0);
 
     for (int i = 0; i < nx; i++) {
@@ -232,14 +245,11 @@ class FrameController extends ChangeNotifier {
     final double rectWidth = max(data.rect.width, data.rect.height);
     for (int ix = 0; ix < nx2; ix++) {
       Node node = data.getResultNode(ix);
-      node.changeAfterPos(
-        Offset(
+      node.changeAfterPos(Offset(
           node.pos.dx + node.becPos.dx / maxBecPos * rectWidth / 8,
-          node.pos.dy + node.becPos.dy / maxBecPos * rectWidth / 8
-        )
-      );
+          node.pos.dy + node.becPos.dy / maxBecPos * rectWidth / 8));
     }
-    
+
     // 力
     for (int ie = 0; ie < nelx2; ie++) {
       Elem elem = data.getResultElem(ie);
@@ -255,7 +265,7 @@ class FrameController extends ChangeNotifier {
       elem.changeResult(3, fint[ie][3]);
       elem.changeResult(4, fint[ie][4]);
     }
-    
+
     // 反力
     for (int ix = 0; ix < nx; ix++) {
       Node node = data.getNode(ix);
@@ -289,6 +299,7 @@ class FrameController extends ChangeNotifier {
       node.changeAfterPos(data.getResultNode(ix).afterPos);
     }
   }
+
   void resetCalculation() {
     _isCalculated = false;
     _changeTypeAndToolIndex();

@@ -30,34 +30,36 @@ class _FrameCanvasUiState extends State<FrameCanvasUi> {
 
     return IgnorePointer(
       child: Container(
-        width: double.infinity,
-        height: double.infinity,
-        padding: const EdgeInsets.all(MyDimens.baseSpacing * 2),
-        child: Stack(
-          children: [
-            SizedBox(
-              width: double.infinity,
-              height: double.infinity,
-              child: CustomPaint(painter: _FrameCanvasPainter(controller: controller)),
-            ),
-
-            if (controller.isCalculated && controller.resultIndex <= 1)...{
-              if (orientation == Orientation.landscape)...{
-                ColorContour.landscape(
-                  maxText: StringUtils.doubleToString(controller.resultMax, 3, minAbs: Setting.minAbs),
-                  minText: StringUtils.doubleToString(controller.resultMin, 3, minAbs: Setting.minAbs),
-                ),
+          width: double.infinity,
+          height: double.infinity,
+          padding: const EdgeInsets.all(MyDimens.baseSpacing * 2),
+          child: Stack(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                height: double.infinity,
+                child: CustomPaint(
+                    painter: _FrameCanvasPainter(controller: controller)),
+              ),
+              if (controller.isCalculated && controller.resultIndex <= 1) ...{
+                if (orientation == Orientation.landscape) ...{
+                  ColorContour.landscape(
+                    maxText: StringUtils.doubleToString(controller.resultMax, 3,
+                        minAbs: Setting.minAbs),
+                    minText: StringUtils.doubleToString(controller.resultMin, 3,
+                        minAbs: Setting.minAbs),
+                  ),
+                } else ...{
+                  ColorContour.portrait(
+                    maxText: StringUtils.doubleToString(controller.resultMax, 3,
+                        minAbs: Setting.minAbs),
+                    minText: StringUtils.doubleToString(controller.resultMin, 3,
+                        minAbs: Setting.minAbs),
+                  ),
+                }
               }
-              else...{
-                ColorContour.portrait(
-                  maxText: StringUtils.doubleToString(controller.resultMax, 3, minAbs: Setting.minAbs),
-                  minText: StringUtils.doubleToString(controller.resultMin, 3, minAbs: Setting.minAbs),
-                ),
-              }
-            }
-          ],
-        )
-      ),
+            ],
+          )),
     );
   }
 }

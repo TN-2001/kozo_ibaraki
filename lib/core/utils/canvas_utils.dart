@@ -201,7 +201,7 @@ class CanvasUtils {
   static void drawText(Canvas canvas, Offset pos, String text,
       {Alignment alignment = Alignment.topLeft,
       Color color = Colors.black,
-      double fontSize = 16,
+      double fontSize = 14,
       bool isOutline = true}) {
     CanvasUtils.text(canvas, pos, text, fontSize, color, isOutline, 1000,
         alignment: alignment);
