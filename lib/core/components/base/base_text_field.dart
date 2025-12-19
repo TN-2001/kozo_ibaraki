@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../../constants/constant.dart';
 
-
 class BaseTextField extends StatelessWidget {
   BaseTextField({
-    super.key, 
-    this.width, 
-    required this.onChanged, 
+    super.key,
+    this.width,
+    required this.onChanged,
     this.onSubmitted,
     this.onUnFocus,
     required this.text,
     this.enabled = true,
-    this.keyboardType = TextInputType.number,
+    this.keyboardType = TextInputType.text,
   }) {
     focusNode.addListener(() {
       if (!focusNode.hasFocus && onUnFocus != null) {
@@ -31,7 +30,6 @@ class BaseTextField extends StatelessWidget {
 
   final FocusNode focusNode = FocusNode();
 
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -48,22 +46,19 @@ class BaseTextField extends StatelessWidget {
         ),
         decoration: InputDecoration(
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(MyDimens.baseButtonBorderRadius),
+            borderRadius:
+                BorderRadius.circular(MyDimens.baseButtonBorderRadius),
           ),
           enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              color: MyColors.baseBorder
-            )
-          ),
-
+              borderSide: BorderSide(color: MyColors.baseBorder)),
           isDense: true,
           contentPadding: const EdgeInsets.all(8),
         ),
 
         // スマホのキーボード設定
-        keyboardType: keyboardType, 
+        keyboardType: keyboardType,
         // 入力制限
-        // inputFormatters: [ 
+        // inputFormatters: [
         //   FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*$')),
         // ],
 
